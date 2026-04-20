@@ -63,12 +63,15 @@ fetch() {
 _gh_assets_by_regex() {
   local repo="$1" regex="$2" field="$3"
   require_cmd gh
-  local tmp_err raw rc stderr_content
+  require_cmd jq
+  local tmp_err tmp_out raw rc stderr_content
   tmp_err="$(mktemp)"
-  if ! raw="$(gh release view --repo "$repo" --json assets --jq \
-       ".assets[] | select(.name | test(\"$regex\")) | .$field" 2>"$tmp_err")"; then
+  tmp_out="$(mktemp)"
+
+  # Paso 1: descargar JSON de assets con gh (sin interpolar regex en jq).
+  if ! gh release view --repo "$repo" --json assets > "$tmp_out" 2>"$tmp_err"; then
     rc=$?
-    stderr_content="$(cat "$tmp_err")"; rm -f "$tmp_err"
+    stderr_content="$(cat "$tmp_err")"; rm -f "$tmp_err" "$tmp_out"
     if grep -q "GH_TOKEN" <<< "$stderr_content"; then
       die "gh sin autenticar al consultar $repo. Falta 'env: GH_TOKEN' en este step del workflow."
     fi
@@ -80,7 +83,16 @@ _gh_assets_by_regex() {
     fi
     die "gh release view falló (rc=$rc) para $repo: $stderr_content"
   fi
-  rm -f "$tmp_err"
+
+  # Paso 2: filtrar con jq usando --arg para pasar el regex como valor,
+  # evitando el bug donde '\.' dentro de un string-literal jq es escape inválido.
+  if ! raw="$(jq -r --arg re "$regex" --arg fld "$field" \
+        '.assets[] | select(.name | test($re)) | .[$fld]' < "$tmp_out" 2>"$tmp_err")"; then
+    rc=$?
+    stderr_content="$(cat "$tmp_err")"; rm -f "$tmp_err" "$tmp_out"
+    die "jq falló filtrando assets de $repo (rc=$rc): $stderr_content"
+  fi
+  rm -f "$tmp_err" "$tmp_out"
   printf "%s\n" "$raw" | head -1
 }
 

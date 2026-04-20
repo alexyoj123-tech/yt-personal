@@ -1,33 +1,63 @@
 name: project-a · build manual (ReVanced)
-# Disparo manual con parámetros (versión específica, patches custom, etc.).
-# Rellenado en Fase A3.
+# Disparo manual con parámetros: versión específica, no publicar, forzar, etc.
+# Útil para debugging cuando el cron diario falla.
 
 on:
   workflow_dispatch:
     inputs:
       youtube_version:
-        description: 'Versión de YouTube a parchear (vacío = auto)'
+        description: 'Versión de YouTube a parchear (vacío = la más alta compatible)'
         required: false
         type: string
+        default: ''
       ytmusic_version:
-        description: 'Versión de YT Music a parchear (vacío = auto)'
+        description: 'Versión de YT Music a parchear (vacío = la más alta compatible)'
         required: false
         type: string
+        default: ''
       publish_release:
-        description: '¿Publicar release?'
+        description: '¿Publicar Release?'
         required: false
         type: boolean
         default: true
+      force_release:
+        description: '¿Forzar publicación aunque no haya cambios?'
+        required: false
+        type: boolean
+        default: false
+      apkeep_source:
+        description: 'Fuente primaria (APKMirror o APKPure)'
+        required: false
+        type: choice
+        default: APKMirror
+        options: [APKMirror, APKPure]
 
 permissions:
   contents: write
 
+concurrency:
+  group: project-a-manual
+  cancel-in-progress: false
+
 jobs:
-  placeholder:
-    name: Placeholder (A1 — se rellena en A3)
+  build:
+    name: Pipeline manual (${{ inputs.youtube_version || 'auto' }}/${{ inputs.ytmusic_version || 'auto' }})
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
-      - name: Info
-        run: |
-          echo "Workflow project-a-manual aún vacío (bootstrap Fase A1)."
-          echo "Inputs recibidos: yt=${{ inputs.youtube_version }} ytm=${{ inputs.ytmusic_version }} pub=${{ inputs.publish_release }}"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ejecutar pipeline
+        uses: ./.github/actions/revanced-build
+        with:
+          youtube_version:           ${{ inputs.youtube_version }}
+          ytmusic_version:           ${{ inputs.ytmusic_version }}
+          publish_release:           ${{ inputs.publish_release }}
+          force_release:             ${{ inputs.force_release }}
+          apkeep_source:             ${{ inputs.apkeep_source }}
+          android_keystore_base64:   ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          android_keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          android_key_alias:         ${{ secrets.ANDROID_KEY_ALIAS }}
+          android_key_password:      ${{ secrets.ANDROID_KEY_PASSWORD }}
+          gh_token:                  ${{ secrets.GITHUB_TOKEN }}

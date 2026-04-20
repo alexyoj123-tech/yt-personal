@@ -1,10 +1,10 @@
 name: project-a · build diario (ReVanced)
-# Pipeline que cada día baja YouTube + YT Music oficiales, los parchea con
-# ReVanced, los firma, y publica un Release. Rellenado en Fase A3.
+# Cron diario 06:00 UTC. Corre el pipeline completo y publica Release si
+# hay cambios. Ver .github/actions/revanced-build/action.yml para el detalle.
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # 06:00 UTC diario
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -15,11 +15,19 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  placeholder:
-    name: Placeholder (A1 — se rellena en A3)
+  build:
+    name: Pipeline ReVanced (YT + YTM + GmsCore)
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     steps:
-      - name: Info
-        run: |
-          echo "Workflow project-a-build aún vacío (bootstrap Fase A1)."
-          echo "Se completará con: fetch-apks → apply-patches → sign → release en Fase A3."
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Ejecutar pipeline
+        uses: ./.github/actions/revanced-build
+        with:
+          android_keystore_base64:   ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          android_keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          android_key_alias:         ${{ secrets.ANDROID_KEY_ALIAS }}
+          android_key_password:      ${{ secrets.ANDROID_KEY_PASSWORD }}
+          gh_token:                  ${{ secrets.GITHUB_TOKEN }}

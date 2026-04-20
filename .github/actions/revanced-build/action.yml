@@ -1,0 +1,137 @@
+name: Run ReVanced pipeline
+description: >
+  Composite action que ejecuta fetch → patch → sign → release del Proyecto A
+  en un runner Ubuntu. Usado por project-a-build.yml (diario) y
+  project-a-manual.yml (dispatch con inputs).
+
+inputs:
+  youtube_version:
+    description: 'Versión de YouTube a parchear (vacío = la más alta compatible)'
+    required: false
+    default: ''
+  ytmusic_version:
+    description: 'Versión de YT Music a parchear (vacío = la más alta compatible)'
+    required: false
+    default: ''
+  publish_release:
+    description: '¿Publicar Release con los APKs firmados?'
+    required: false
+    default: 'true'
+  force_release:
+    description: '¿Publicar aunque no haya cambios vs el release anterior?'
+    required: false
+    default: 'false'
+  apkeep_source:
+    description: 'Fuente primaria de apkeep: APKMirror o APKPure'
+    required: false
+    default: 'APKMirror'
+  android_keystore_base64:
+    description: 'Base64 del keystore release'
+    required: true
+  android_keystore_password:
+    description: 'Password del keystore'
+    required: true
+  android_key_alias:
+    description: 'Alias de la key (yt-personal)'
+    required: true
+  android_key_password:
+    description: 'Password de la key'
+    required: true
+  gh_token:
+    description: 'Token de GitHub para crear el Release'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup JDK 21 (Temurin)
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '21'
+
+    - name: Setup Android SDK (build-tools para apksigner + zipalign)
+      uses: android-actions/setup-android@v3
+      with:
+        packages: 'build-tools;34.0.0 platform-tools'
+        accept-android-sdk-licenses: true
+        log-accepted-android-sdk-licenses: false
+
+    - name: Añadir build-tools al PATH
+      shell: bash
+      run: |
+        BT_DIR="$ANDROID_SDK_ROOT/build-tools/34.0.0"
+        [ -d "$BT_DIR" ] || { echo "::error::No existe $BT_DIR"; exit 1; }
+        echo "$BT_DIR" >> "$GITHUB_PATH"
+        echo "Añadido: $BT_DIR"
+
+    - name: Instalar apkeep
+      shell: bash
+      run: |
+        mkdir -p "$HOME/.local/bin"
+        curl -fL --retry 8 --retry-delay 3 --retry-all-errors \
+          -o "$HOME/.local/bin/apkeep" \
+          https://github.com/EFForg/apkeep/releases/latest/download/apkeep-x86_64-unknown-linux-gnu
+        chmod +x "$HOME/.local/bin/apkeep"
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        "$HOME/.local/bin/apkeep" --version || true
+
+    - name: Verificar toolchain
+      shell: bash
+      run: |
+        echo "== java ==";      java -version 2>&1 | head -1
+        echo "== apksigner =="; apksigner --version || true
+        echo "== zipalign =="; zipalign 2>&1 | head -1 || true
+        echo "== apkeep ==";    apkeep --version || true
+        echo "== jq ==";        jq --version
+        echo "== gh ==";        gh --version | head -1
+
+    - name: fetch-apks
+      shell: bash
+      env:
+        YT_VERSION: ${{ inputs.youtube_version }}
+        YTM_VERSION: ${{ inputs.ytmusic_version }}
+        APKEEP_SOURCE: ${{ inputs.apkeep_source }}
+      run: bash project-a/scripts/fetch-apks.sh
+
+    - name: apply-patches
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.gh_token }}
+      run: bash project-a/scripts/apply-patches.sh
+
+    - name: sign-apks
+      shell: bash
+      env:
+        ANDROID_KEYSTORE_BASE64:   ${{ inputs.android_keystore_base64 }}
+        ANDROID_KEYSTORE_PASSWORD: ${{ inputs.android_keystore_password }}
+        ANDROID_KEY_ALIAS:         ${{ inputs.android_key_alias }}
+        ANDROID_KEY_PASSWORD:      ${{ inputs.android_key_password }}
+      run: bash project-a/scripts/sign-apks.sh
+
+    - name: create-release
+      if: inputs.publish_release == 'true'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.gh_token }}
+        FORCE_RELEASE: ${{ inputs.force_release == 'true' && '1' || '0' }}
+        DEVICE_NAME: 'Samsung Galaxy A04e'
+      run: bash project-a/scripts/create-release.sh
+
+    - name: Subir meta como artifact (siempre)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: project-a-meta-${{ github.run_id }}
+        path: project-a/build/meta/
+        retention-days: 14
+        if-no-files-found: ignore
+
+    - name: Subir APKs firmados como artifact (si hay)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: project-a-signed-${{ github.run_id }}
+        path: project-a/build/signed/*.apk
+        retention-days: 7
+        if-no-files-found: ignore

@@ -1,0 +1,33 @@
+name: project-a · build manual (ReVanced)
+# Disparo manual con parámetros (versión específica, patches custom, etc.).
+# Rellenado en Fase A3.
+
+on:
+  workflow_dispatch:
+    inputs:
+      youtube_version:
+        description: 'Versión de YouTube a parchear (vacío = auto)'
+        required: false
+        type: string
+      ytmusic_version:
+        description: 'Versión de YT Music a parchear (vacío = auto)'
+        required: false
+        type: string
+      publish_release:
+        description: '¿Publicar release?'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  placeholder:
+    name: Placeholder (A1 — se rellena en A3)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: |
+          echo "Workflow project-a-manual aún vacío (bootstrap Fase A1)."
+          echo "Inputs recibidos: yt=${{ inputs.youtube_version }} ytm=${{ inputs.ytmusic_version }} pub=${{ inputs.publish_release }}"

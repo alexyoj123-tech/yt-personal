@@ -1,0 +1,23 @@
+name: release-all · tag coordinado de los 3 proyectos
+# Dispara los workflows de A, B, C en secuencia y crea un Release global
+# que agrupa los 3 APKs. Rellenado en Fase final de verificación.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag del release global (ej. yt-personal-2026.04.19)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  placeholder:
+    name: Placeholder (A1 — se rellena al final)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: echo "release-all aún vacío — se completará tras A, B y C listos."

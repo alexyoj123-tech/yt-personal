@@ -1,0 +1,25 @@
+name: project-a · build diario (ReVanced)
+# Pipeline que cada día baja YouTube + YT Music oficiales, los parchea con
+# ReVanced, los firma, y publica un Release. Rellenado en Fase A3.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC diario
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-a-build
+  cancel-in-progress: false
+
+jobs:
+  placeholder:
+    name: Placeholder (A1 — se rellena en A3)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: |
+          echo "Workflow project-a-build aún vacío (bootstrap Fase A1)."
+          echo "Se completará con: fetch-apks → apply-patches → sign → release en Fase A3."

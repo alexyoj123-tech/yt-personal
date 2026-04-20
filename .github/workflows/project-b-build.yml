@@ -1,0 +1,21 @@
+name: project-b · build cliente nativo
+# Compila el cliente Android Kotlin+Compose y publica release firmado.
+# Rellenado en Fase B10.
+
+on:
+  push:
+    paths:
+      - 'project-b/**'
+      - '.github/workflows/project-b-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  placeholder:
+    name: Placeholder (A1 — se rellena en B10)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: echo "Workflow project-b-build aún vacío (bootstrap Fase A1)."

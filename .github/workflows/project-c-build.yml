@@ -1,0 +1,21 @@
+name: project-c · build YTP Setup (dual phone/TV)
+# Compila el APK único que orquesta instalación en celular y Android TV.
+# Rellenado en Fase C13.
+
+on:
+  push:
+    paths:
+      - 'project-c/**'
+      - '.github/workflows/project-c-build.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  placeholder:
+    name: Placeholder (A1 — se rellena en C13)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: echo "Workflow project-c-build aún vacío (bootstrap Fase A1)."

@@ -25,6 +25,18 @@ inputs:
     description: 'Fuente de apkeep (valores válidos: apk-pure, google-play, f-droid, huawei-app-gallery). Para YT/YTM solo apk-pure es práctico sin credenciales.'
     required: false
     default: 'apk-pure'
+  revanced_cli_repo:
+    description: 'Owner/repo del CLI de ReVanced. Default oficial (accesible).'
+    required: false
+    default: 'ReVanced/revanced-cli'
+  revanced_patches_repo:
+    description: 'Owner/repo de los patches. El oficial ReVanced/revanced-patches está HTTP 451 desde 2025 → fork inotia00 por default.'
+    required: false
+    default: 'inotia00/revanced-patches'
+  revanced_gmscore_repo:
+    description: 'Owner/repo de GmsCore.'
+    required: false
+    default: 'ReVanced/GmsCore'
   android_keystore_base64:
     description: 'Base64 del keystore release'
     required: true
@@ -104,12 +116,18 @@ runs:
         YT_VERSION: ${{ inputs.youtube_version }}
         YTM_VERSION: ${{ inputs.ytmusic_version }}
         APKEEP_SOURCE: ${{ inputs.apkeep_source }}
+        GH_TOKEN: ${{ inputs.gh_token }}
+        REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
+        REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
       run: bash project-a/scripts/fetch-apks.sh
 
     - name: apply-patches
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.gh_token }}
+        REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
+        REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
+        REVANCED_GMSCORE_REPO: ${{ inputs.revanced_gmscore_repo }}
       run: bash project-a/scripts/apply-patches.sh
 
     - name: sign-apks

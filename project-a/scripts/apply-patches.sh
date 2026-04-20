@@ -17,11 +17,17 @@ require_cmd gh
 require_cmd jq
 
 # ── Descargar herramientas ───────────────────────────────────────────
-step "Descargando revanced-cli, revanced-patches, GmsCore"
+# Defaults parametrizables por env (ver CLAUDE.md / TROUBLESHOOTING.md).
+# ReVanced/revanced-patches está HTTP 451 desde 2025 → usamos fork.
+CLI_REPO="${REVANCED_CLI_REPO:-ReVanced/revanced-cli}"
+PATCHES_REPO="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
+GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-ReVanced/GmsCore}"
 
-CLI_JAR="$(ensure_tool "revanced-cli.jar"  "ReVanced/revanced-cli"     "revanced-cli-.*-all\\.jar$")"
-PATCHES_RVP="$(ensure_tool "revanced-patches.rvp" "ReVanced/revanced-patches" "patches-.*\\.rvp$")"
-GMSCORE_APK="$(ensure_tool "gmscore.apk"  "ReVanced/GmsCore"          "app-release-.*\\.apk$|GmsCore-.*\\.apk$")"
+step "Descargando revanced-cli ($CLI_REPO), patches ($PATCHES_REPO), GmsCore ($GMSCORE_REPO)"
+
+CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "revanced-cli-.*-all\\.jar$")"
+PATCHES_RVP="$(ensure_tool "revanced-patches.rvp" "$PATCHES_REPO" "patches-.*\\.rvp$")"
+GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "app-release-.*\\.apk$|GmsCore-.*\\.apk$")"
 
 info "CLI:       $CLI_JAR"
 info "Patches:   $PATCHES_RVP"
@@ -65,9 +71,9 @@ cp -f "$GMSCORE_APK" "$PATCHED_DIR/gmscore.apk"
 ok "GmsCore copiado: $PATCHED_DIR/gmscore.apk"
 
 # ── Meta del patch run ───────────────────────────────────────────────
-CLI_VER="$(gh_latest_tag "ReVanced/revanced-cli")"
-PATCHES_VER="$(gh_latest_tag "ReVanced/revanced-patches")"
-GMS_VER="$(gh_latest_tag "ReVanced/GmsCore")"
+CLI_VER="$(gh_latest_tag "$CLI_REPO")"
+PATCHES_VER="$(gh_latest_tag "$PATCHES_REPO")"
+GMS_VER="$(gh_latest_tag "$GMSCORE_REPO")"
 
 cat > "$META_DIR/patch.json" <<EOF
 {

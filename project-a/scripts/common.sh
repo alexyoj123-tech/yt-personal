@@ -53,28 +53,59 @@ fetch() {
   ok "Guardado en $out ($(du -h "$out" | cut -f1))"
 }
 
-# Último asset de un release de GitHub que matchee un regex sobre el nombre.
-# Uso: gh_latest_asset <owner/repo> <regex>
-gh_latest_asset() {
-  local repo="$1" regex="$2"
+# Wrapper robusto sobre `gh release view` que discrimina causas de fallo
+# comunes (sin GH_TOKEN, repo 451-bloqueado, asset no matchea) y muere
+# con mensaje accionable en vez del engañoso "asset no encontrado".
+#
+# Uso interno:
+#   _gh_assets_by_regex <owner/repo> <regex> <field>
+# field = url | name
+_gh_assets_by_regex() {
+  local repo="$1" regex="$2" field="$3"
   require_cmd gh
-  gh release view --repo "$repo" --json assets --jq \
-    ".assets[] | select(.name | test(\"$regex\")) | .url" | head -1
+  local tmp_err raw rc stderr_content
+  tmp_err="$(mktemp)"
+  if ! raw="$(gh release view --repo "$repo" --json assets --jq \
+       ".assets[] | select(.name | test(\"$regex\")) | .$field" 2>"$tmp_err")"; then
+    rc=$?
+    stderr_content="$(cat "$tmp_err")"; rm -f "$tmp_err"
+    if grep -q "GH_TOKEN" <<< "$stderr_content"; then
+      die "gh sin autenticar al consultar $repo. Falta 'env: GH_TOKEN' en este step del workflow."
+    fi
+    if grep -qiE '451|unavailable.for.legal' <<< "$stderr_content"; then
+      die "Repo $repo bloqueado por GitHub (HTTP 451). Usa un fork alternativo (ej. inotia00/revanced-patches)."
+    fi
+    if grep -qiE 'not.found|no.release' <<< "$stderr_content"; then
+      die "El repo $repo no tiene releases o no existe: $stderr_content"
+    fi
+    die "gh release view falló (rc=$rc) para $repo: $stderr_content"
+  fi
+  rm -f "$tmp_err"
+  printf "%s\n" "$raw" | head -1
 }
 
-# Nombre de archivo del último asset que matchee.
-gh_latest_asset_name() {
-  local repo="$1" regex="$2"
-  require_cmd gh
-  gh release view --repo "$repo" --json assets --jq \
-    ".assets[] | select(.name | test(\"$regex\")) | .name" | head -1
-}
+gh_latest_asset()      { _gh_assets_by_regex "$1" "$2" "url"; }
+gh_latest_asset_name() { _gh_assets_by_regex "$1" "$2" "name"; }
 
-# Tag del último release de un repo.
+# Tag del último release de un repo (con manejo robusto de errores).
 gh_latest_tag() {
   local repo="$1"
   require_cmd gh
-  gh release view --repo "$repo" --json tagName --jq '.tagName'
+  local tmp_err raw rc stderr_content
+  tmp_err="$(mktemp)"
+  if ! raw="$(gh release view --repo "$repo" --json tagName --jq '.tagName' 2>"$tmp_err")"; then
+    rc=$?
+    stderr_content="$(cat "$tmp_err")"; rm -f "$tmp_err"
+    if grep -q "GH_TOKEN" <<< "$stderr_content"; then
+      die "gh sin autenticar al consultar $repo. Falta 'env: GH_TOKEN' en este step."
+    fi
+    if grep -qiE '451|unavailable.for.legal' <<< "$stderr_content"; then
+      die "Repo $repo bloqueado por GitHub (HTTP 451). Usa un fork alternativo."
+    fi
+    die "gh release view falló (rc=$rc) para $repo: $stderr_content"
+  fi
+  rm -f "$tmp_err"
+  printf "%s" "$raw"
 }
 
 # Ruta al tool dentro de TOOLS_DIR o download-and-return.
@@ -82,14 +113,14 @@ gh_latest_tag() {
 ensure_tool() {
   local name="$1" repo="$2" regex="$3"
   local dest="$TOOLS_DIR/$name"
-  if [ -f "$dest" ]; then
+  if [ -s "$dest" ]; then
     info "Ya existe $name en $dest — reuso."
     printf "%s" "$dest"
     return 0
   fi
   local url
   url="$(gh_latest_asset "$repo" "$regex")"
-  [ -n "$url" ] || die "No encontré asset '$regex' en $repo"
+  [ -n "$url" ] || die "No encontré asset '$regex' en $repo (gh devolvió vacío sin error)."
   fetch "$url" "$dest"
   printf "%s" "$dest"
 }

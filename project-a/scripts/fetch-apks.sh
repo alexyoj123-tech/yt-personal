@@ -37,9 +37,15 @@ resolve_patches_meta_if_needed() {
   require_cmd java
   require_cmd gh
 
+  # Nota: ReVanced/revanced-patches está HTTP 451-bloqueado por GitHub
+  # desde 2025. Default switcheado a inotia00/revanced-patches (fork
+  # mantenido). Parametrizable con env por si inotia00 también cae.
+  local cli_repo="${REVANCED_CLI_REPO:-ReVanced/revanced-cli}"
+  local patches_repo="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
+
   local cli_jar patches_rvp
-  cli_jar="$(ensure_tool "revanced-cli.jar" "ReVanced/revanced-cli" "revanced-cli-.*-all\\.jar$")"
-  patches_rvp="$(ensure_tool "revanced-patches.rvp" "ReVanced/revanced-patches" "patches-.*\\.rvp$")"
+  cli_jar="$(ensure_tool "revanced-cli.jar" "$cli_repo" "revanced-cli-.*-all\\.jar$")"
+  patches_rvp="$(ensure_tool "revanced-patches.rvp" "$patches_repo" "patches-.*\\.rvp$")"
 
   if java -jar "$cli_jar" list-patches --with-packages --with-versions --json "$patches_rvp" \
        > "$META_DIR/patches-meta.json" 2>/dev/null; then

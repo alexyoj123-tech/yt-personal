@@ -77,7 +77,7 @@ cat >> "$body_file" <<EOF
 - **YouTube:** $YT_VERSION · package \`app.rvx.android.youtube\`
 - **YT Music:** $YTM_VERSION · package \`app.rvx.android.apps.youtube.music\`
 - **GmsCore:** $GMS_VERSION · package \`app.revanced.android.gms\`
-- **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`com.liskovsoft.smarttubetv.beta\`
+- **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`org.smarttube.stable\`
 - **ReVanced CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION (fork inotia00)
 
 ## Assets (arm64-v8a, firmados con \`yt-personal\`)

@@ -33,27 +33,49 @@ YTM_PKG="com.google.android.apps.youtube.music"
 # ── 1+2. Bootstrap patches-meta.json ─────────────────────────────────
 resolve_patches_meta_if_needed() {
   [ -s "$META_DIR/patches-meta.json" ] && return 0
-  info "patches-meta.json no existe — descargo revanced-cli + patches para generarlo."
-  require_cmd java
+  info "patches-meta.json no existe — extrayendo metadata del .rvp directamente."
   require_cmd gh
+  require_cmd unzip
+  require_cmd jq
 
   # Nota: ReVanced/revanced-patches está HTTP 451-bloqueado por GitHub
   # desde 2025. Default switcheado a inotia00/revanced-patches (fork
   # mantenido). Parametrizable con env por si inotia00 también cae.
-  local cli_repo="${REVANCED_CLI_REPO:-ReVanced/revanced-cli}"
   local patches_repo="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
 
-  local cli_jar patches_rvp
-  cli_jar="$(ensure_tool "revanced-cli.jar" "$cli_repo" "revanced-cli-.*-all\\.jar$")"
+  local patches_rvp
   patches_rvp="$(ensure_tool "revanced-patches.rvp" "$patches_repo" "patches-.*\\.rvp$")"
 
-  if java -jar "$cli_jar" list-patches --with-packages --with-versions --json "$patches_rvp" \
-       > "$META_DIR/patches-meta.json" 2>/dev/null; then
-    ok "patches-meta.json generado ($(wc -l < "$META_DIR/patches-meta.json") líneas)"
-  else
-    warn "list-patches --json no soportado — versiones se resolverán como 'latest'."
-    echo "[]" > "$META_DIR/patches-meta.json"
-  fi
+  # revanced-cli v6 removió `list-patches --with-packages --with-versions
+  # --json` — ahora solo soporta --descriptions/--index/--options y no
+  # emite JSON con compatibilidad. Alternativa: .rvp es un ZIP, leemos
+  # la metadata directo. Probamos rutas candidatas conocidas.
+  info "Archivos JSON dentro del .rvp:"
+  unzip -l "$patches_rvp" 2>/dev/null | awk 'NR>3 && $4 ~ /\.json$/ {print "  • "$4}' >&2 || true
+
+  local candidates=(
+    "patches.json"
+    "META-INF/patches.json"
+    "META-INF/revanced/patches.json"
+    "revanced/patches.json"
+    "compatibility.json"
+    "compatiblePackages.json"
+  )
+  local tmp
+  tmp="$(mktemp)"
+  for path in "${candidates[@]}"; do
+    if unzip -p "$patches_rvp" "$path" > "$tmp" 2>/dev/null && \
+       [ -s "$tmp" ] && jq empty "$tmp" 2>/dev/null; then
+      mv "$tmp" "$META_DIR/patches-meta.json"
+      ok "patches-meta.json extraído de '$path' ($(wc -c < "$META_DIR/patches-meta.json") bytes)"
+      return 0
+    fi
+  done
+  rm -f "$tmp"
+
+  warn "Ninguna ruta candidata contiene JSON válido en el .rvp — versiones se resolverán como 'latest'."
+  warn "(Si querés pinpoint de versión, revisa el listado de arriba y añade la ruta correcta a 'candidates' en fetch-apks.sh.)"
+  echo "[]" > "$META_DIR/patches-meta.json"
 }
 
 resolve_patches_meta_if_needed

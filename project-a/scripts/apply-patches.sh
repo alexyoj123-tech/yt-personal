@@ -53,13 +53,18 @@ apply_patch() {
   [ -f "$input_apk" ] || die "No encuentro input: $input_apk"
 
   step "Parcheando $label → $(basename "$out_apk")"
-  # revanced-cli v5+ usa `patch`. Flags:
+  # revanced-cli v6 requiere especificar verificación PGP:
+  #   -b / --bypass-verification  → aceptar RVP sin firma PGP oficial
+  #   -s -k -a [-r]               → verificar con signature+keyring+attestation
+  # Como usamos fork inotia00 que no firma con las llaves PGP de ReVanced
+  # oficial, pasamos --bypass-verification. Resto de flags:
   #   --patches <file.rvp>  : set de patches
   #   --out <apk>           : archivo de salida (sin firmar)
   #   --purge               : limpia temporales
   # NO pasamos --keystore aquí; la firma va en sign-apks.sh.
   java -jar "$CLI_JAR" patch \
     --patches "$PATCHES_RVP" \
+    --bypass-verification \
     --out "$out_apk" \
     --purge \
     "$input_apk"

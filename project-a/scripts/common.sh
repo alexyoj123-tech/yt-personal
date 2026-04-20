@@ -27,16 +27,20 @@ else
   C_RESET=""; C_RED=""; C_GREEN=""; C_YELLOW=""; C_BLUE=""; C_DIM=""
 fi
 
-log()   { printf "%s[%s]%s %s\n" "$C_DIM" "$(date +%H:%M:%S)" "$C_RESET" "$*"; }
-info()  { printf "%s[INFO]%s  %s\n"  "$C_BLUE"   "$C_RESET" "$*"; }
-ok()    { printf "%s[OK]%s    %s\n"  "$C_GREEN"  "$C_RESET" "$*"; }
+# Todos los logs van a STDERR. STDOUT queda reservado para valores
+# "de retorno" de funciones llamadas via command substitution
+# (ensure_tool, gh_latest_asset, etc.) — mezclar log + retorno en el
+# mismo stream poluciona $(...) y causa bugs silenciosos.
+log()   { printf "%s[%s]%s %s\n" "$C_DIM" "$(date +%H:%M:%S)" "$C_RESET" "$*" >&2; }
+info()  { printf "%s[INFO]%s  %s\n"  "$C_BLUE"   "$C_RESET" "$*" >&2; }
+ok()    { printf "%s[OK]%s    %s\n"  "$C_GREEN"  "$C_RESET" "$*" >&2; }
 warn()  { printf "%s[WARN]%s  %s\n"  "$C_YELLOW" "$C_RESET" "$*" >&2; }
 err()   { printf "%s[ERR]%s   %s\n"  "$C_RED"    "$C_RESET" "$*" >&2; }
 die()   { err "$*"; exit 1; }
 
 # ── Step delimiter ────────────────────────────────────────────────────
 step() {
-  printf "\n%s═══ %s ═══%s\n" "$C_BLUE" "$*" "$C_RESET"
+  printf "\n%s═══ %s ═══%s\n" "$C_BLUE" "$*" "$C_RESET" >&2
 }
 
 # ── Utilities ─────────────────────────────────────────────────────────

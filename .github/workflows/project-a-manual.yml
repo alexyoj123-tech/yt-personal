@@ -26,7 +26,7 @@ on:
         type: boolean
         default: false
       apkeep_source:
-        description: 'Fuente apkeep (solo apk-pure es viable sin credenciales para YT/YTM)'
+        description: 'VESTIGIAL (apkeep reemplazado por scraper APKMirror). Ignorado. Dejado para compat con disparos viejos.'
         required: false
         type: choice
         default: apk-pure

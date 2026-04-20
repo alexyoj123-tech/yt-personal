@@ -1,34 +1,49 @@
 #!/usr/bin/env bash
 # Descarga los APKs oficiales de YouTube y YouTube Music compatibles con
-# los patches actuales de ReVanced.
+# los patches actuales de ReVanced desde APKMirror.
 #
 # Flujo:
-#   1) Descarga revanced-cli.jar y revanced-patches.rvp si no existen
-#      (para poder extraer `patches-meta.json` y saber qué versión pedir).
-#   2) Extrae patches-meta.json si no existe.
-#   3) Resuelve la versión MÁS ALTA listada como compatible por cada
-#      paquete. Si no hay meta, usa "latest".
-#   4) Descarga los APKs con `apkeep --download-source apk-pure`.
-#      APKPure a veces sirve XAPK/APKM (zips con splits) → se extrae la
-#      base (el .apk más grande).
+#   1) Intenta extraer metadata de compat del .rvp para resolver versiones.
+#      Si no se encuentra, depende de YT_VERSION / YTM_VERSION del env.
+#   2) Invoca scripts/apkmirror_download.py para bajar cada APK.
+#      El scraper sigue la cadena version-page → variant-page →
+#      key-page (con Referer) → download.php → CDN R2 de APKMirror.
 #
-# Requiere: apkeep, java (para list-patches), gh, jq, unzip.
-# Env opcionales: ARCH (default arm64-v8a, informativo — apk-pure no
-# filtra por arch), YT_VERSION / YTM_VERSION (override),
-# APKEEP_SOURCE (default "apk-pure").
+# ¿Por qué APKMirror y no apkeep? apkeep no soporta APKMirror como fuente
+# y las fuentes soportadas (apk-pure, google-play, f-droid, huawei-app-
+# gallery) no tienen las versiones pinneadas que inotia00 v5.14.x
+# requiere. APKMirror sí tiene archivo histórico. Ver
+# docs/APKMIRROR-SCRAPER.md.
+#
+# Requiere: python3, gh, jq, unzip.
+# Env:
+#   YT_VERSION / YTM_VERSION  — versiones específicas (OBLIGATORIAS; ya no
+#                               hay "latest" — APKMirror scraper requiere
+#                               versión explícita).
+#   ARCH                       — informativo (APKMirror sirve el APK
+#                               universal con nodpi por default, válido
+#                               para arm64-v8a).
+#   APKEEP_SOURCE              — vestigial (ignorado; soportado para
+#                               compat con disparos viejos del workflow).
 
 set -euo pipefail
 source "$(dirname "$0")/common.sh"
 
-require_cmd apkeep
+require_cmd python3 || require_cmd python
 require_cmd jq
-require_cmd unzip
 
 ARCH="${ARCH:-arm64-v8a}"
-APKEEP_SOURCE="${APKEEP_SOURCE:-apk-pure}"
 
 YT_PKG="com.google.android.youtube"
 YTM_PKG="com.google.android.apps.youtube.music"
+
+# Mapping package → (APKMirror org, slug). Si se añaden apps nuevas al
+# pipeline en el futuro, extender aquí.
+YT_APKM_ORG="google-inc";    YT_APKM_SLUG="youtube"
+YTM_APKM_ORG="google-inc";   YTM_APKM_SLUG="youtube-music"
+
+PY_SCRAPER="$SCRIPT_DIR/apkmirror_download.py"
+[ -f "$PY_SCRAPER" ] || die "Falta $PY_SCRAPER — scraper APKMirror."
 
 # ── 1+2. Bootstrap patches-meta.json ─────────────────────────────────
 resolve_patches_meta_if_needed() {
@@ -102,80 +117,56 @@ YTM_VERSION="${YTM_VERSION:-}"
 [ -z "$YT_VERSION"  ] && YT_VERSION="$(resolve_version_from_meta  "$YT_PKG"  || true)"
 [ -z "$YTM_VERSION" ] && YTM_VERSION="$(resolve_version_from_meta "$YTM_PKG" || true)"
 
-info "YouTube        → ${YT_VERSION:-latest}  ($YT_PKG)"
-info "YouTube Music  → ${YTM_VERSION:-latest} ($YTM_PKG)"
+# El scraper APKMirror requiere versión explícita (no existe "latest" en
+# su URL schema). Si no hay env ni meta, abortamos con mensaje útil que
+# lista las versiones conocidas-compatibles con inotia00 v5.14.1.
+if [ -z "$YT_VERSION" ] || [ -z "$YTM_VERSION" ]; then
+  die "Faltan versiones explícitas (YT_VERSION/YTM_VERSION) y no hay meta disponible.
+    Pasa versiones via workflow_dispatch. Últimas conocidas-compat con
+    inotia00/revanced-patches v5.14.1:
+      YouTube:       19.05.36, 19.16.39, 19.43.41, 19.44.39, 19.47.53, 20.05.46
+      YouTube Music: 6.20.51, 6.29.59, 6.42.55, 6.51.53, 7.16.53, 7.25.53, 8.12.54, 8.28.54, 8.30.54
+    Si APKMirror no tiene una, prueba la anterior de la lista.
+    Ver docs/APKMIRROR-SCRAPER.md §versiones-soportadas."
+fi
 
-# ── 4. Descarga + manejo XAPK/APKM ───────────────────────────────────
-extract_base_apk() {
-  local bundle="$1" dest="$2"
-  local extracted
-  extracted="$(mktemp -d)"
-  info "Bundle detectado ($(basename "$bundle")) — extrayendo base APK"
-  unzip -q "$bundle" -d "$extracted"
-  # El APK base suele ser el más grande del bundle.
-  local base
-  base="$(find "$extracted" -maxdepth 3 -type f -name '*.apk' -printf '%s\t%p\n' | sort -rn | head -1 | cut -f2-)"
-  [ -n "$base" ] && [ -f "$base" ] || { rm -rf "$extracted"; die "No encontré ningún .apk dentro de $bundle"; }
-  mv "$base" "$dest"
-  rm -rf "$extracted"
-  ok "Base APK extraído: $dest"
-}
+info "YouTube        → $YT_VERSION  ($YT_PKG)"
+info "YouTube Music  → $YTM_VERSION ($YTM_PKG)"
 
+# ── 4. Descarga via scraper APKMirror ────────────────────────────────
 download_apk() {
-  local pkg="$1" version="$2" out_name="$3"
-  step "Descargando $pkg desde $APKEEP_SOURCE (versión=${version:-latest})"
-
-  local tmp_dir spec
-  tmp_dir="$(mktemp -d)"
-  if [ -n "$version" ]; then spec="$pkg@$version"; else spec="$pkg"; fi
-
-  # Primer intento: versión solicitada (si alguna).
-  local ok_dl=0
-  if apkeep --download-source "$APKEEP_SOURCE" -a "$spec" "$tmp_dir" 2>&1; then
-    ok_dl=1
-  elif [ -n "$version" ]; then
-    warn "apk-pure no tiene $pkg@$version — retry con latest."
-    rm -rf "$tmp_dir"
-    tmp_dir="$(mktemp -d)"
-    apkeep --download-source "$APKEEP_SOURCE" -a "$pkg" "$tmp_dir" 2>&1 && ok_dl=1
-  fi
-  [ "$ok_dl" = "1" ] || { rm -rf "$tmp_dir"; die "apkeep falló para $pkg desde $APKEEP_SOURCE"; }
-
-  # Encontrar lo descargado (puede ser .apk, .xapk, .apkm).
-  local downloaded
-  downloaded="$(find "$tmp_dir" -maxdepth 3 -type f \( -name '*.apk' -o -name '*.xapk' -o -name '*.apkm' -o -name '*.apks' \) | head -1)"
-  [ -n "$downloaded" ] && [ -f "$downloaded" ] || { rm -rf "$tmp_dir"; die "apkeep OK pero no vi archivo en $tmp_dir"; }
-
+  local pkg="$1" version="$2" out_name="$3" org="$4" slug="$5"
   local dest="$APKS_DIR/$out_name"
-  case "$downloaded" in
-    *.xapk|*.apkm|*.apks)
-      extract_base_apk "$downloaded" "$dest"
-      ;;
-    *.apk)
-      mv "$downloaded" "$dest"
-      ;;
-  esac
-  rm -rf "$tmp_dir"
+  step "Descargando $pkg@$version desde APKMirror ($org/$slug)"
+
+  if ! python3 "$PY_SCRAPER" "$org" "$slug" "$version" "$dest"; then
+    die "APKMirror scraper falló para $pkg@$version.
+    Pasos de diagnóstico:
+      1. Revisá el exit code arriba (2=version 404, 3=sin variantes,
+         4=key missing, 5=download.php missing, 6=download inválido).
+      2. Si el HTML de APKMirror cambió, revisar docs/APKMIRROR-SCRAPER.md
+         §mantenimiento y actualizar los regex en apkmirror_download.py."
+  fi
   ok "Descargado: $dest ($(du -h "$dest" | cut -f1))"
 }
 
-download_apk "$YT_PKG"  "$YT_VERSION"  "youtube.apk"
-download_apk "$YTM_PKG" "$YTM_VERSION" "youtube-music.apk"
+download_apk "$YT_PKG"  "$YT_VERSION"  "youtube.apk"       "$YT_APKM_ORG"  "$YT_APKM_SLUG"
+download_apk "$YTM_PKG" "$YTM_VERSION" "youtube-music.apk" "$YTM_APKM_ORG" "$YTM_APKM_SLUG"
 
 # ── Meta ─────────────────────────────────────────────────────────────
 cat > "$META_DIR/fetch.json" <<EOF
 {
   "fetched_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "source_primary": "$APKEEP_SOURCE",
+  "source_primary": "apkmirror",
   "arch": "$ARCH",
   "youtube": {
     "package": "$YT_PKG",
-    "version": "${YT_VERSION:-latest}",
+    "version": "$YT_VERSION",
     "apk": "youtube.apk"
   },
   "youtube_music": {
     "package": "$YTM_PKG",
-    "version": "${YTM_VERSION:-latest}",
+    "version": "$YTM_VERSION",
     "apk": "youtube-music.apk"
   }
 }

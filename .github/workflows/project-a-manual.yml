@@ -26,11 +26,11 @@ on:
         type: boolean
         default: false
       apkeep_source:
-        description: 'Fuente primaria (APKMirror o APKPure)'
+        description: 'Fuente apkeep (solo apk-pure es viable sin credenciales para YT/YTM)'
         required: false
         type: choice
-        default: APKMirror
-        options: [APKMirror, APKPure]
+        default: apk-pure
+        options: [apk-pure, google-play, f-droid, huawei-app-gallery]
 
 permissions:
   contents: write

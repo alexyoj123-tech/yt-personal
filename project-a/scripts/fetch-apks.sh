@@ -1,106 +1,139 @@
 #!/usr/bin/env bash
-# Descarga los APKs oficiales de YouTube y YouTube Music para arm64-v8a.
+# Descarga los APKs oficiales de YouTube y YouTube Music compatibles con
+# los patches actuales de ReVanced.
 #
-# Usa `apkeep` como downloader. Fuente primaria: APKMirror (más al día);
-# fallback: APKPure.
+# Flujo:
+#   1) Descarga revanced-cli.jar y revanced-patches.rvp si no existen
+#      (para poder extraer `patches-meta.json` y saber qué versión pedir).
+#   2) Extrae patches-meta.json si no existe.
+#   3) Resuelve la versión MÁS ALTA listada como compatible por cada
+#      paquete. Si no hay meta, usa "latest".
+#   4) Descarga los APKs con `apkeep --download-source apk-pure`.
+#      APKPure a veces sirve XAPK/APKM (zips con splits) → se extrae la
+#      base (el .apk más grande).
 #
-# Requiere:
-#  - apkeep (instalado por el workflow, ver A3)
-#  - gh (para consultar releases de revanced-patches y ajustar versiones)
-#
-# Salida: $APKS_DIR/youtube.apk y $APKS_DIR/youtube-music.apk
-# Meta: $META_DIR/fetch.json con versiones resueltas y fuentes.
+# Requiere: apkeep, java (para list-patches), gh, jq, unzip.
+# Env opcionales: ARCH (default arm64-v8a, informativo — apk-pure no
+# filtra por arch), YT_VERSION / YTM_VERSION (override),
+# APKEEP_SOURCE (default "apk-pure").
 
 set -euo pipefail
 source "$(dirname "$0")/common.sh"
 
+require_cmd apkeep
+require_cmd jq
+require_cmd unzip
+
 ARCH="${ARCH:-arm64-v8a}"
+APKEEP_SOURCE="${APKEEP_SOURCE:-apk-pure}"
 
 YT_PKG="com.google.android.youtube"
 YTM_PKG="com.google.android.apps.youtube.music"
 
-# ── Resolución de versiones ──────────────────────────────────────────
-# Si el workflow pasó YT_VERSION / YTM_VERSION, respetarlas. Si no,
-# intentar leer `compatible_packages` del último revanced-patches.rvp.
+# ── 1+2. Bootstrap patches-meta.json ─────────────────────────────────
+resolve_patches_meta_if_needed() {
+  [ -s "$META_DIR/patches-meta.json" ] && return 0
+  info "patches-meta.json no existe — descargo revanced-cli + patches para generarlo."
+  require_cmd java
+  require_cmd gh
+
+  local cli_jar patches_rvp
+  cli_jar="$(ensure_tool "revanced-cli.jar" "ReVanced/revanced-cli" "revanced-cli-.*-all\\.jar$")"
+  patches_rvp="$(ensure_tool "revanced-patches.rvp" "ReVanced/revanced-patches" "patches-.*\\.rvp$")"
+
+  if java -jar "$cli_jar" list-patches --with-packages --with-versions --json "$patches_rvp" \
+       > "$META_DIR/patches-meta.json" 2>/dev/null; then
+    ok "patches-meta.json generado ($(wc -l < "$META_DIR/patches-meta.json") líneas)"
+  else
+    warn "list-patches --json no soportado — versiones se resolverán como 'latest'."
+    echo "[]" > "$META_DIR/patches-meta.json"
+  fi
+}
+
+resolve_patches_meta_if_needed
+
+# ── 3. Resolución de versiones ───────────────────────────────────────
+# Preferencia: env override > patches-meta > latest
+resolve_version_from_meta() {
+  local pkg="$1"
+  jq -r --arg pkg "$pkg" '
+    [.[]
+     | select(.compatiblePackages?[]?.name == $pkg)
+     | .compatiblePackages[]
+     | select(.name == $pkg)
+     | .versions[]?]
+    | unique
+    | sort_by(split(".") | map(tonumber? // 0))
+    | last // empty
+  ' "$META_DIR/patches-meta.json" 2>/dev/null || true
+}
+
 YT_VERSION="${YT_VERSION:-}"
 YTM_VERSION="${YTM_VERSION:-}"
+[ -z "$YT_VERSION"  ] && YT_VERSION="$(resolve_version_from_meta  "$YT_PKG"  || true)"
+[ -z "$YTM_VERSION" ] && YTM_VERSION="$(resolve_version_from_meta "$YTM_PKG" || true)"
 
-resolve_version_from_patches() {
-  local pkg="$1"
-  local patches_json="$META_DIR/patches-meta.json"
-  # Si el workflow generó patches-meta.json (con revanced-cli list-versions),
-  # extraer la versión más alta reportada como compatible.
-  if [ -f "$patches_json" ]; then
-    jq -r --arg pkg "$pkg" \
-      '[.[] | select(.compatiblePackages[]?.name == $pkg) | .compatiblePackages[] | select(.name == $pkg) | .versions[]?] | unique | sort_by(.) | last // empty' \
-      "$patches_json" 2>/dev/null || true
-  fi
+info "YouTube        → ${YT_VERSION:-latest}  ($YT_PKG)"
+info "YouTube Music  → ${YTM_VERSION:-latest} ($YTM_PKG)"
+
+# ── 4. Descarga + manejo XAPK/APKM ───────────────────────────────────
+extract_base_apk() {
+  local bundle="$1" dest="$2"
+  local extracted
+  extracted="$(mktemp -d)"
+  info "Bundle detectado ($(basename "$bundle")) — extrayendo base APK"
+  unzip -q "$bundle" -d "$extracted"
+  # El APK base suele ser el más grande del bundle.
+  local base
+  base="$(find "$extracted" -maxdepth 3 -type f -name '*.apk' -printf '%s\t%p\n' | sort -rn | head -1 | cut -f2-)"
+  [ -n "$base" ] && [ -f "$base" ] || { rm -rf "$extracted"; die "No encontré ningún .apk dentro de $bundle"; }
+  mv "$base" "$dest"
+  rm -rf "$extracted"
+  ok "Base APK extraído: $dest"
 }
-
-if [ -z "$YT_VERSION" ]; then
-  YT_VERSION="$(resolve_version_from_patches "$YT_PKG" || true)"
-fi
-if [ -z "$YTM_VERSION" ]; then
-  YTM_VERSION="$(resolve_version_from_patches "$YTM_PKG" || true)"
-fi
-
-info "YouTube        → versión=${YT_VERSION:-latest} pkg=$YT_PKG"
-info "YouTube Music  → versión=${YTM_VERSION:-latest} pkg=$YTM_PKG"
-
-# ── Downloader ───────────────────────────────────────────────────────
-require_cmd apkeep
-
-APKEEP_SOURCE="${APKEEP_SOURCE:-APKMirror}"
-APKEEP_OPTS=()
-# APKMirror requiere un user-agent no genérico; apkeep ya lo maneja.
-# Para APKMirror, opcionalmente se usa token apkmirror; si no, usa scraping.
 
 download_apk() {
-  local pkg="$1" version="$2" arch_label="$3" out_name="$4"
-  local spec="$pkg"
-  if [ -n "$version" ]; then
-    spec="$pkg@$version"
-  fi
+  local pkg="$1" version="$2" out_name="$3"
+  step "Descargando $pkg desde $APKEEP_SOURCE (versión=${version:-latest})"
 
-  step "Descargando $pkg desde $APKEEP_SOURCE (arch=$arch_label)"
-  local tmp_dir
+  local tmp_dir spec
   tmp_dir="$(mktemp -d)"
-  # apkeep acepta --download-source y --options.
-  # Para APKMirror: --options arch=<arm64-v8a|armeabi-v7a|x86_64>,min_api=24
-  local opts="arch=$arch_label"
-  if [ "$APKEEP_SOURCE" = "APKMirror" ]; then
-    opts="$opts,min_api=24"
-  fi
-  if apkeep --download-source "$APKEEP_SOURCE" --options "$opts" \
-            -a "$spec" "$tmp_dir"; then
-    # apkeep guarda como <pkg>.apk; moverlo al nombre canónico.
-    local found
-    found="$(find "$tmp_dir" -maxdepth 2 -type f -name '*.apk' | head -1)"
-    [ -n "$found" ] || die "apkeep OK pero no encontré APK en $tmp_dir"
-    mv "$found" "$APKS_DIR/$out_name"
-    ok "Descargado: $APKS_DIR/$out_name ($(du -h "$APKS_DIR/$out_name" | cut -f1))"
+  if [ -n "$version" ]; then spec="$pkg@$version"; else spec="$pkg"; fi
+
+  # Primer intento: versión solicitada (si alguna).
+  local ok_dl=0
+  if apkeep --download-source "$APKEEP_SOURCE" -a "$spec" "$tmp_dir" 2>&1; then
+    ok_dl=1
+  elif [ -n "$version" ]; then
+    warn "apk-pure no tiene $pkg@$version — retry con latest."
     rm -rf "$tmp_dir"
-    return 0
+    tmp_dir="$(mktemp -d)"
+    apkeep --download-source "$APKEEP_SOURCE" -a "$pkg" "$tmp_dir" 2>&1 && ok_dl=1
   fi
-  warn "apkeep con fuente $APKEEP_SOURCE falló para $pkg — intento fallback APKPure."
+  [ "$ok_dl" = "1" ] || { rm -rf "$tmp_dir"; die "apkeep falló para $pkg desde $APKEEP_SOURCE"; }
+
+  # Encontrar lo descargado (puede ser .apk, .xapk, .apkm).
+  local downloaded
+  downloaded="$(find "$tmp_dir" -maxdepth 3 -type f \( -name '*.apk' -o -name '*.xapk' -o -name '*.apkm' -o -name '*.apks' \) | head -1)"
+  [ -n "$downloaded" ] && [ -f "$downloaded" ] || { rm -rf "$tmp_dir"; die "apkeep OK pero no vi archivo en $tmp_dir"; }
+
+  local dest="$APKS_DIR/$out_name"
+  case "$downloaded" in
+    *.xapk|*.apkm|*.apks)
+      extract_base_apk "$downloaded" "$dest"
+      ;;
+    *.apk)
+      mv "$downloaded" "$dest"
+      ;;
+  esac
   rm -rf "$tmp_dir"
-  tmp_dir="$(mktemp -d)"
-  if apkeep --download-source APKPure -a "$spec" "$tmp_dir"; then
-    local found
-    found="$(find "$tmp_dir" -maxdepth 2 -type f -name '*.apk' | head -1)"
-    [ -n "$found" ] || die "APKPure OK pero no encontré APK."
-    mv "$found" "$APKS_DIR/$out_name"
-    ok "Fallback APKPure OK: $APKS_DIR/$out_name"
-    rm -rf "$tmp_dir"
-    return 0
-  fi
-  die "Ambas fuentes fallaron para $pkg"
+  ok "Descargado: $dest ($(du -h "$dest" | cut -f1))"
 }
 
-download_apk "$YT_PKG"  "$YT_VERSION"  "$ARCH" "youtube.apk"
-download_apk "$YTM_PKG" "$YTM_VERSION" "$ARCH" "youtube-music.apk"
+download_apk "$YT_PKG"  "$YT_VERSION"  "youtube.apk"
+download_apk "$YTM_PKG" "$YTM_VERSION" "youtube-music.apk"
 
-# ── Escribir meta ────────────────────────────────────────────────────
+# ── Meta ─────────────────────────────────────────────────────────────
 cat > "$META_DIR/fetch.json" <<EOF
 {
   "fetched_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",

@@ -22,9 +22,9 @@ inputs:
     required: false
     default: 'false'
   apkeep_source:
-    description: 'Fuente primaria de apkeep: APKMirror o APKPure'
+    description: 'Fuente de apkeep (valores válidos: apk-pure, google-play, f-droid, huawei-app-gallery). Para YT/YTM solo apk-pure es práctico sin credenciales.'
     required: false
-    default: 'APKMirror'
+    default: 'apk-pure'
   android_keystore_base64:
     description: 'Base64 del keystore release'
     required: true
@@ -44,6 +44,18 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Forzar Node.js 24 en actions JS (silencia warning de deprecación)
+      shell: bash
+      run: echo "FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true" >> "$GITHUB_ENV"
+
+    - name: Instalar unzip (por si falta en el runner)
+      shell: bash
+      run: |
+        if ! command -v unzip >/dev/null 2>&1; then
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends unzip
+        fi
+        unzip -v | head -1
+
     - name: Setup JDK 21 (Temurin)
       uses: actions/setup-java@v4
       with:

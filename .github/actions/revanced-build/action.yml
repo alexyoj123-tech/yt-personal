@@ -37,6 +37,10 @@ inputs:
     description: 'Owner/repo de GmsCore.'
     required: false
     default: 'ReVanced/GmsCore'
+  revanced_gmscore_regex:
+    description: 'Regex del asset GmsCore. Default matchea naming 2026 (app.revanced.android.gms-<ver>-signed.apk, excluye -hw-signed). Override si upstream cambia el naming.'
+    required: false
+    default: 'app\.revanced\.android\.gms-[0-9]+-signed\.apk$'
   android_keystore_base64:
     description: 'Base64 del keystore release'
     required: true
@@ -128,6 +132,7 @@ runs:
         REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
         REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
         REVANCED_GMSCORE_REPO: ${{ inputs.revanced_gmscore_repo }}
+        REVANCED_GMSCORE_REGEX: ${{ inputs.revanced_gmscore_regex }}
       run: bash project-a/scripts/apply-patches.sh
 
     - name: sign-apks

@@ -23,11 +23,16 @@ CLI_REPO="${REVANCED_CLI_REPO:-ReVanced/revanced-cli}"
 PATCHES_REPO="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
 GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-ReVanced/GmsCore}"
 
+# Regex del asset GmsCore. Default hoy: naming 'app.revanced.android.gms-<ver>-signed.apk'
+# (excluye -hw-signed.apk, que es la variante Huawei AppGallery). Si el upstream
+# cambia el naming de nuevo, override con env REVANCED_GMSCORE_REGEX sin tocar código.
+GMSCORE_REGEX="${REVANCED_GMSCORE_REGEX:-app\\.revanced\\.android\\.gms-[0-9]+-signed\\.apk$}"
+
 step "Descargando revanced-cli ($CLI_REPO), patches ($PATCHES_REPO), GmsCore ($GMSCORE_REPO)"
 
 CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "revanced-cli-.*-all\\.jar$")"
 PATCHES_RVP="$(ensure_tool "revanced-patches.rvp" "$PATCHES_REPO" "patches-.*\\.rvp$")"
-GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "app-release-.*\\.apk$|GmsCore-.*\\.apk$")"
+GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
 info "CLI:       $CLI_JAR"
 info "Patches:   $PATCHES_RVP"

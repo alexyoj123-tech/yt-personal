@@ -94,14 +94,23 @@ apply_patch() {
 # tendríamos que extraer los PNGs del APK original con apktool y
 # commitearlos (gray-area + mantenimiento). Con los presets todo viene
 # del .rvp y se actualiza automáticamente con cada nueva versión.
+#
+# SINTAXIS CLI v5.0.1 (orden-sensible picocli):
+#   -e "PatchName" -O "optionKey=value" [-O "otherKey=otherValue"]...
+# Los -O que siguen a un -e se asocian a ESE patch hasta que aparece
+# otro -e. No usar el formato v6-style "PatchName:key=value" dentro
+# del -O — v5 no lo parsea (ver TROUBLESHOOTING Bug #9).
+# Los patches ya son Enabled=true por default, -e explícito es redundante
+# pero requerido por picocli cuando hay -O (y sin --exclusive no limita
+# el set de patches que corren).
 YT_OPTS=(
-  -O "Custom branding icon for YouTube:appIcon=youtube"
-  -O "Custom branding name for YouTube:appName=YouTube"
+  -e "Custom branding icon for YouTube"  -O "appIcon=youtube"
+  -e "Custom branding name for YouTube"  -O "appName=YouTube"
 )
 YTM_OPTS=(
-  -O "Custom branding icon for YouTube Music:appIcon=youtube_music"
-  -O "Custom branding name for YouTube Music:appNameLauncher=YouTube Music"
-  -O "Custom branding name for YouTube Music:appNameNotification=YouTube Music"
+  -e "Custom branding icon for YouTube Music"  -O "appIcon=youtube_music"
+  -e "Custom branding name for YouTube Music"  -O "appNameLauncher=YouTube Music"
+                                               -O "appNameNotification=YouTube Music"
 )
 
 apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"

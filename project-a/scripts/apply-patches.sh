@@ -23,14 +23,19 @@ CLI_REPO="${REVANCED_CLI_REPO:-ReVanced/revanced-cli}"
 PATCHES_REPO="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
 GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-ReVanced/GmsCore}"
 
+# CLI pineada a v5.0.1 por default — v6 tiene incompat binaria con los
+# patches de inotia00 v5.14.1 (patcher v2 rompió clases como MutableMethod
+# que usan los patches v5.x). Ver docs/TROUBLESHOOTING.md #8.
+CLI_TAG="${REVANCED_CLI_TAG:-v5.0.1}"
+
 # Regex del asset GmsCore. Default hoy: naming 'app.revanced.android.gms-<ver>-signed.apk'
 # (excluye -hw-signed.apk, que es la variante Huawei AppGallery). Si el upstream
 # cambia el naming de nuevo, override con env REVANCED_GMSCORE_REGEX sin tocar código.
 GMSCORE_REGEX="${REVANCED_GMSCORE_REGEX:-app\\.revanced\\.android\\.gms-[0-9]+-signed\\.apk$}"
 
-step "Descargando revanced-cli ($CLI_REPO), patches ($PATCHES_REPO), GmsCore ($GMSCORE_REPO)"
+step "Descargando revanced-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), GmsCore ($GMSCORE_REPO)"
 
-CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "revanced-cli-.*-all\\.jar$")"
+CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "revanced-cli-.*-all\\.jar$" "$CLI_TAG")"
 PATCHES_RVP="$(ensure_tool "revanced-patches.rvp" "$PATCHES_REPO" "patches-.*\\.rvp$")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
@@ -53,19 +58,20 @@ apply_patch() {
   [ -f "$input_apk" ] || die "No encuentro input: $input_apk"
 
   step "Parcheando $label → $(basename "$out_apk")"
-  # revanced-cli v6 requiere especificar verificación PGP:
-  #   -b / --bypass-verification  → aceptar RVP sin firma PGP oficial
-  #   -s -k -a [-r]               → verificar con signature+keyring+attestation
-  # Como usamos fork inotia00 que no firma con las llaves PGP de ReVanced
-  # oficial, pasamos --bypass-verification. Resto de flags:
-  #   --patches <file.rvp>  : set de patches
-  #   --out <apk>           : archivo de salida (sin firmar)
+  # cli v5 NO exige verificación PGP — por eso pineamos a v5.0.1 (v6
+  # añadió --bypass-verification obligatorio pero es incompat binaria
+  # con los patches de inotia00 v5.14.1; v6.x necesita patcher v2+,
+  # v5.x patches usan MutableMethod de patcher v1.x).
+  # Flags:
+  #   -p <file.rvp>         : set de patches (short form, compat v5+v6)
+  #   -o <apk>              : archivo de salida (sin firmar por nosotros)
   #   --purge               : limpia temporales
-  # NO pasamos --keystore aquí; la firma va en sign-apks.sh.
+  # NO pasamos --keystore aquí; cli v5 firma con su "ReVanced Key" default,
+  # luego sign-apks.sh re-firma con nuestro keystore vía apksigner
+  # (apksigner replace la firma existente limpiamente).
   java -jar "$CLI_JAR" patch \
-    --patches "$PATCHES_RVP" \
-    --bypass-verification \
-    --out "$out_apk" \
+    -p "$PATCHES_RVP" \
+    -o "$out_apk" \
     --purge \
     "$input_apk"
   [ -f "$out_apk" ] || die "Patch OK pero no existe $out_apk"
@@ -80,8 +86,31 @@ apply_patch "$APKS_DIR/youtube-music.apk" "$PATCHED_DIR/youtube-music-patched.ap
 cp -f "$GMSCORE_APK" "$PATCHED_DIR/gmscore.apk"
 ok "GmsCore copiado: $PATCHED_DIR/gmscore.apk"
 
+# ── Verificación defensiva: patches efectivamente aplicados ───────────
+# Previene regresión al escenario de "falsa victoria" (run #7): si los
+# patches no cargaron por incompat binaria, el package name quedaría
+# como el original y el flag -b / exit-0 no alertarían. Chequear el
+# rename del GmsCore support patch es la señal más confiable.
+step "Verificando que los patches se aplicaron (package name debe cambiar)"
+require_cmd aapt2
+
+verify_package() {
+  local apk="$1" expected="$2" label="$3"
+  local actual
+  actual="$(aapt2 dump badging "$apk" 2>/dev/null | awk -F\' '/^package/{print $2; exit}')"
+  if [ "$actual" = "$expected" ]; then
+    ok "$label: package=$actual ✓ (rename aplicado)"
+  else
+    die "$label: package esperado='$expected' actual='$actual'. Los patches NO se aplicaron (posible incompat CLI/patches). Revisa el SEVERE del log."
+  fi
+}
+
+verify_package "$PATCHED_DIR/youtube-patched.apk"       "app.rvx.android.youtube"             "YouTube"
+verify_package "$PATCHED_DIR/youtube-music-patched.apk" "app.rvx.android.apps.youtube.music"  "YouTube Music"
+
 # ── Meta del patch run ───────────────────────────────────────────────
-CLI_VER="$(gh_latest_tag "$CLI_REPO")"
+# Para CLI usamos el tag pineado (no "latest" del repo).
+CLI_VER="${CLI_TAG}"
 PATCHES_VER="$(gh_latest_tag "$PATCHES_REPO")"
 GMS_VER="$(gh_latest_tag "$GMSCORE_REPO")"
 

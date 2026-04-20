@@ -58,7 +58,14 @@ info "Tag elegido: $tag"
 
 # ── Changelog / body ─────────────────────────────────────────────────
 body_file="$(mktemp)"
-cat > "$body_file" <<EOF
+# Nota prefijo opcional (ej. para releases de corrección).
+{
+  if [ -n "${RELEASE_NOTE_PREFIX:-}" ]; then
+    echo "> **Nota:** $RELEASE_NOTE_PREFIX"
+    echo ""
+  fi
+} > "$body_file"
+cat >> "$body_file" <<EOF
 # YTP — Daily ReVanced Build
 
 **Fecha:** $(date -u '+%Y-%m-%d %H:%M UTC')

@@ -29,6 +29,10 @@ inputs:
     description: 'Owner/repo del CLI de ReVanced. Default oficial (accesible).'
     required: false
     default: 'ReVanced/revanced-cli'
+  revanced_cli_tag:
+    description: 'Tag de revanced-cli a usar. Default v5.0.1 (compat con patches inotia00 v5.x; v6 tiene incompat binaria con MutableMethod).'
+    required: false
+    default: 'v5.0.1'
   revanced_patches_repo:
     description: 'Owner/repo de los patches. El oficial ReVanced/revanced-patches está HTTP 451 desde 2025 → fork inotia00 por default.'
     required: false
@@ -41,6 +45,10 @@ inputs:
     description: 'Regex del asset GmsCore. Default matchea naming 2026 (app.revanced.android.gms-<ver>-signed.apk, excluye -hw-signed). Override si upstream cambia el naming.'
     required: false
     default: 'app\.revanced\.android\.gms-[0-9]+-signed\.apk$'
+  release_note_prefix:
+    description: 'Texto opcional prefixado como nota al body del Release (ej. "Release corregida. La anterior tenía APKs sin parchear...").'
+    required: false
+    default: ''
   android_keystore_base64:
     description: 'Base64 del keystore release'
     required: true
@@ -122,6 +130,7 @@ runs:
         APKEEP_SOURCE: ${{ inputs.apkeep_source }}
         GH_TOKEN: ${{ inputs.gh_token }}
         REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
+        REVANCED_CLI_TAG: ${{ inputs.revanced_cli_tag }}
         REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
       run: bash project-a/scripts/fetch-apks.sh
 
@@ -130,6 +139,7 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.gh_token }}
         REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
+        REVANCED_CLI_TAG: ${{ inputs.revanced_cli_tag }}
         REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
         REVANCED_GMSCORE_REPO: ${{ inputs.revanced_gmscore_repo }}
         REVANCED_GMSCORE_REGEX: ${{ inputs.revanced_gmscore_regex }}
@@ -151,6 +161,7 @@ runs:
         GH_TOKEN: ${{ inputs.gh_token }}
         FORCE_RELEASE: ${{ inputs.force_release == 'true' && '1' || '0' }}
         DEVICE_NAME: 'Samsung Galaxy A04e'
+        RELEASE_NOTE_PREFIX: ${{ inputs.release_note_prefix }}
       run: bash project-a/scripts/create-release.sh
 
     - name: Subir meta como artifact (siempre)

@@ -41,6 +41,7 @@ resolve_patches_meta_if_needed() {
   # Nota: ReVanced/revanced-patches está HTTP 451-bloqueado por GitHub
   # desde 2025. Default switcheado a inotia00/revanced-patches (fork
   # mantenido). Parametrizable con env por si inotia00 también cae.
+  # CLI pineada a v5.0.1 (consistente con apply-patches.sh).
   local patches_repo="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
 
   local patches_rvp

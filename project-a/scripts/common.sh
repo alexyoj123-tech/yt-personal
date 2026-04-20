@@ -65,7 +65,7 @@ fetch() {
 #   _gh_assets_by_regex <owner/repo> <regex> <field>
 # field = url | name
 _gh_assets_by_regex() {
-  local repo="$1" regex="$2" field="$3"
+  local repo="$1" regex="$2" field="$3" tag="${4:-}"
   require_cmd gh
   require_cmd jq
   local tmp_err tmp_out raw rc stderr_content
@@ -73,7 +73,14 @@ _gh_assets_by_regex() {
   tmp_out="$(mktemp)"
 
   # Paso 1: descargar JSON de assets con gh (sin interpolar regex en jq).
-  if ! gh release view --repo "$repo" --json assets > "$tmp_out" 2>"$tmp_err"; then
+  # Si se pasa tag, consulta esa release específica; si no, usa latest.
+  local -a gh_cmd
+  if [ -n "$tag" ]; then
+    gh_cmd=(gh release view "$tag" --repo "$repo" --json assets)
+  else
+    gh_cmd=(gh release view --repo "$repo" --json assets)
+  fi
+  if ! "${gh_cmd[@]}" > "$tmp_out" 2>"$tmp_err"; then
     rc=$?
     stderr_content="$(cat "$tmp_err")"; rm -f "$tmp_err" "$tmp_out"
     if grep -q "GH_TOKEN" <<< "$stderr_content"; then
@@ -100,8 +107,8 @@ _gh_assets_by_regex() {
   printf "%s\n" "$raw" | head -1
 }
 
-gh_latest_asset()      { _gh_assets_by_regex "$1" "$2" "url"; }
-gh_latest_asset_name() { _gh_assets_by_regex "$1" "$2" "name"; }
+gh_latest_asset()      { _gh_assets_by_regex "$1" "$2" "url"  "${3:-}"; }
+gh_latest_asset_name() { _gh_assets_by_regex "$1" "$2" "name" "${3:-}"; }
 
 # Tag del último release de un repo (con manejo robusto de errores).
 gh_latest_tag() {
@@ -125,9 +132,10 @@ gh_latest_tag() {
 }
 
 # Ruta al tool dentro de TOOLS_DIR o download-and-return.
-# Uso: ensure_tool <nombre_local> <owner/repo> <regex>
+# Uso: ensure_tool <nombre_local> <owner/repo> <regex> [<tag>]
+# Si se pasa <tag>, descarga de esa release específica; si no, usa latest.
 ensure_tool() {
-  local name="$1" repo="$2" regex="$3"
+  local name="$1" repo="$2" regex="$3" tag="${4:-}"
   local dest="$TOOLS_DIR/$name"
   if [ -s "$dest" ]; then
     info "Ya existe $name en $dest — reuso."
@@ -135,8 +143,8 @@ ensure_tool() {
     return 0
   fi
   local url
-  url="$(gh_latest_asset "$repo" "$regex")"
-  [ -n "$url" ] || die "No encontré asset '$regex' en $repo (gh devolvió vacío sin error)."
+  url="$(gh_latest_asset "$repo" "$regex" "$tag")"
+  [ -n "$url" ] || die "No encontré asset '$regex' en $repo${tag:+ @ $tag} (gh devolvió vacío sin error)."
   fetch "$url" "$dest"
   printf "%s" "$dest"
 }

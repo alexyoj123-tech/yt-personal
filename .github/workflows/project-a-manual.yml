@@ -31,6 +31,16 @@ on:
         type: choice
         default: apk-pure
         options: [apk-pure, google-play, f-droid, huawei-app-gallery]
+      revanced_cli_tag:
+        description: 'Tag de revanced-cli (v5.0.1 compat con patches inotia00; v6.0.0 sería incompat)'
+        required: false
+        type: string
+        default: v5.0.1
+      release_note_prefix:
+        description: 'Nota opcional al inicio del body del Release (ej. para releases de corrección)'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   contents: write
@@ -56,6 +66,8 @@ jobs:
           publish_release:           ${{ inputs.publish_release }}
           force_release:             ${{ inputs.force_release }}
           apkeep_source:             ${{ inputs.apkeep_source }}
+          revanced_cli_tag:          ${{ inputs.revanced_cli_tag }}
+          release_note_prefix:       ${{ inputs.release_note_prefix }}
           android_keystore_base64:   ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           android_keystore_password: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           android_key_alias:         ${{ secrets.ANDROID_KEY_ALIAS }}

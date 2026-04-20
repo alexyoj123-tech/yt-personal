@@ -53,8 +53,15 @@ java -jar "$CLI_JAR" list-patches --with-packages --with-versions --json "$PATCH
 }
 
 # ── Función: aplicar patches a un APK ────────────────────────────────
+# Uso: apply_patch <input_apk> <out_apk> <label> [-- <extra_opts>...]
+# Los extra_opts se pasan literalmente a revanced-cli (típicamente -O
+# para configurar options de patches, ej. appIcon / appName).
 apply_patch() {
   local input_apk="$1" out_apk="$2" label="$3"
+  shift 3
+  # Resto de args = opciones extra (típicamente -O flags).
+  local extra_opts=("$@")
+
   [ -f "$input_apk" ] || die "No encuentro input: $input_apk"
 
   step "Parcheando $label → $(basename "$out_apk")"
@@ -64,6 +71,7 @@ apply_patch() {
   # v5.x patches usan MutableMethod de patcher v1.x).
   # Flags:
   #   -p <file.rvp>         : set de patches (short form, compat v5+v6)
+  #   -O "PatchName:key=val": override opción de un patch específico
   #   -o <apk>              : archivo de salida (sin firmar por nosotros)
   #   --purge               : limpia temporales
   # NO pasamos --keystore aquí; cli v5 firma con su "ReVanced Key" default,
@@ -71,6 +79,7 @@ apply_patch() {
   # (apksigner replace la firma existente limpiamente).
   java -jar "$CLI_JAR" patch \
     -p "$PATCHES_RVP" \
+    "${extra_opts[@]}" \
     -o "$out_apk" \
     --purge \
     "$input_apk"
@@ -78,13 +87,42 @@ apply_patch() {
   ok "$label parcheado: $(du -h "$out_apk" | cut -f1)"
 }
 
-apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"
-apply_patch "$APKS_DIR/youtube-music.apk" "$PATCHED_DIR/youtube-music-patched.apk" "YouTube Music"
+# ── Opciones de branding: usar presets oficiales built-in de inotia00 ──
+# Los patches "Custom branding icon for <app>" aceptan presets en sus
+# options — entre ellos `youtube` y `youtube_music` que son los íconos
+# oficiales de Google embebidos en el .rvp por inotia00. Sin presets
+# tendríamos que extraer los PNGs del APK original con apktool y
+# commitearlos (gray-area + mantenimiento). Con los presets todo viene
+# del .rvp y se actualiza automáticamente con cada nueva versión.
+YT_OPTS=(
+  -O "Custom branding icon for YouTube:appIcon=youtube"
+  -O "Custom branding name for YouTube:appName=YouTube"
+)
+YTM_OPTS=(
+  -O "Custom branding icon for YouTube Music:appIcon=youtube_music"
+  -O "Custom branding name for YouTube Music:appNameLauncher=YouTube Music"
+  -O "Custom branding name for YouTube Music:appNameNotification=YouTube Music"
+)
+
+apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"
+apply_patch "$APKS_DIR/youtube-music.apk" "$PATCHED_DIR/youtube-music-patched.apk" "YouTube Music" "${YTM_OPTS[@]}"
 
 # GmsCore se copia tal cual al output; es un requisito externo pero se
 # redistribuye junto con los otros APKs en el Release.
 cp -f "$GMSCORE_APK" "$PATCHED_DIR/gmscore.apk"
 ok "GmsCore copiado: $PATCHED_DIR/gmscore.apk"
+
+# ── SmartTube para Android TV ────────────────────────────────────────
+# yuliskov/SmartTube es Apache 2.0 — permite redistribución. Lo bajamos
+# arm64-v8a (compat con la mayoría de TV Boxes 2020+), lo copiamos al
+# directorio de patched/, y sign-apks.sh lo re-firma con nuestro
+# keystore para consistencia con los otros 3 APKs.
+step "Descargando SmartTube (Android TV) desde yuliskov/SmartTube"
+SMARTTUBE_REPO="${SMARTTUBE_REPO:-yuliskov/SmartTube}"
+SMARTTUBE_REGEX="${SMARTTUBE_REGEX:-SmartTube_stable_.*_arm64-v8a\\.apk$}"
+SMARTTUBE_APK_SRC="$(ensure_tool "smarttube.apk" "$SMARTTUBE_REPO" "$SMARTTUBE_REGEX")"
+cp -f "$SMARTTUBE_APK_SRC" "$PATCHED_DIR/smarttube.apk"
+ok "SmartTube copiado: $PATCHED_DIR/smarttube.apk"
 
 # ── Verificación defensiva: patches efectivamente aplicados ───────────
 # Previene regresión al escenario de "falsa victoria" (run #7): si los
@@ -113,6 +151,7 @@ verify_package "$PATCHED_DIR/youtube-music-patched.apk" "app.rvx.android.apps.yo
 CLI_VER="${CLI_TAG}"
 PATCHES_VER="$(gh_latest_tag "$PATCHES_REPO")"
 GMS_VER="$(gh_latest_tag "$GMSCORE_REPO")"
+SMARTTUBE_VER="$(gh_latest_tag "$SMARTTUBE_REPO")"
 
 cat > "$META_DIR/patch.json" <<EOF
 {
@@ -120,10 +159,12 @@ cat > "$META_DIR/patch.json" <<EOF
   "revanced_cli_version": "$CLI_VER",
   "revanced_patches_version": "$PATCHES_VER",
   "gmscore_version": "$GMS_VER",
+  "smarttube_version": "$SMARTTUBE_VER",
   "outputs": [
     "youtube-patched.apk",
     "youtube-music-patched.apk",
-    "gmscore.apk"
+    "gmscore.apk",
+    "smarttube.apk"
   ]
 }
 EOF

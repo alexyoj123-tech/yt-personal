@@ -27,6 +27,7 @@ DEVICE_NAME="${DEVICE_NAME:-Samsung Galaxy A04e}"
 YT_VERSION="$(jq -r '.versions.youtube'       "$META_DIR/sign.json")"
 YTM_VERSION="$(jq -r '.versions.youtube_music' "$META_DIR/sign.json")"
 GMS_VERSION="$(jq -r '.versions.gmscore'       "$META_DIR/sign.json")"
+SMARTTUBE_VERSION="$(jq -r '.versions.smarttube // "n/a"' "$META_DIR/sign.json")"
 CLI_VERSION="$(jq -r '.revanced_cli_version'      "$META_DIR/patch.json")"
 PATCHES_VERSION="$(jq -r '.revanced_patches_version' "$META_DIR/patch.json")"
 
@@ -73,31 +74,37 @@ cat >> "$body_file" <<EOF
 
 ## Versiones incluidas
 
-- **YouTube:** $YT_VERSION
-- **YT Music:** $YTM_VERSION
-- **GmsCore:** $GMS_VERSION
-- **ReVanced CLI:** $CLI_VERSION
-- **ReVanced patches:** $PATCHES_VERSION
+- **YouTube:** $YT_VERSION · package \`app.rvx.android.youtube\`
+- **YT Music:** $YTM_VERSION · package \`app.rvx.android.apps.youtube.music\`
+- **GmsCore:** $GMS_VERSION · package \`app.revanced.android.gms\`
+- **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`com.liskovsoft.smarttubetv.beta\`
+- **ReVanced CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION (fork inotia00)
 
 ## Assets (arm64-v8a, firmados con \`yt-personal\`)
 
 | Archivo | Propósito |
 |---------|-----------|
-| \`youtube-personal-${YT_VERSION}.apk\` | YouTube parcheado (ad-free, background, PiP, SponsorBlock). |
-| \`youtube-music-personal-${YTM_VERSION}.apk\` | YouTube Music parcheado (ad-free, background). |
+| \`youtube-personal-${YT_VERSION}.apk\` | YouTube parcheado (ad-free, background, PiP, SponsorBlock, ícono + nombre oficiales). |
+| \`youtube-music-personal-${YTM_VERSION}.apk\` | YouTube Music parcheado (ad-free, background, ícono + nombre oficiales). |
 | \`gmscore-${GMS_VERSION}.apk\` | ReVanced/GmsCore: MicroG fork requerido para login Google. |
+| \`smarttube-${SMARTTUBE_VERSION}.apk\` | SmartTube (Android TV, cliente YouTube con SponsorBlock). |
+
+## Calidad de streaming
+
+- **Video (YouTube):** highest (4K/2160p) disponible según conexión/video. Configuración post-install: Settings → Video quality → "Highest available" (remember = ON).
+- **Audio (YT Music):** máximo disponible en cuenta no-Premium (~256 kbps AAC/OPUS). Enhanced Bitrate (lossless 256+ kbps) requiere cuenta Premium verificada server-side — no bypasseable por patches.
+- **Codec preferido:** detectado automáticamente por el player (AV1 si el device lo soporta, luego VP9, luego H.264).
 
 ## Instalación
+
+**Teléfono:** [docs/INSTALL-PHONE.md](../blob/main/docs/INSTALL-PHONE.md) · **TV (Claro 4K, etc.):** [docs/INSTALL-TV.md](../blob/main/docs/INSTALL-TV.md)
 
 Si ya tienes el YTP Setup, Obtainium actualizará todo solo en background
 en los próximos minutos.
 
-Si es tu primera vez: descarga el \`YTP-Setup.apk\` del Release de
-\`ytp-setup\` más reciente y sigue [docs/INSTALL-PHONE.md](../blob/main/docs/INSTALL-PHONE.md).
-
 ---
 
-*Automático. Uso personal.*
+*Automático. Uso personal. Ver [docs/CONTINUIDAD.md](../blob/main/docs/CONTINUIDAD.md) para retomo futuro.*
 EOF
 
 # ── Crear release ────────────────────────────────────────────────────

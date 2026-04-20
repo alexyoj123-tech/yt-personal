@@ -83,11 +83,21 @@ sign_apk "$PATCHED_DIR/youtube-music-patched.apk" \
 sign_apk "$PATCHED_DIR/gmscore.apk" \
          "$SIGNED_DIR/gmscore-${GMS_VERSION}.apk" "GmsCore"
 
+# SmartTube: si apply-patches.sh lo descargó, re-firmamos con nuestro
+# keystore (consistencia). El tag de SmartTube lo recogemos de meta/patch.json.
+if [ -f "$PATCHED_DIR/smarttube.apk" ]; then
+  SMARTTUBE_VERSION="$(jq -r '.smarttube_version // "unknown"' "$META_DIR/patch.json")"
+  sign_apk "$PATCHED_DIR/smarttube.apk" \
+           "$SIGNED_DIR/smarttube-${SMARTTUBE_VERSION}.apk" "SmartTube"
+fi
+
 # ── Limpieza: borrar keystore materializado ──────────────────────────
 shred -u "$KS_PATH" 2>/dev/null || rm -f "$KS_PATH"
 info "Keystore borrado de disco."
 
 # ── Meta del signing ─────────────────────────────────────────────────
+SMARTTUBE_VERSION="${SMARTTUBE_VERSION:-unknown}"
+
 cat > "$META_DIR/sign.json" <<EOF
 {
   "signed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
@@ -95,12 +105,14 @@ cat > "$META_DIR/sign.json" <<EOF
   "signed_apks": [
     "youtube-personal-${YT_VERSION}.apk",
     "youtube-music-personal-${YTM_VERSION}.apk",
-    "gmscore-${GMS_VERSION}.apk"
+    "gmscore-${GMS_VERSION}.apk",
+    "smarttube-${SMARTTUBE_VERSION}.apk"
   ],
   "versions": {
     "youtube": "${YT_VERSION}",
     "youtube_music": "${YTM_VERSION}",
-    "gmscore": "${GMS_VERSION}"
+    "gmscore": "${GMS_VERSION}",
+    "smarttube": "${SMARTTUBE_VERSION}"
   }
 }
 EOF

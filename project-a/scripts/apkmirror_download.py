@@ -257,10 +257,22 @@ def download_version(app_org: str, app_slug: str, version: str, out_path: str) -
             code=3,
         )
 
-    # Prefer a variant whose title contains "(nodpi)" (universal APK) and
-    # does NOT contain "BUNDLE". If nothing matches nodpi, take any non-bundle.
-    preferred: tuple[str, str, str] | None = None  # (href, title, html)
-    fallback: tuple[str, str, str] | None = None
+    # Selección de variant con prioridad explícita (Bug #12 fix, 2026-04-23):
+    #   1. arm64-v8a + nodpi       ← ideal (target arch del A04e, universal DPI)
+    #   2. arm64-v8a + any DPI     ← arm64 aunque DPI específico
+    #   3. universal nodpi         ← sin arch en title (APK universal)
+    #   4. fallback non-bundle     ← lo que quede
+    # Rechazo explícito:
+    #   - "BUNDLE" en title (split APKs empaquetados)
+    #   - density ranges tipo "(120-640dpi)" (también son bundles multi-density)
+    #   - "(arm-v7a)" / "(armeabi-v7a)" (arch equivocada para A04e arm64)
+    preferred: tuple[str, str, str] | None = None      # arm64 + nodpi
+    arm64_any: tuple[str, str, str] | None = None      # arm64 cualquier dpi
+    universal_nodpi: tuple[str, str, str] | None = None # nodpi sin arch
+    fallback: tuple[str, str, str] | None = None        # lo que sea
+
+    density_range_re = re.compile(r"\(\d+-\d+DPI\)")
+
     for href in hrefs:
         url = BASE + href
         log(f"inspecting variant: {href}")
@@ -272,18 +284,37 @@ def download_version(app_org: str, app_slug: str, version: str, out_path: str) -
         title = extract_title(v_html)
         log(f"  title: {title!r}")
         up = title.upper()
+
+        # Rechazo absoluto: BUNDLE / density-range / arm-v7a
         if "BUNDLE" in up:
             log("  → BUNDLE, skipping")
             continue
-        if "(NODPI)" in up and preferred is None:
-            preferred = (href, title, v_html)
+        if density_range_re.search(up):
+            log("  → density range (multi-DPI bundle), skipping")
+            continue
+        if "(ARM-V7A)" in up or "(ARMEABI-V7A)" in up:
+            log("  → arm-v7a (arch equivocada para arm64-v8a target), skipping")
+            continue
+
+        is_arm64 = "(ARM64-V8A)" in up
+        is_nodpi = "(NODPI)" in up
+        pack = (href, title, v_html)
+
+        if is_arm64 and is_nodpi and preferred is None:
+            preferred = pack
+        elif is_arm64 and arm64_any is None:
+            arm64_any = pack
+        elif is_nodpi and universal_nodpi is None:
+            # nodpi sin arch = APK universal
+            universal_nodpi = pack
         if fallback is None:
-            fallback = (href, title, v_html)
-    pick = preferred or fallback
+            fallback = pack
+
+    pick = preferred or arm64_any or universal_nodpi or fallback
     if not pick:
         die(
-            f"no non-bundle variant for {app_slug} {version} "
-            "(todos los matches eran BUNDLE o inaccesibles)",
+            f"no variant elegible para {app_slug} {version} "
+            "(todos los matches eran BUNDLE / density-range / arm-v7a / inaccesibles)",
             code=3,
         )
     chosen_href, chosen_title, v_html = pick

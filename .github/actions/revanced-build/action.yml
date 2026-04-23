@@ -26,25 +26,25 @@ inputs:
     required: false
     default: 'apk-pure'
   revanced_cli_repo:
-    description: 'Owner/repo del CLI de ReVanced. Default oficial (accesible).'
+    description: 'Owner/repo del CLI. Default Morphe (drop-in syntax compat v5). ReVanced/revanced-cli sigue funcional pero no mantiene los patches.'
     required: false
-    default: 'ReVanced/revanced-cli'
+    default: 'MorpheApp/morphe-cli'
   revanced_cli_tag:
-    description: 'Tag de revanced-cli a usar. Default v5.0.1 (compat con patches inotia00 v5.x; v6 tiene incompat binaria con MutableMethod).'
+    description: 'Tag del CLI a usar. Default v1.7.0 (morphe-cli compat con patches Morphe v1.24.0). Migrado de revanced-cli v5.0.1 tras archivado de inotia00.'
     required: false
-    default: 'v5.0.1'
+    default: 'v1.7.0'
   revanced_patches_repo:
-    description: 'Owner/repo de los patches. El oficial ReVanced/revanced-patches está HTTP 451 desde 2025 → fork inotia00 por default.'
+    description: 'Owner/repo de los patches. Default MorpheApp/morphe-patches (formato .mpp, sucesor oficial tras archivado de inotia00 en marzo 2026).'
     required: false
-    default: 'inotia00/revanced-patches'
+    default: 'MorpheApp/morphe-patches'
   revanced_gmscore_repo:
-    description: 'Owner/repo de GmsCore.'
+    description: 'Owner/repo de GmsCore/MicroG. Default MorpheApp/MicroG-RE (12.8 MB, fork microG mantenido por Morphe, vendor app.revanced).'
     required: false
-    default: 'ReVanced/GmsCore'
+    default: 'MorpheApp/MicroG-RE'
   revanced_gmscore_regex:
-    description: 'Regex del asset GmsCore. Default matchea naming 2026 (app.revanced.android.gms-<ver>-signed.apk, excluye -hw-signed). Override si upstream cambia el naming.'
+    description: 'Regex del asset GmsCore. Default matchea naming MicroG-RE (microg-<ver>.apk). Override si upstream cambia el naming.'
     required: false
-    default: 'app\.revanced\.android\.gms-[0-9]+-signed\.apk$'
+    default: 'microg-[0-9.]+\.apk$'
   release_note_prefix:
     description: 'Texto opcional prefixado como nota al body del Release (ej. "Release corregida. La anterior tenía APKs sin parchear...").'
     required: false

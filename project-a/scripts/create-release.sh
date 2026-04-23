@@ -76,7 +76,7 @@ cat >> "$body_file" <<EOF
 
 - **YouTube:** $YT_VERSION · package \`app.morphe.android.youtube\`
 - **YT Music:** $YTM_VERSION · package \`app.morphe.android.apps.youtube.music\`
-- **MicroG-RE:** $GMS_VERSION · package \`org.microg.gms\` (microG upstream, vendor Morphe)
+- **MicroG-RE:** $GMS_VERSION · package \`app.revanced.android.gms\` (fork microG por Morphe, mantiene vendor ReVanced — instala como update sobre ReVanced/GmsCore previo sin desinstalar)
 - **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`org.smarttube.stable\`
 - **Morphe CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION
 

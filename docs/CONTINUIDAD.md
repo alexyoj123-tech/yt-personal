@@ -27,7 +27,9 @@ estrictamente **personal**, repo **privado**, sin distribución pública.
   (mismos devs ex-ReVanced, código limpio desde cero):
     - `MorpheApp/morphe-cli` v1.7.0 (drop-in syntax v5-compat)
     - `MorpheApp/morphe-patches` v1.24.0 (formato `.mpp`)
-    - `MorpheApp/MicroG-RE` v6.1.3 (reemplazo de GmsCore, 12.8 MB)
+    - `MorpheApp/MicroG-RE` v6.1.3 (reemplazo de GmsCore, 12.8 MB,
+      package `app.revanced.android.gms` — mismo vendor que
+      ReVanced/GmsCore, se instala como update sin desinstalar el viejo)
   Workflow `project-a-manual.yml` (dispatch manual) y
   `project-a-build.yml` (cron diario 06:00 UTC) producen 4 APKs firmados.
 - ✅ **Keystore release** generado (RSA 4096, 100 años, alias

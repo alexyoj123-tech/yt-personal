@@ -21,6 +21,7 @@ Si encuentras un bug nuevo, añádelo al final en la sección
   - [Bug #7 — revanced-cli v6 exige `--bypass-verification` en `patch`](#bug-7)
   - [Bug #7b — revanced-cli v6 removió `list-patches --json`](#bug-7b)
   - [Bug #10 — inotia00 archivado + YT 19.44.39 recibe HTTP 400 → migración a Morphe](#bug-10)
+  - [Bug #11 — Composite action YAML defaults ganan sobre bash `${VAR:-...}`](#bug-11)
 - [Nuevos bugs](#nuevos-bugs)
 
 ---
@@ -298,6 +299,40 @@ Cambios aplicados en commit de migración:
 - Íconos oficiales Q4 2024 re-extraídos del YT 20.47.62 / YTM 8.47.56 con apktool, commiteados en `project-a/assets/morphe-icons/`
 
 **Lección:** cuando un upstream abandona, verificar su estado (archived, last-push) antes de asumir que "solo cambió el naming". Y para apps como YouTube que bloquean cliente parcheado server-side, el patch crítico es "Spoof streaming data / video streams" — si el fork no lo tiene, migrar.
+
+---
+
+### <a id="bug-11"></a>Bug #11 — Composite action YAML defaults ganan sobre bash `${VAR:-default}`
+
+**Run afectado:** #14 (primer intento migración Morphe, 2026-04-23) · **Resuelto en:** commit con sincronización de defaults action.yml + corrección doc MicroG-RE package · **Archivos tocados:** `.github/actions/revanced-build/action.yml`, `project-a/scripts/create-release.sh`, `docs/CONTINUIDAD.md`
+
+**Síntoma (literal del log):**
+```
+env:
+  REVANCED_CLI_REPO: ReVanced/revanced-cli           ← VIEJO
+  REVANCED_CLI_TAG: v1.7.0                            ← NUEVO (inconsistente)
+  REVANCED_PATCHES_REPO: inotia00/revanced-patches   ← VIEJO
+...
+[INFO]  patches-meta.json no existe — extrayendo metadata del .mpp directamente.
+[ERR]   No encontré asset 'patches-.*\.mpp$' en inotia00/revanced-patches (gh devolvió vacío sin error).
+##[error]Process completed with exit code 1.
+```
+
+**Causa raíz:** tras la migración a Morphe actualicé los defaults dentro de los scripts bash con patrón `"${VAR:-default_nuevo}"`, pero **el composite action `.github/actions/revanced-build/action.yml` seguía declarando inputs con `default: 'default_viejo'`**. El workflow caller (`project-a-manual.yml`) no pasa explícitamente esos inputs → action toma el default YAML → lo propaga como env al step → el `${VAR:-...}` del bash ya tiene valor (viejo), el fallback no aplica.
+
+Resultado: el script consulta `inotia00/revanced-patches` (archivado, formato `.rvp`) buscando el asset `.mpp` de Morphe → no matchea → error engañoso ("asset no encontrado" cuando realmente estábamos apuntando al repo equivocado).
+
+**Fix:** sincronizar los 4 defaults del composite action con los nuevos valores Morphe:
+```yaml
+revanced_cli_repo:     default: 'MorpheApp/morphe-cli'
+revanced_patches_repo: default: 'MorpheApp/morphe-patches'
+revanced_gmscore_repo: default: 'MorpheApp/MicroG-RE'
+revanced_gmscore_regex: default: 'microg-[0-9.]+\.apk$'
+```
+
+**Lección (regla del repo):** cuando un composite action declara un `input.default` Y el bash script que lo consume usa `${VAR:-fallback}`, **el default del YAML SIEMPRE gana** (porque el YAML setea el env con un valor no-vacío antes de que el bash lo evalúe). Dos fuentes de verdad = desync garantizada.
+
+Política adoptada: **defaults EN UN SOLO LUGAR (action.yml)**. El bash usa `${VAR:?required}` o verifica vacío explícitamente con `die` — nunca `${VAR:-...}` salvo para valores genuinamente opcionales (ej. `VERSION:-latest`).
 
 ---
 

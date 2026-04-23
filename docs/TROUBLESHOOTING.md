@@ -20,6 +20,7 @@ Si encuentras un bug nuevo, añádelo al final en la sección
   - [Bug #6 — Logs a stdout polucionan command substitution](#bug-6)
   - [Bug #7 — revanced-cli v6 exige `--bypass-verification` en `patch`](#bug-7)
   - [Bug #7b — revanced-cli v6 removió `list-patches --json`](#bug-7b)
+  - [Bug #10 — inotia00 archivado + YT 19.44.39 recibe HTTP 400 → migración a Morphe](#bug-10)
 - [Nuevos bugs](#nuevos-bugs)
 
 ---
@@ -258,6 +259,45 @@ Metadata de los 7 bugs, para referencia:
 - Parametrización por env de repos + regexes (permite override sin código).
 - Extracción directa de metadata donde el CLI no es estable (.rvp como ZIP).
 - Wrappers de gh que discriminan causa de error (no más "not found" engañoso).
+
+---
+
+### <a id="bug-10"></a>Bug #10 — inotia00 archivado + YT 19.44.39 parcheado recibe HTTP 400 server-side
+
+**Runs afectados:** v6 (#12, #13) en dispositivo físico · **Resuelto con migración a Morphe** (commit migración v7, ver abajo) · **Archivos tocados:** `project-a/scripts/apply-patches.sh`, `fetch-apks.sh`, `create-release.sh`, `.github/workflows/project-a-manual.yml`, `docs/*`
+
+**Síntoma (en dispositivo Samsung A04e, abril 2026):**
+```
+App "YouTube" parcheado abre, UI carga (botones bottom visibles),
+pero el contenido central muestra:
+  "Se produjo un error"
+  [REINTENTAR]
+REINTENTAR no hace nada. No permite login.
+YT Music parcheado (mismo build) funciona 100%.
+```
+
+**Causa raíz (descubierta 2026-04-21):** combinación de dos cosas:
+1. **`inotia00/revanced-patches` fue archivado** (`archived: true`, last push 2026-03-10). Ya no recibe updates.
+2. **YT 19.44.39 recibe HTTP 400 del server de Google.** Las versiones 19.x están bloqueadas server-side por YouTube en 2026. inotia00 v5.14.1 solo soporta hasta YT 20.05.46, todas rechazables.
+3. **inotia00 NO expone públicamente `Spoof streaming data` / `Spoof client` como patch** para YT. Sin spoof, YouTube server rechaza el cliente parcheado.
+
+YT Music funciona porque YTM usa una API diferente (YouTube TV API) que aún no tiene el mismo nivel de bloqueo server-side.
+
+**Fix: migración completa a MorpheApp.** Los mismos desarrolladores ex-ReVanced crearon la org `MorpheApp` con:
+- `MorpheApp/morphe-patches` v1.24.0 — nuevo set (YT 20.47.62 como top)
+- `MorpheApp/morphe-cli` v1.7.0 — drop-in syntax compat con v5
+- `MorpheApp/MicroG-RE` v6.1.3 — 8× más liviano que ReVanced/GmsCore
+- **Incluye `Spoof video streams` patch** — EL que resuelve el HTTP 400
+
+Cambios aplicados en commit de migración:
+- `REVANCED_CLI_REPO=MorpheApp/morphe-cli`, tag `v1.7.0`
+- `REVANCED_PATCHES_REPO=MorpheApp/morphe-patches` (formato `.mpp`)
+- `REVANCED_GMSCORE_REPO=MorpheApp/MicroG-RE`
+- Target YT=20.47.62, YTM=8.47.56
+- Patches explícitos habilitados: `Custom branding`, `Change package name`
+- Íconos oficiales Q4 2024 re-extraídos del YT 20.47.62 / YTM 8.47.56 con apktool, commiteados en `project-a/assets/morphe-icons/`
+
+**Lección:** cuando un upstream abandona, verificar su estado (archived, last-push) antes de asumir que "solo cambió el naming". Y para apps como YouTube que bloquean cliente parcheado server-side, el patch crítico es "Spoof streaming data / video streams" — si el fork no lo tiene, migrar.
 
 ---
 

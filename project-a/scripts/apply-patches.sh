@@ -17,26 +17,31 @@ require_cmd gh
 require_cmd jq
 
 # ── Descargar herramientas ───────────────────────────────────────────
-# Defaults parametrizables por env (ver CLAUDE.md / TROUBLESHOOTING.md).
-# ReVanced/revanced-patches está HTTP 451 desde 2025 → usamos fork.
-CLI_REPO="${REVANCED_CLI_REPO:-ReVanced/revanced-cli}"
-PATCHES_REPO="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
-GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-ReVanced/GmsCore}"
+# MIGRACIÓN 2026-04-23: inotia00/revanced-patches archivado (ver Bug #10
+# en TROUBLESHOOTING.md). Nueva fuente: MorpheApp, mantenido por los mismos
+# desarrolladores ex-ReVanced/inotia00 con código limpio desde cero.
+# - morphe-patches v1.24.0+ (formato .mpp)
+# - morphe-cli v1.7.0+ (drop-in syntax compat con revanced-cli v5)
+# - MicroG-RE v6.1.3+ (reemplazo ligero 12.8 MB vs 100 MB de ReVanced/GmsCore)
+CLI_REPO="${REVANCED_CLI_REPO:-MorpheApp/morphe-cli}"
+PATCHES_REPO="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
+GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-MorpheApp/MicroG-RE}"
 
-# CLI pineada a v5.0.1 por default — v6 tiene incompat binaria con los
-# patches de inotia00 v5.14.1 (patcher v2 rompió clases como MutableMethod
-# que usan los patches v5.x). Ver docs/TROUBLESHOOTING.md #8.
-CLI_TAG="${REVANCED_CLI_TAG:-v5.0.1}"
+# CLI pineada a v1.7.0 por estabilidad. Actualizar cuando Morphe publique
+# nueva stable + verificar compat con .mpp correspondiente.
+CLI_TAG="${REVANCED_CLI_TAG:-v1.7.0}"
 
-# Regex del asset GmsCore. Default hoy: naming 'app.revanced.android.gms-<ver>-signed.apk'
-# (excluye -hw-signed.apk, que es la variante Huawei AppGallery). Si el upstream
-# cambia el naming de nuevo, override con env REVANCED_GMSCORE_REGEX sin tocar código.
-GMSCORE_REGEX="${REVANCED_GMSCORE_REGEX:-app\\.revanced\\.android\\.gms-[0-9]+-signed\\.apk$}"
+# Regex del asset MicroG-RE: 'microg-<ver>.apk'. Si el naming cambia,
+# override con env REVANCED_GMSCORE_REGEX.
+GMSCORE_REGEX="${REVANCED_GMSCORE_REGEX:-microg-[0-9.]+\\.apk$}"
 
-step "Descargando revanced-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), GmsCore ($GMSCORE_REPO)"
+step "Descargando morphe-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), MicroG-RE ($GMSCORE_REPO)"
 
-CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "revanced-cli-.*-all\\.jar$" "$CLI_TAG")"
-PATCHES_RVP="$(ensure_tool "revanced-patches.rvp" "$PATCHES_REPO" "patches-.*\\.rvp$")"
+# El regex de CLI acepta ambos formatos histórico y actual:
+# - revanced-cli-<ver>-all.jar (histórico, inotia00/ReVanced)
+# - morphe-cli-<ver>-all.jar   (actual, Morphe)
+CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe-cli)-.*-all\\.jar$" "$CLI_TAG")"
+PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\\.mpp$")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
 info "CLI:       $CLI_JAR"
@@ -65,52 +70,66 @@ apply_patch() {
   [ -f "$input_apk" ] || die "No encuentro input: $input_apk"
 
   step "Parcheando $label → $(basename "$out_apk")"
-  # cli v5 NO exige verificación PGP — por eso pineamos a v5.0.1 (v6
-  # añadió --bypass-verification obligatorio pero es incompat binaria
-  # con los patches de inotia00 v5.14.1; v6.x necesita patcher v2+,
-  # v5.x patches usan MutableMethod de patcher v1.x).
-  # Flags:
-  #   -p <file.rvp>         : set de patches (short form, compat v5+v6)
-  #   -O "PatchName:key=val": override opción de un patch específico
-  #   -o <apk>              : archivo de salida (sin firmar por nosotros)
+  # morphe-cli v1.7.0 es drop-in replacement de revanced-cli v5 syntax:
+  #   -p=<file.mpp>         : set de patches
+  #   -e "<PatchName>"      : habilita un patch específico (enable, -e)
+  #   -O "key=value"        : override una opción del patch anterior
+  #   -o=<apk>              : archivo de salida
+  #   --unsigned            : NO firma (Morphe-specific flag, ideal — firmamos
+  #                           con apksigner en sign-apks.sh)
+  #   --continue-on-error   : continúa si un patch menor falla
   #   --purge               : limpia temporales
-  # NO pasamos --keystore aquí; cli v5 firma con su "ReVanced Key" default,
-  # luego sign-apks.sh re-firma con nuestro keystore vía apksigner
-  # (apksigner replace la firma existente limpiamente).
+  # NO pasamos --keystore; el APK sale sin firmar gracias a --unsigned.
   java -jar "$CLI_JAR" patch \
     -p "$PATCHES_RVP" \
     "${extra_opts[@]}" \
     -o "$out_apk" \
+    --unsigned \
+    --continue-on-error \
     --purge \
     "$input_apk"
   [ -f "$out_apk" ] || die "Patch OK pero no existe $out_apk"
   ok "$label parcheado: $(du -h "$out_apk" | cut -f1)"
 }
 
-# ── Opciones de branding: usar presets oficiales built-in de inotia00 ──
-# Los patches "Custom branding icon for <app>" aceptan presets en sus
-# options — entre ellos `youtube` y `youtube_music` que son los íconos
-# oficiales de Google embebidos en el .rvp por inotia00. Sin presets
-# tendríamos que extraer los PNGs del APK original con apktool y
-# commitearlos (gray-area + mantenimiento). Con los presets todo viene
-# del .rvp y se actualiza automáticamente con cada nueva versión.
+# ── Opciones de branding (Morphe v1.24.0+) ──────────────────────────
+# Patches clave que habilitamos explícitamente:
+#   "Custom branding" (unificado icon+name)   — opciones: customName, customIcon
+#   "Change package name"                     — NO enabled by default en Morphe.
+#     Debe habilitarse para que el APK coexista con el pre-instalado de
+#     Samsung/Google. Opciones safe: updatePermissions/Providers=true.
+#   "GmsCore support"                         — enabled, auto, integra con MicroG-RE.
+#   "Spoof video streams"                     — enabled, auto, resuelve HTTP 400
+#                                                server-side (el patch clave que
+#                                                inotia00 NO exponía).
 #
-# SINTAXIS CLI v5.0.1 (orden-sensible picocli):
-#   -e "PatchName" -O "optionKey=value" [-O "otherKey=otherValue"]...
-# Los -O que siguen a un -e se asocian a ESE patch hasta que aparece
-# otro -e. No usar el formato v6-style "PatchName:key=value" dentro
-# del -O — v5 no lo parsea (ver TROUBLESHOOTING Bug #9).
-# Los patches ya son Enabled=true por default, -e explícito es redundante
-# pero requerido por picocli cuando hay -O (y sin --exclusive no limita
-# el set de patches que corren).
+# El customIcon espera una carpeta con:
+#   mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}/
+#     morphe_adaptive_background_custom.png   (108/162/216/324/432 px)
+#     morphe_adaptive_foreground_custom.png
+# Íconos extraídos del APK oficial 20.47.62 / 8.47.56 Q4 2024 via apktool,
+# commiteados en project-a/assets/morphe-icons/.
+MORPHE_ICONS="$REPO_ROOT/project-a/assets/morphe-icons"
+
 YT_OPTS=(
-  -e "Custom branding icon for YouTube"  -O "appIcon=youtube"
-  -e "Custom branding name for YouTube"  -O "appName=YouTube"
+  -e "Custom branding"
+  -O "customName=YouTube"
+  -O "customIcon=$MORPHE_ICONS/youtube"
+  -e "Change package name"
+  -O "packageName=Default"
+  -O "updatePermissions=true"
+  -O "updateProviders=true"
+  -O "updateProvidersStrings=true"
 )
 YTM_OPTS=(
-  -e "Custom branding icon for YouTube Music"  -O "appIcon=youtube_music"
-  -e "Custom branding name for YouTube Music"  -O "appNameLauncher=YouTube Music"
-                                               -O "appNameNotification=YouTube Music"
+  -e "Custom branding"
+  -O "customName=YouTube Music"
+  -O "customIcon=$MORPHE_ICONS/ytmusic"
+  -e "Change package name"
+  -O "packageName=Default"
+  -O "updatePermissions=true"
+  -O "updateProviders=true"
+  -O "updateProvidersStrings=true"
 )
 
 apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"
@@ -152,8 +171,16 @@ verify_package() {
   fi
 }
 
-verify_package "$PATCHED_DIR/youtube-patched.apk"       "app.rvx.android.youtube"             "YouTube"
-verify_package "$PATCHED_DIR/youtube-music-patched.apk" "app.rvx.android.apps.youtube.music"  "YouTube Music"
+# Package names esperados tras "Change package name" patch de Morphe.
+# El único valor posible en el patch es "Default" → Morphe decide el naming.
+# Esperado: app.morphe.android.youtube / app.morphe.android.apps.youtube.music
+# (patrón consistente con morphe-* de sus forks). Si el primer build da otro
+# nombre, aapt2 del log lo confirma — override via env EXPECTED_*_PACKAGE.
+EXPECTED_YT_PACKAGE="${EXPECTED_YT_PACKAGE:-app.morphe.android.youtube}"
+EXPECTED_YTM_PACKAGE="${EXPECTED_YTM_PACKAGE:-app.morphe.android.apps.youtube.music}"
+
+verify_package "$PATCHED_DIR/youtube-patched.apk"       "$EXPECTED_YT_PACKAGE"  "YouTube"
+verify_package "$PATCHED_DIR/youtube-music-patched.apk" "$EXPECTED_YTM_PACKAGE" "YouTube Music"
 
 # ── Meta del patch run ───────────────────────────────────────────────
 # Para CLI usamos el tag pineado (no "latest" del repo).

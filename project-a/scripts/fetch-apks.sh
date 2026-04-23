@@ -48,32 +48,30 @@ PY_SCRAPER="$SCRIPT_DIR/apkmirror_download.py"
 # ── 1+2. Bootstrap patches-meta.json ─────────────────────────────────
 resolve_patches_meta_if_needed() {
   [ -s "$META_DIR/patches-meta.json" ] && return 0
-  info "patches-meta.json no existe — extrayendo metadata del .rvp directamente."
+  info "patches-meta.json no existe — extrayendo metadata del .mpp directamente."
   require_cmd gh
   require_cmd unzip
   require_cmd jq
 
-  # Nota: ReVanced/revanced-patches está HTTP 451-bloqueado por GitHub
-  # desde 2025. Default switcheado a inotia00/revanced-patches (fork
-  # mantenido). Parametrizable con env por si inotia00 también cae.
-  # CLI pineada a v5.0.1 (consistente con apply-patches.sh).
-  local patches_repo="${REVANCED_PATCHES_REPO:-inotia00/revanced-patches}"
+  # MIGRACIÓN 2026-04-23: inotia00/revanced-patches archivado. Nuevo default
+  # MorpheApp/morphe-patches con formato .mpp (ZIP igual, estructura similar).
+  # Parametrizable via REVANCED_PATCHES_REPO por si cambiamos de fork.
+  local patches_repo="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
 
   local patches_rvp
-  patches_rvp="$(ensure_tool "revanced-patches.rvp" "$patches_repo" "patches-.*\\.rvp$")"
+  patches_rvp="$(ensure_tool "revanced-patches.mpp" "$patches_repo" "patches-.*\\.mpp$")"
 
-  # revanced-cli v6 removió `list-patches --with-packages --with-versions
-  # --json` — ahora solo soporta --descriptions/--index/--options y no
-  # emite JSON con compatibilidad. Alternativa: .rvp es un ZIP, leemos
-  # la metadata directo. Probamos rutas candidatas conocidas.
-  info "Archivos JSON dentro del .rvp:"
+  # Las versiones YT/YTM las pasamos siempre explícitamente vía workflow
+  # input — este bootstrap es best-effort para documentar compat internamente.
+  # El .mpp es un ZIP. Probamos rutas candidatas conocidas para metadata JSON.
+  info "Archivos JSON dentro del .mpp:"
   unzip -l "$patches_rvp" 2>/dev/null | awk 'NR>3 && $4 ~ /\.json$/ {print "  • "$4}' >&2 || true
 
   local candidates=(
     "patches.json"
     "META-INF/patches.json"
-    "META-INF/revanced/patches.json"
-    "revanced/patches.json"
+    "META-INF/morphe/patches.json"
+    "morphe/patches.json"
     "compatibility.json"
     "compatiblePackages.json"
   )
@@ -89,7 +87,7 @@ resolve_patches_meta_if_needed() {
   done
   rm -f "$tmp"
 
-  warn "Ninguna ruta candidata contiene JSON válido en el .rvp — versiones se resolverán como 'latest'."
+  warn "Ninguna ruta candidata contiene JSON válido en el .mpp — versiones se resolverán como 'latest'."
   warn "(Si querés pinpoint de versión, revisa el listado de arriba y añade la ruta correcta a 'candidates' en fetch-apks.sh.)"
   echo "[]" > "$META_DIR/patches-meta.json"
 }
@@ -123,9 +121,9 @@ YTM_VERSION="${YTM_VERSION:-}"
 if [ -z "$YT_VERSION" ] || [ -z "$YTM_VERSION" ]; then
   die "Faltan versiones explícitas (YT_VERSION/YTM_VERSION) y no hay meta disponible.
     Pasa versiones via workflow_dispatch. Últimas conocidas-compat con
-    inotia00/revanced-patches v5.14.1:
-      YouTube:       19.05.36, 19.16.39, 19.43.41, 19.44.39, 19.47.53, 20.05.46
-      YouTube Music: 6.20.51, 6.29.59, 6.42.55, 6.51.53, 7.16.53, 7.25.53, 8.12.54, 8.28.54, 8.30.54
+    MorpheApp/morphe-patches v1.24.0:
+      YouTube:       20.21.37, 20.31.42, 20.45.36, 20.47.62
+      YouTube Music: 7.29.52, 8.44.54, 8.47.56
     Si APKMirror no tiene una, prueba la anterior de la lista.
     Ver docs/APKMIRROR-SCRAPER.md §versiones-soportadas."
 fi

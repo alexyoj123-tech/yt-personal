@@ -32,10 +32,10 @@ on:
         default: apk-pure
         options: [apk-pure, google-play, f-droid, huawei-app-gallery]
       revanced_cli_tag:
-        description: 'Tag de revanced-cli (v5.0.1 compat con patches inotia00; v6.0.0 sería incompat)'
+        description: 'Tag de morphe-cli (v1.7.0 compat con patches Morphe v1.24.0). Migrado de revanced-cli v5 tras archivado de inotia00.'
         required: false
         type: string
-        default: v5.0.1
+        default: v1.7.0
       release_note_prefix:
         description: 'Nota opcional al inicio del body del Release (ej. para releases de corrección)'
         required: false

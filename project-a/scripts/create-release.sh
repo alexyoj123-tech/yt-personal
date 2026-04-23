@@ -74,11 +74,11 @@ cat >> "$body_file" <<EOF
 
 ## Versiones incluidas
 
-- **YouTube:** $YT_VERSION · package \`app.rvx.android.youtube\`
-- **YT Music:** $YTM_VERSION · package \`app.rvx.android.apps.youtube.music\`
-- **GmsCore:** $GMS_VERSION · package \`app.revanced.android.gms\`
+- **YouTube:** $YT_VERSION · package \`app.morphe.android.youtube\`
+- **YT Music:** $YTM_VERSION · package \`app.morphe.android.apps.youtube.music\`
+- **MicroG-RE:** $GMS_VERSION · package \`org.microg.gms\` (microG upstream, vendor Morphe)
 - **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`org.smarttube.stable\`
-- **ReVanced CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION (fork inotia00)
+- **Morphe CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION
 
 ## Assets (arm64-v8a, firmados con \`yt-personal\`)
 
@@ -86,7 +86,7 @@ cat >> "$body_file" <<EOF
 |---------|-----------|
 | \`youtube-personal-${YT_VERSION}.apk\` | YouTube parcheado (ad-free, background, PiP, SponsorBlock, ícono + nombre oficiales). |
 | \`youtube-music-personal-${YTM_VERSION}.apk\` | YouTube Music parcheado (ad-free, background, ícono + nombre oficiales). |
-| \`gmscore-${GMS_VERSION}.apk\` | ReVanced/GmsCore: MicroG fork requerido para login Google. |
+| \`gmscore-${GMS_VERSION}.apk\` | MicroG-RE: microG fork (vendor Morphe) requerido para login Google. |
 | \`smarttube-${SMARTTUBE_VERSION}.apk\` | SmartTube (Android TV, cliente YouTube con SponsorBlock). |
 
 ## Calidad de streaming

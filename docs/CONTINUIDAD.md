@@ -19,11 +19,17 @@ estrictamente **personal**, repo **privado**, sin distribución pública.
 
 ## 2. Estado actual (snapshot 2026-04-20)
 
-### Qué funciona hoy
+### Qué funciona hoy (última migración: 2026-04-23)
 
-- ✅ **Proyecto A — pipeline ReVanced:** workflow `project-a-manual.yml`
-  (dispatch manual) y `project-a-build.yml` (cron diario 06:00 UTC)
-  corren contra el runner Ubuntu y producen 4 APKs firmados.
+- ✅ **Proyecto A — pipeline MORPHE:** tras la migración del 2026-04-23
+  (inotia00/revanced-patches fue archivado, ver Bug #10 en
+  TROUBLESHOOTING), el pipeline usa el ecosistema **MorpheApp**
+  (mismos devs ex-ReVanced, código limpio desde cero):
+    - `MorpheApp/morphe-cli` v1.7.0 (drop-in syntax v5-compat)
+    - `MorpheApp/morphe-patches` v1.24.0 (formato `.mpp`)
+    - `MorpheApp/MicroG-RE` v6.1.3 (reemplazo de GmsCore, 12.8 MB)
+  Workflow `project-a-manual.yml` (dispatch manual) y
+  `project-a-build.yml` (cron diario 06:00 UTC) producen 4 APKs firmados.
 - ✅ **Keystore release** generado (RSA 4096, 100 años, alias
   `yt-personal`). Ubicación local:
   `C:\Users\alexy\yt-personal-secrets\yt-personal-release.jks`.
@@ -32,17 +38,31 @@ estrictamente **personal**, repo **privado**, sin distribución pública.
 - ✅ **Scraper APKMirror** (`project-a/scripts/apkmirror_download.py`,
   Python stdlib-only) maneja la descarga de YT/YTM oficiales.
 - ✅ **Íconos oficiales Q4 2024 de YouTube/YT Music** extraídos del APK
-  original (apktool local) y commiteados en `project-a/assets/icons/`.
-  Se inyectan en el build vía `Custom branding icon for <app>` patch
-  de inotia00.
-- ✅ **Nombres oficiales** "YouTube" y "YouTube Music" mantenidos vía
-  `Custom branding name` patches.
+  original (apktool local, YT 20.47.62 + YTM 8.47.56) y commiteados en
+  `project-a/assets/morphe-icons/`. Se inyectan via `Custom branding`
+  patch de Morphe (opción `customIcon`).
+- ✅ **Nombres oficiales** "YouTube" y "YouTube Music" vía
+  `Custom branding` patch (opción `customName`).
+- ✅ **Spoof video streams** patch (nuevo en Morphe, no existía público
+  en inotia00) — resuelve el HTTP 400 server-side que bloqueaba YT
+  parcheado en abril 2026.
 - ✅ **SmartTube** incluido en el Release para TV.
+
+### Versiones pineadas actuales
+
+- **YouTube:** `20.47.62` (de las 4 compat Morphe: 20.21.37/20.31.42/20.45.36/**20.47.62**)
+- **YouTube Music:** `8.47.56` (de las 3 compat Morphe: 7.29.52/8.44.54/**8.47.56**)
+- **MicroG-RE:** auto-latest (hoy v6.1.3)
+- **SmartTube:** auto-latest (hoy 31.57s)
+- **Package names post-rename:**
+  - YT: `app.morphe.android.youtube`
+  - YTM: `app.morphe.android.apps.youtube.music`
 
 ### Tag del último release válido
 
-A la fecha de este documento: **`ytp-a-2026.04.20-v6`** (o el último
-en https://github.com/alexyoj123-tech/yt-personal/releases).
+Ver https://github.com/alexyoj123-tech/yt-personal/releases/latest —
+después de la migración Morphe, primer release esperado es
+**`ytp-a-2026.04.20-v7`** (o el siguiente en línea).
 
 ## 3. Plan original vs ajustes
 
@@ -74,7 +94,7 @@ Triada de proyectos:
 ## 4. Bugs históricos ya resueltos
 
 Ver `docs/TROUBLESHOOTING.md` para el catálogo completo con síntoma
-literal + causa raíz + fix + SHA. Resumen de los 8 bugs principales:
+literal + causa raíz + fix + SHA. Resumen de los 10 bugs principales:
 
 | # | Título | Commit SHA |
 |---|--------|-----------|
@@ -87,6 +107,8 @@ literal + causa raíz + fix + SHA. Resumen de los 8 bugs principales:
 | 7 | revanced-cli v6 exige `--bypass-verification` en patch | `261b2fe` |
 | 7b | revanced-cli v6 removió `list-patches --json` | `261b2fe` |
 | 8 | CLI v6 incompat binaria con patches inotia00 v5.x (MutableMethod) → pineado v5.0.1 | `7aabc3e` |
+| 9 | Sintaxis -O estilo v6 rechazada por CLI v5 | `d88c815` |
+| 10 | **inotia00 archivado + YT 19.44.39 HTTP 400 → migración completa a Morphe** | (commit v7) |
 
 ## 5. Cómo retomo el proyecto
 

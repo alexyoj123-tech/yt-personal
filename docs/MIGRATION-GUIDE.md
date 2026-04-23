@@ -24,27 +24,38 @@ bloquearse o desaparecer: **inotia00/revanced-patches**, **APKMirror**,
 - `gh release view` falla con "Repository access blocked" o "not found".
 - El último commit de inotia00 es > 6 meses atrás (proyecto abandonado).
 
-### Forks alternativos activos (verificados 2026-04)
+### Estado 2026-04-23: PRIMARY es Morphe (NO inotia00)
+
+**IMPORTANTE:** `inotia00/revanced-patches` fue **archivado** en marzo 2026. Los mismos desarrolladores crearon **MorpheApp** como sucesor oficial. El pipeline actual usa:
+
+- `MorpheApp/morphe-patches` v1.24.0+ (formato `.mpp`)
+- `MorpheApp/morphe-cli` v1.7.0+ (drop-in syntax v5-compat)
+- `MorpheApp/MicroG-RE` v6.1.3+ (reemplazo de ReVanced/GmsCore, 8× más liviano)
+
+### Forks alternativos activos (por si Morphe cae — verificados 2026-04-23)
 
 | Fork | Formato | Compat CLI | Notas |
 |------|---------|-----------|-------|
-| [`anddea/revanced-patches`](https://github.com/anddea/revanced-patches) | `.mpp` (fork propio del patcher) | Requiere CLI propio (fork `app.morphe.patcher`) — no publicado en GitHub | Cambio de formato + nueva herramienta. Más trabajo pero tiene patches que inotia00 retiró (ej. "Spoof streaming data" para YT). |
-| [`crimera/piko-patches`](https://github.com/crimera/piko-patches) | `.rvp` | CLI v5.x compatible | Inicialmente fork de Twitter/X patches, no siempre tiene YT. Verificar antes de migrar. |
+| **`MorpheApp/morphe-patches`** ⭐ **ACTIVO (primary)** | `.mpp` | `MorpheApp/morphe-cli` | Sucesor oficial de inotia00. YT compat 20.21–20.47. Incluye `Spoof video streams` que resuelve HTTP 400 server-side. |
+| [`anddea/revanced-patches`](https://github.com/anddea/revanced-patches) | `.mpp` (usa morphe-patcher) | Compatible con `MorpheApp/morphe-cli` | Fork paralelo con algunos patches adicionales. Última v4.0.0 (2026-03). |
+| [`crimera/piko-patches`](https://github.com/crimera/piko-patches) | `.rvp` o `.mpp` | Legacy revanced-cli v5 | Inicialmente fork de Twitter/X. Verificar si tiene YT antes de migrar. |
+| [`inotia00/revanced-patches`](https://github.com/inotia00/revanced-patches) | `.rvp` | revanced-cli v5.0.1 | 🧟 **ARCHIVED** marzo 2026. Histórico, NO usar. |
 
-### Procedimiento para migrar
+### Procedimiento para migrar (si Morphe cae)
 
-1. Cambiar default de `REVANCED_PATCHES_REPO` en `.github/actions/revanced-build/action.yml`:
+1. Cambiar defaults en `.github/actions/revanced-build/action.yml` y `apply-patches.sh`:
    ```yaml
    revanced_patches_repo:
-     default: 'crimera/piko-patches'  # o anddea/revanced-patches
+     default: 'anddea/revanced-patches'  # fork compat con morphe-cli
+   revanced_cli_repo:
+     default: 'MorpheApp/morphe-cli'  # morphe-cli sigue siendo el CLI
    ```
-2. Si el nuevo fork usa otro formato (`.mpp` vs `.rvp`), actualizar regex en `fetch-apks.sh` y `apply-patches.sh`:
+2. Ajustar regex si el asset name cambia. Default actual cubre ambos:
    ```bash
-   PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\\.mpp$")"
+   CLI_REGEX="(revanced-cli|morphe-cli)-.*-all\\.jar$"
    ```
-3. Si requiere CLI distinto (ej. anddea requiere `app.morphe.patcher`), actualizar `REVANCED_CLI_REPO` e `REVANCED_CLI_TAG` al CLI compatible.
-4. Actualizar `docs/APKMIRROR-SCRAPER.md` §versiones-soportadas con el set de versiones compat del nuevo fork.
-5. Correr un build manual. Si falla, seguir protocolo estándar de `docs/TROUBLESHOOTING.md` §nuevos-bugs.
+3. Actualizar `docs/APKMIRROR-SCRAPER.md` §versiones-soportadas con el set de versiones compat del nuevo fork.
+4. Correr un build manual. Si falla, seguir protocolo estándar de `docs/TROUBLESHOOTING.md` §nuevos-bugs.
 
 ### Si TODOS los forks caen simultáneamente
 

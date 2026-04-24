@@ -1,59 +1,73 @@
 # yt-personal
 
-> Proyecto personal. **No distribuir.** YouTube + YT Music sin anuncios,
-> con descargas, PiP, reproducción en segundo plano y SponsorBlock,
-> auto-actualizado casi de forma invisible.
+> Proyecto personal. **No distribuir.** YouTube sin anuncios en cada dispositivo
+> del dueño — celular, TV Box, en el futuro iPhone — con auto-update casi
+> invisible.
 
-## Triada + iOS futuro
+## Apps empaquetadas por este repo
+
+| Tipo | App | Package | Tag release | Instalar en |
+|------|-----|---------|-------------|-------------|
+| 📱 | **YouTube (Morphe)** | `app.morphe.android.youtube` | `ytp-a-<fecha>` | Celular Android |
+| 📱 | **YouTube Music (Morphe)** | `app.morphe.android.apps.youtube.music` | `ytp-a-<fecha>` | Celular Android |
+| 📱 | **MicroG-RE** (reemplazo de Google Play Services) | `app.revanced.android.gms` | `ytp-a-<fecha>` | Celular Android (requerido por YT/YTM Morphe) |
+| 📺 | **YouTube Origin** ⭐ | `com.google.android.youtube.tv` (wrapper) | `ytp-d-origin-<ver>` | Google TV / Android TV / TV Box (Claro 4K, Fire TV) |
+| 📺 | **SmartTube** (fallback TV) | `org.smarttube.stable` | `ytp-a-<fecha>` | Android TV si Origin falla |
+
+## Instalación rápida
+
+- **Celular:** [docs/INSTALL-PHONE.md](docs/INSTALL-PHONE.md) — 3 APKs (YT + YTM + MicroG-RE).
+- **TV Box:** [docs/INSTALL-TV.md](docs/INSTALL-TV.md) — Origin (primario) o SmartTube (fallback).
+
+Después del primer setup, Obtainium en cada dispositivo recoge updates en background. Detalle en [docs/AUTO-UPDATES.md](docs/AUTO-UPDATES.md).
+
+## Proyectos del monorepo
 
 | Proyecto | Qué es | Estado |
 |----------|--------|--------|
-| **A** `project-a/` — yt-auto-revanced | Pipeline GitHub Actions que descarga YouTube + YT Music oficiales cada día y los parchea con [ReVanced](https://revanced.app). | ⏳ WIP |
-| **B** `project-b/` — yt-native-client | Cliente Android nativo Kotlin+Compose con NewPipeExtractor. Fallback por si ReVanced rompe. | ⏳ WIP |
-| **C** `project-c/` — ytp-setup | **El APK único**. Funciona en celular y Android TV. Instala todo, pre-configura auto-updates con Obtainium, descubre TVs por WiFi. | ⏳ WIP |
-| **D** `project-d-ios/` — yt-ios-sideload | Documentado, no ejecutado. Se activa cuando el dueño compre un iPhone. Ver [docs/IOS-FUTURO.md](docs/IOS-FUTURO.md). | 📋 Plan |
-
-## Cómo lo uso
-
-1. En el celular abro `https://github.com/alexyoj123-tech/yt-personal/releases/latest`.
-2. Descargo `YTP-Setup.apk`. Doble-tap. Permito instalar. Tap "Instalar todo".
-3. Acepto 3 prompts de Android. Obtainium se abre solo con las 5 apps ya configuradas. Listo.
-4. Si tengo Android TV: desde el celular, "Enviar a mi TV" en YTP Setup. 4 taps en la TV y SmartTube queda instalado.
-
-Desde ahí todo se actualiza solo en background. Detalle en [docs/AUTO-UPDATES.md](docs/AUTO-UPDATES.md).
+| **A** `project-a/` — YouTube + YT Music Morphe + MicroG-RE + SmartTube | Pipeline GitHub Actions diario que descarga YT/YTM oficiales, les aplica patches de [MorpheApp/morphe-patches](https://github.com/MorpheApp/morphe-patches) con `Spoof video streams`, firma con keystore `yt-personal`, y publica release con los 4 APKs. | ✅ Activo |
+| **D** `project-d/` — YouTube Origin (TV) | Chequeo semanal de [energylove/originproject](https://gitlab.com/energylove/originproject) (GitLab). Descarga el RAR arm64-v8a, extrae el APK, publica release. **No re-firma** (preserva Widevine DRM). | ✅ Activo |
+| **B** `project-b/` — cliente nativo Kotlin+Compose con NewPipeExtractor | Fallback total si el ecosistema ReVanced/Morphe cae definitivamente. | ⏳ WIP (no iniciado) |
+| **C** `project-c/` — YTP Setup (APK único installer) | APK dual phone/TV que orquesta instalación de todo + configura Obtainium. | ⏳ WIP (no iniciado) |
+| **iOS futuro** `project-d-ios/` | Plan documentado solo. Se activa cuando el dueño compre iPhone. | 📋 Plan solo |
 
 ## Estructura del monorepo
 
 ```
 yt-personal/
-├── project-a/          Pipeline ReVanced (bash + GitHub Actions)
-├── project-b/          Cliente nativo Kotlin + Compose
-├── project-c/          YTP Setup dual phone/TV (Kotlin + Compose)
-├── project-d-ios/      Plan iOS documentado (no ejecutado)
-├── .github/workflows/  CI/CD (build diario + manual + por-proyecto)
-├── docs/               Guías de instalación, auto-updates, keystore, iOS
-└── assets/             Íconos, banners, otros recursos estáticos
+├── project-a/          Pipeline Morphe (bash + GitHub Actions) — YT/YTM/MicroG/SmartTube
+├── project-b/          Cliente nativo Kotlin + Compose (WIP)
+├── project-c/          YTP Setup installer dual phone/TV (WIP)
+├── project-d/          YouTube Origin pipeline (TV) — nuevo 2026-04-23
+├── project-d-ios/      iOS sideload (documentado, sin código)
+├── .github/workflows/  CI/CD (diario A, semanal D, manuales)
+├── docs/               Guías + runbooks
+└── assets/             Recursos estáticos
 ```
 
-## Enlaces de documentación
+## Docs clave
 
-- [docs/INSTALL-PHONE.md](docs/INSTALL-PHONE.md)
-- [docs/INSTALL-TV-EASY.md](docs/INSTALL-TV-EASY.md) — con Send Files to TV
-- [docs/INSTALL-TV-FALLBACK.md](docs/INSTALL-TV-FALLBACK.md) — con Downloader by AFTVnews
+**Instalación:**
+- [docs/INSTALL-PHONE.md](docs/INSTALL-PHONE.md) — celular
+- [docs/INSTALL-TV.md](docs/INSTALL-TV.md) — TV Box
 - [docs/AUTO-UPDATES.md](docs/AUTO-UPDATES.md) — 3 niveles de automatización
-- [docs/OBTAINIUM.md](docs/OBTAINIUM.md)
-- [docs/KEYSTORE.md](docs/KEYSTORE.md)
-- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
-- [docs/HOW-IT-WORKS.md](docs/HOW-IT-WORKS.md)
-- [docs/IOS-FUTURO.md](docs/IOS-FUTURO.md)
+
+**Mantenimiento (para retomar el proyecto en el futuro):**
+- [docs/CONTINUIDAD.md](docs/CONTINUIDAD.md) — onboarding en 5 min
+- [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) — runbook de los 12+ bugs resueltos
+- [docs/MIGRATION-GUIDE.md](docs/MIGRATION-GUIDE.md) — plan B si upstream cae (patches / APKs / GmsCore / SmartTube)
+- [docs/MIGRATION-GUIDE-TV.md](docs/MIGRATION-GUIDE-TV.md) — específico para Origin (TV)
+- [docs/APKMIRROR-SCRAPER.md](docs/APKMIRROR-SCRAPER.md) — supervivencia del scraper
+- [docs/KEYSTORE.md](docs/KEYSTORE.md) — keystore + backups
+- [docs/IOS-FUTURO.md](docs/IOS-FUTURO.md) — plan para cuando haya iPhone
 
 ## Restricciones duras
 
 - Uso personal. **No se distribuye** el APK ni los binarios a terceros.
 - Sin analytics, crashlytics, Firebase ni tracking.
-- Sin credenciales ni API keys en el repo.
-- Keystore nunca se commitea (está como secret en GitHub Actions).
-- Proyectos B y C no usan logos/íconos con copyright de YouTube/Google.
+- Sin credenciales ni API keys en el repo (keystore como Secret de Actions).
+- Proyectos B y C no usan logos/íconos copyright de YouTube/Google.
+- Firma única **`yt-personal`** para todas las apps — excepción: **YouTube Origin** mantiene firma original de energylove para preservar Widevine ([rationale](docs/MIGRATION-GUIDE-TV.md#firma)).
 
 ## Licencia
 

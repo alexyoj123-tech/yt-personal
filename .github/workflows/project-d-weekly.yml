@@ -1,0 +1,98 @@
+name: project-d · YouTube Origin (TV Box) weekly check
+# Upstream energylove/originproject publica ~bimensualmente; chequeo
+# semanal (domingo) es margen suficiente sin spam a GitLab.
+# Si hay versión nueva, crea un release con tag ytp-d-origin-<version>.
+# Si el tag ya existe, skip (idempotente).
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'   # domingos 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-d-origin
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Fetch + publish YouTube Origin
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar deps (unrar + jq + aapt)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends unrar jq aapt
+
+      - name: Fetch Origin desde GitLab
+        run: bash project-d/scripts/fetch-origin.sh
+
+      - name: Inspeccionar APK con aapt (informativo, no falla build)
+        run: |
+          APK=$(ls project-d/build/out/youtube-origin-*.apk | head -1)
+          echo "=== aapt dump badging ==="
+          aapt dump badging "$APK" | grep -E "^(package|application-label:|application-icon-160|native-code)" | head -8
+
+      - name: Crear release si no existe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VER=$(jq -r '.version_clean' project-d/build/meta/fetch.json)
+          TAG="ytp-d-origin-${VER}"
+          APK=$(ls project-d/build/out/youtube-origin-*.apk | head -1)
+          SHA=$(jq -r '.apk_sha256' project-d/build/meta/fetch.json)
+          SOURCE=$(jq -r '.rar_source' project-d/build/meta/fetch.json)
+
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG ya existe — skip (idempotente)."
+            exit 0
+          fi
+
+          BODY_FILE=$(mktemp)
+          cat > "$BODY_FILE" <<EOF
+          # YouTube Origin $VER (Google TV / Android TV)
+
+          Wrapper del YouTube TV oficial de Google con **uBlock Origin + Adblock Plus + SponsorBlock** inyectados, mantiene UI 100% oficial y Widevine DRM para contenido gratis de Movies & TV.
+
+          **Arquitectura:** arm64-v8a · **Instalar en:** Google TV, Fire TV, Android TV, TV Boxes (ej. Claro 4K Android TV Box) con Android 9+.
+
+          ## Firma
+
+          ⚠️ **Este APK mantiene la firma original de energylove** — NO está re-firmado con el keystore \`yt-personal\` del repo. Es la única app del release en este estado. Razón: re-firmar rompería la attestation Widevine del chip DRM del TV Box y perdería HD/4K en películas gratis de YouTube Movies & TV. Ver [docs/MIGRATION-GUIDE-TV.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/MIGRATION-GUIDE-TV.md) §firma.
+
+          ## Integridad
+
+          - SHA-256 del APK: \`$SHA\`
+
+          ## Instalación
+
+          Ver [docs/INSTALL-TV.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/INSTALL-TV.md) — método **"Send Files to TV"** desde el celular (recomendado por energylove) o **Downloader by AFTVnews**.
+
+          ## Fuente
+
+          - Upstream: $SOURCE
+          - Mantenedor: [energylove](https://gitlab.com/energylove) · XDA: [hilo oficial](https://xdaforums.com/t/app-android-tv-youtube-origin-for-google-tv.4699190/)
+          - Frecuencia de releases upstream: ~bimensual (sin GitLab Releases API — distribuye via archivos commiteados).
+          EOF
+
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "YouTube Origin $VER (Google TV / Android TV)" \
+            --notes-file "$BODY_FILE" \
+            "$APK"
+          rm -f "$BODY_FILE"
+
+      - name: Upload meta como artifact (siempre)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-d-meta-${{ github.run_id }}
+          path: project-d/build/meta/
+          retention-days: 30
+          if-no-files-found: ignore

@@ -1,97 +1,73 @@
-# Instalar SmartTube en Android TV / TV Box Claro 4K
+# Instalar cliente YouTube en Android TV / TV Box
 
-SmartTube es el mejor cliente de YouTube para Android TV: 4K/8K,
-SponsorBlock integrado, sin anuncios, navegación con control remoto.
-Desarrollado por Yuri Liskov, **Apache 2.0**.
+Este repo provee 2 clientes para TV Box:
 
-Este proyecto firma cada build nuevo con el keystore `yt-personal`
-(consistencia con YouTube/YT Music del celular) y lo publica en el
-mismo Release. Auto-update vía Obtainium o el propio updater interno
-de SmartTube funcionan.
+1. **YouTube Origin** ⭐ **(recomendado)** — wrapper oficial de Google YouTube TV con ad-block + SponsorBlock, UI idéntica a la oficial, con Widevine HD para Movies & TV.
+2. **SmartTube** (fallback robusto) — cliente OSS alternativo, UI propia D-pad friendly.
 
-## Método recomendado — "Downloader by AFTVnews" (todas las TV)
+Ver [docs/MIGRATION-GUIDE-TV.md](MIGRATION-GUIDE-TV.md) para fallbacks adicionales y detalle de por qué Origin mantiene firma externa.
 
-Funciona en cualquier Android TV (Claro 4K, Xiaomi TV Stick, Fire TV,
-Chromecast Google TV, MI Box, Nvidia Shield, etc.).
+---
 
-### Primera instalación (~5 min)
+## Método A — YouTube Origin (primario)
 
-1. **En la TV** — instalar Downloader:
-   - Google TV/Android TV: Google Play Store → buscar "Downloader" (desarrollador: AFTVnews). Install.
-   - Fire TV: Amazon App Store → mismo proceso.
+Funciona en: Google TV, Fire TV, Android TV, TV Boxes 4K (Claro 4K, Xiaomi TV Stick, etc.) con **Android 9+**.
 
-2. **En la TV** — habilitar "Apps from Unknown Sources" para Downloader:
-   - Settings → Apps → Security & restrictions → Unknown sources → Downloader → **On**.
-   - (En Fire TV: Settings → My Fire TV → Developer options → Install unknown apps → Downloader ON.)
+### Preparación (solo la primera vez)
 
-3. **En la TV** — abrir Downloader. Campo "URL":
-   - Tipear la URL del último APK de SmartTube de nuestro Release. Ejemplo:
-     ```
-     https://github.com/alexyoj123-tech/yt-personal/releases/latest/download/smarttube-<version>.apk
-     ```
-   - (Reemplazar `<version>` con el tag más reciente, visible en https://github.com/alexyoj123-tech/yt-personal/releases/latest. O usar el URL directo copiando el link del asset `smarttube-*.apk`.)
+1. **En tu celular:** instalar **"Send Files to TV"** por yablio desde la Play Store.
+2. **En la TV:** instalar **"Send Files to TV"** en la Play Store de Google TV (misma app, cuenta conectada).
+3. **En la TV:** instalar **"ZArchiver"** para extraer el `.rar` (el APK viene comprimido).
+4. **En la TV:** Settings → Apps → Security → Unknown sources → permitir Send Files to TV y ZArchiver.
 
-4. Tap **Go**. Downloader baja el APK (~24 MB, <1 min en WiFi decente).
+### Instalación
 
-5. Cuando termine, aparece "Install". Tap Install.
+Origin está en nuestro release dedicado `ytp-d-origin-<version>`:
 
-6. Android TV pregunta: "¿Instalar esta aplicación?" → **Install** con el D-pad.
-
-7. Tap "Done" (o "Open" si querés abrir ya).
-
-**Listo.** SmartTube queda en tu launcher. Login con tu cuenta Google
-del celular vía "Link account" (te da un código, lo pegas en
-`youtube.com/tv` desde el celular/PC).
+1. **En el celular**, abrir: https://github.com/alexyoj123-tech/yt-personal/releases
+2. Buscar el release más reciente con tag `ytp-d-origin-*` (último confirmado: `ytp-d-origin-1.4.6`).
+3. Descargar `youtube-origin-1.4.6.apk` (~198 MB — baja en 1-2 min con WiFi decente).
+4. Abrir "Send Files to TV" en el celular → seleccionar el APK → seleccionar tu TV Box en la lista.
+5. **En la TV**, aceptar la recepción → abrir el APK con "Package Installer" → Install.
+6. Abrir Origin → iniciar sesión con tu cuenta Google del TV Box.
 
 ### Updates futuros
 
-Dos caminos, elegí uno:
+Dos opciones:
 
-**A — Auto-update interno de SmartTube (más simple):**
-- Abrir SmartTube → Settings → About → "Check for updates" → **Automatic**.
-- Cada vez que abrís la app, verifica si hay update y la instala en
-  background. Necesita solo aceptar la instalación 1 vez cuando
-  aparezca. **Este es el camino recomendado si solo tenés SmartTube en la TV.**
+**A — Cuando releases un nuevo `ytp-d-origin-*`:**
+- Nuestro workflow chequea cada domingo 04:00 UTC. Si energylove publica nueva versión, aparece en Releases automáticamente.
+- Instalar igual que la primera vez (Send Files to TV). Origin soporta update in-place si la firma es la misma (energylove mantiene su key).
 
-**B — Obtainium en la TV (si más apps):**
-- Installar Obtainium en la TV (mismo método Downloader, baja de
-  GitHub Releases de ImranR98/Obtainium).
+**B — Obtainium (recomendado):**
+- Instalar Obtainium en el TV Box (vía Downloader by AFTVnews → `https://github.com/ImranR98/Obtainium/releases/latest`).
 - Add app → pegar URL del repo: `https://github.com/alexyoj123-tech/yt-personal`
-- Filter regex: `smarttube-.*\.apk$`
+- Filter regex: `youtube-origin-.*\.apk$`
 - Activar auto-update.
 
-## Método rápido — "Send Files to TV" (si ya instalaste YTP Setup en el celular)
+### Importante sobre la firma
 
-Cuando el YTP Setup esté implementado (Proyecto C, WIP), tendrá una
-opción "Enviar a mi TV" que usa el protocolo SFTV (Send Files to TV
-by yablio) para enviar el APK directamente sin Downloader. 4 taps en
-la TV y listo.
+El APK de Origin **NO** está re-firmado con `yt-personal` — mantiene la firma original de energylove. Razón: preservar Widevine DRM (HD/4K en YouTube Movies & TV gratis). Todos los demás APKs del repo SÍ están firmados con `yt-personal`; Origin es la única excepción documentada. Detalle en [docs/MIGRATION-GUIDE-TV.md §firma](MIGRATION-GUIDE-TV.md#firma).
 
-Ver [docs/INSTALL-TV-EASY.md](INSTALL-TV-EASY.md) — pendiente hasta
-C14.
+---
 
-## Login / cuenta Google
+## Método B — SmartTube (fallback / alternativa)
 
-SmartTube soporta login estándar vía "Sign in":
-1. Abrí SmartTube → menú lateral → tu avatar → "Sign in".
-2. Muestra un código corto (ej. `K7X3-F9DM`).
-3. En el celular o PC: ir a `youtube.com/tv` → pegar el código → autorizar.
-4. Listo — subs, historial, mis videos, todo sincronizado.
+Si Origin falla por cualquier motivo (update rompe algo, GitLab bloquea el repo, etc.), SmartTube está siempre disponible en cada release del `project-a` (archivo `smarttube-<version>.apk`).
 
-## Notas técnicas
+Instalación: ver [docs/INSTALL-TV.md versión previa](https://github.com/alexyoj123-tech/yt-personal/blob/ytp-a-2026.04.23/docs/INSTALL-TV.md) o seguir el mismo flujo que Origin (Send Files to TV). Descarga: desde el release `ytp-a-<fecha>`, asset `smarttube-*.apk` (24 MB).
 
-- **APK firmado con `yt-personal`.** Si ya tenés instalado SmartTube
-  de otra fuente (Play Store, upstream GitHub, etc.), **desinstalá
-  primero** — Android rechaza instalar con firma diferente.
-- **Package name:** `com.liskovsoft.smarttubetv.beta` (no modificado
-  por nosotros — respetamos la build oficial de yuliskov).
-- **SponsorBlock, ad-block y calidad máxima:** ya vienen on-by-default
-  en SmartTube; no hay que configurar nada extra.
+SmartTube está re-firmado con `yt-personal` (consistente con el resto), así que Obtainium/auto-update funciona sin caveats.
+
+---
 
 ## Troubleshooting específico TV
 
-| Síntoma | Fix |
-|---------|-----|
-| "La aplicación no está instalada" | Ya tenés SmartTube con otra firma. Desinstalá (Settings → Apps → SmartTube → Uninstall) y reintentá. |
-| Downloader no puede acceder a GitHub | Verificá WiFi de la TV. Algunos ISPs bloquean github.com/releases; usar URL directa del asset R2 si eso pasa. |
-| SmartTube dice "Update disponible" pero no instala | Activar Settings → About → "Install updates without prompt" si tu Android TV lo permite. Si no, aceptar el prompt manualmente (1 tap). |
+| Síntoma | Solución |
+|---------|----------|
+| ZArchiver dice "archivo corrupto" al abrir el RAR | Re-descargar — descarga parcial. Verificar SHA-256 del APK con el publicado en las release notes. |
+| Origin abre pero dice "No connection" / "check your internet" | WiFi del TV Box. Reiniciar WiFi. Si persiste, probar VPN (algunos ISPs bloquean servidores YouTube TV). |
+| Origin dice "Se requiere actualización" al abrir | energylove publicó nueva versión; esperar al próximo cron (domingo) o triggear manualmente el workflow `project-d-weekly` desde Actions. |
+| Video arranca pero sin audio | Settings → Audio → Prefer Dolby (solo si el TV Box lo soporta). En Claro 4K: setear "Stereo PCM" en Audio output. |
+| "La aplicación no está instalada" al instalar | Ya tenés Origin con otra firma (instalación previa). Desinstalá (Settings → Apps → YouTube Origin → Uninstall) y reintentá. |
+| Quiero volver a SmartTube temporal | Instalarlo del release `ytp-a-*` — convive con Origin sin conflicto (distintos package names). |

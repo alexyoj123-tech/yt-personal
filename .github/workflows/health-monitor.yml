@@ -1,0 +1,32 @@
+name: health-monitor · weekly upstream check
+# Cada lunes 06:00 UTC audita los 5 upstreams del proyecto.
+# Crea issues automáticos si alguno está archivado o stale.
+# Lógica en .github/scripts/health-monitor.sh (data-driven UPSTREAMS array).
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'   # lunes 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: health-monitor
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Audit upstreams
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run health monitor
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: bash .github/scripts/health-monitor.sh

@@ -179,7 +179,49 @@ Alexy aceptó explícitamente estas limitaciones:
 - **Gray-area legal:** íconos extraídos del APK oficial de Google.
   OK para uso personal en repo privado; no distribuir.
 
-## 7. Reconocimientos
+## 7. Sistema anti-frágil (completado 2026-04-27)
+
+El proyecto tiene **detección automática de problemas en upstreams** vía
+`.github/workflows/health-monitor.yml` (cron lunes 06:00 UTC). Audita
+los 5 upstreams (`MorpheApp/morphe-patches`, `MorpheApp/morphe-cli`,
+`MorpheApp/MicroG-RE`, `yuliskov/SmartTube`,
+`gitlab.com/energylove/originproject`) y crea **issues automáticos con
+label `health`** si alguno está archivado o supera su threshold (90 días
+para upstreams diarios, 180 días para bimensuales).
+
+### Si esto se rompe en el futuro — orden de checks
+
+1. **Primer paso siempre:** revisar issues abiertos con label `health` en
+   <https://github.com/alexyoj123-tech/yt-personal/issues?q=label%3Ahealth+is%3Aopen>.
+   Cada issue dice exactamente qué upstream falló y enlaza al
+   procedimiento de fallback.
+2. Si no hay issues pero algo no anda: trigger manual del workflow para
+   forzar un check fresco:
+   ```bash
+   gh workflow run health-check-manual.yml --repo alexyoj123-tech/yt-personal \
+     -f dry_run=false
+   ```
+3. Si querés probar el monitor sin disparar issues:
+   ```bash
+   gh workflow run health-check-manual.yml --repo alexyoj123-tech/yt-personal \
+     -f dry_run=true
+   ```
+4. Si querés override del threshold (ej. ver qué pasaría con 30d):
+   ```bash
+   gh workflow run health-check-manual.yml --repo alexyoj123-tech/yt-personal \
+     -f dry_run=true -f threshold_override=30
+   ```
+5. Procedimiento de migración por upstream: ver
+   [`docs/ANTI-FRAGIL.md` §3](ANTI-FRAGIL.md#3-procedimientos-por-upstream).
+
+### Caso histórico documentado
+
+`docs/ANTI-FRAGIL.md` §4 contiene el postmortem completo de la migración
+inotia00 → Morphe (2026-04-23): síntomas, investigación, cambios
+aplicados, lecciones aprendidas. Es el prototipo de cómo se ejecuta una
+migración mayor en este proyecto.
+
+## 8. Reconocimientos
 
 Este proyecto es posible gracias a:
 

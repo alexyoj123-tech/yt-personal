@@ -1,0 +1,44 @@
+name: health-check · manual on-demand
+# Versión manual del health-monitor con inputs para testing.
+# Útil para:
+#   - Verificar logs sin disparar issues (dry_run=true)
+#   - Probar threshold distinto (threshold_override=30 → todo lo viejo de 30d alerta)
+#
+# La versión cron sin inputs vive en health-monitor.yml.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '¿Dry run? (logea sin crear issues — recomendado para testing)'
+        type: boolean
+        default: true
+      threshold_override:
+        description: 'Override threshold global en días (vacío = usar defaults asimétricos por upstream)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: health-check-manual
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Audit upstreams (manual)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run health monitor (dry_run=${{ inputs.dry_run }}, threshold_override=${{ inputs.threshold_override }})
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+          THRESHOLD_OVERRIDE: ${{ inputs.threshold_override }}
+        run: bash .github/scripts/health-monitor.sh

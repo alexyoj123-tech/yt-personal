@@ -17,9 +17,10 @@ es el mapa: qué hay en cada archivo y por dónde empezar según quién seas.
 
 ### 🤖 Soy Claude (u otro agente AI) y el dueño me pidió retomar el proyecto
 1. **[CONTINUIDAD.md](CONTINUIDAD.md)** — onboarding completo en 5 minutos. Empezar acá SIEMPRE.
-2. **[HOW-IT-WORKS.md](HOW-IT-WORKS.md)** — arquitectura del pipeline + cómo se conectan los componentes.
-3. **[MIGRATION-GUIDE.md](MIGRATION-GUIDE.md)** — planes B para cada upstream que pueda caer.
-4. Si algo falla: **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** primero, después los específicos según el componente afectado.
+2. **[CLAUDE-FUTURO-INSTRUCCIONES.md](CLAUDE-FUTURO-INSTRUCCIONES.md)** — info específica sobre keystore, secrets, comandos útiles. Leer justo después de CONTINUIDAD para no tener que preguntarle al dueño dónde está cada cosa.
+3. **[HOW-IT-WORKS.md](HOW-IT-WORKS.md)** — arquitectura del pipeline + cómo se conectan los componentes.
+4. **[MIGRATION-GUIDE.md](MIGRATION-GUIDE.md)** — planes B para cada upstream que pueda caer.
+5. Si algo falla: **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** primero, después los específicos según el componente afectado.
 
 ### 🔧 Vengo a entender o extender un componente específico
 - Pipeline Morphe (Project A) → [HOW-IT-WORKS.md §A](HOW-IT-WORKS.md), [APKMIRROR-SCRAPER.md](APKMIRROR-SCRAPER.md), [KEYSTORE.md](KEYSTORE.md)
@@ -34,6 +35,7 @@ es el mapa: qué hay en cada archivo y por dónde empezar según quién seas.
 |---------|-------:|-----------|-----------|
 | [README.md](README.md) | 60 | Todos | Este índice. |
 | [CONTINUIDAD.md](CONTINUIDAD.md) | 360+ | Mantenedor / Claude futuro | Snapshot estado actual, plan original vs ajustes, los 12 bugs ya resueltos, cómo retomar. **Leer primero siempre.** |
+| [CLAUDE-FUTURO-INSTRUCCIONES.md](CLAUDE-FUTURO-INSTRUCCIONES.md) | 200 | Claude futuro | Onboarding específico para agentes AI: dónde están los secrets, cómo hacer builds, recovery si todo se pierde, qué NUNCA hacer, comandos útiles. |
 | [HOW-IT-WORKS.md](HOW-IT-WORKS.md) | 120 | Mantenedor | Diagrama ASCII del flujo + qué hace cada componente + cómo se conectan. |
 | [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | 500 | Mantenedor | Catálogo de los 12 bugs históricos con síntoma literal → causa → fix → SHA. Template para añadir bugs nuevos. |
 | [ANTI-FRAGIL.md](ANTI-FRAGIL.md) | 220 | Mantenedor | Sistema de health-monitor semanal. Procedimientos paso a paso si un upstream cae. Caso histórico postmortem inotia00→Morphe. |

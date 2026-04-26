@@ -4,6 +4,11 @@
 > documento diciendo **"Retomo proyecto yt-personal, lee este
 > CONTINUIDAD.md y aplica lo pendiente"** — este es tu onboarding en
 > 5 minutos.
+>
+> **Después de este archivo, leé también**
+> [`CLAUDE-FUTURO-INSTRUCCIONES.md`](CLAUDE-FUTURO-INSTRUCCIONES.md)
+> — tiene info específica sobre keystore, secrets y comandos que vas a
+> necesitar (Alexy ya no te tiene que explicar dónde está cada cosa).
 
 ## 1. Introducción
 

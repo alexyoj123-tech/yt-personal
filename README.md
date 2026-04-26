@@ -1,8 +1,12 @@
 # yt-personal
 
-> Proyecto personal. **No distribuir.** YouTube sin anuncios en cada dispositivo
-> del dueño — celular, TV Box, en el futuro iPhone — con auto-update casi
-> invisible.
+> Proyecto personal — uso familiar. YouTube sin anuncios en cada dispositivo
+> (celular, TV Box, en el futuro iPhone) con auto-update casi invisible.
+
+## 👉 Empezá acá: https://alexyoj123-tech.github.io/yt-personal/
+
+Página de instalación con Obtainium preconfigurado para celular y TV.
+**Compartí ese link con tu familia/amigos cercanos.**
 
 ## Apps empaquetadas por este repo
 
@@ -16,6 +20,9 @@
 
 ## Instalación rápida
 
+**Camino fácil (recomendado):** abrí <https://alexyoj123-tech.github.io/yt-personal/> en el dispositivo y seguí los 5 pasos. Obtainium queda configurado y maneja auto-updates desde ahí.
+
+**Camino manual:**
 - **Celular:** [docs/INSTALL-PHONE.md](docs/INSTALL-PHONE.md) — 3 APKs (YT + YTM + MicroG-RE).
 - **TV Box:** [docs/INSTALL-TV.md](docs/INSTALL-TV.md) — Origin (primario) o SmartTube (fallback).
 
@@ -63,9 +70,9 @@ yt-personal/
 
 ## Restricciones duras
 
-- Uso personal. **No se distribuye** el APK ni los binarios a terceros.
+- Uso personal y educativo. La página de Pages se comparte con familia y amigos cercanos — **no redistribución comercial ni publicación masiva**.
 - Sin analytics, crashlytics, Firebase ni tracking.
-- Sin credenciales ni API keys en el repo (keystore como Secret de Actions).
+- Sin credenciales ni API keys en el repo (keystore como Secret de Actions, sigue privado aunque el repo sea público).
 - Proyectos B y C no usan logos/íconos copyright de YouTube/Google.
 - Firma única **`yt-personal`** para todas las apps — excepción: **YouTube Origin** mantiene firma original de energylove para preservar Widevine ([rationale](docs/MIGRATION-GUIDE-TV.md#firma)).
 

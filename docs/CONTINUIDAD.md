@@ -221,7 +221,56 @@ inotia00 → Morphe (2026-04-23): síntomas, investigación, cambios
 aplicados, lecciones aprendidas. Es el prototipo de cómo se ejecuta una
 migración mayor en este proyecto.
 
-## 8. Reconocimientos
+## 8. Distribución pública vía GitHub Pages (completado 2026-04-26)
+
+Para compartir con familia/amigos sin fricción, el repo se hizo
+**público** y desplegamos una landing page en
+<https://alexyoj123-tech.github.io/yt-personal/>.
+
+### Cambio de visibilidad
+- `gh repo edit alexyoj123-tech/yt-personal --visibility public --accept-visibility-change-consequences`
+- Auditoría previa confirmada: sin secret leaks en archivos ni en
+  history (PEM keys, base64 keystores, tokens). Detalle del audit en
+  el commit que cambió la visibilidad.
+- GitHub Secrets siguen privados (`Settings → Actions → Secrets`),
+  como diseña GitHub.
+
+### Componentes de la landing page
+- `docs/index.html` — page mobile-first con 2 tarjetas (📱 celular, 📺 TV).
+  Botones que copian la URL del JSON Obtainium correspondiente al
+  portapapeles. Disclaimer de uso personal + tributo a las
+  comunidades upstream.
+- `docs/obtainium-phone.json` — 3 apps preconfiguradas: YouTube
+  Morphe, YT Music Morphe, MicroG Services. Filtra por título de
+  release "Daily ReVanced Build" + regex APK por app.
+- `docs/obtainium-tv.json` — 2 apps: YouTube Origin (filtra por
+  título "YouTube Origin"), SmartTube (filtra por "Daily ReVanced
+  Build" igual que las del celular pero distinto regex APK).
+- `.github/workflows/pages-deploy.yml` — auto-deploy en push a `main`
+  con cambios en `docs/`. Usa `actions/deploy-pages@v4` (método
+  moderno, no requiere branch `gh-pages` dedicada).
+
+### UX para usuario nuevo (familia/amigo)
+1. Abre la URL en su Android.
+2. Tap "Importar a Obtainium" → URL copiada.
+3. Instala [Obtainium](https://github.com/ImranR98/Obtainium) si no
+   lo tiene (también en F-Droid).
+4. Abre Obtainium → menú ⋮ → Import → URL → pega.
+5. Obtainium muestra las apps preconfiguradas → Add + Install cada una.
+6. **Auto-update perpetuo:** Obtainium chequea diariamente y notifica
+   cuando hay versión nueva.
+
+### Justificación de hacer el repo público
+- Pipeline + scripts son educativos (otros pueden aprender del approach).
+- APKs ya estaban diseñados para compartir con círculo cercano según
+  el plan del MEGA_PROMPT.
+- GitHub Secrets quedan privados por design.
+- Pages requiere repo público (o GitHub Pro $4/mes en privado) — no
+  pagar.
+- No es publicación masiva: link no se promociona, solo se comparte
+  uno-a-uno con familia.
+
+## 9. Reconocimientos
 
 Este proyecto es posible gracias a:
 

@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#cc0000">
+  <title>YouTube Personal — Setup</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📺%3C/text%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      --bg: #0e0e0e;
+      --card: #1a1a1a;
+      --card-hover: #232323;
+      --text: #f1f1f1;
+      --text-dim: #aaa;
+      --accent: #ff3333;
+      --accent-dim: #cc0000;
+      --border: #2a2a2a;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+      padding: 1.5rem 1rem 4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    main { width: 100%; max-width: 540px; }
+
+    header { text-align: center; margin-bottom: 2.5rem; }
+    .logo { font-size: 4rem; line-height: 1; margin-bottom: .25rem; }
+    h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.01em; }
+    .subtitle { color: var(--text-dim); font-size: 1rem; margin-top: .35rem; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h2 {
+      font-size: 1.15rem;
+      margin-bottom: .35rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card .desc {
+      color: var(--text-dim);
+      font-size: .95rem;
+      margin-bottom: 1rem;
+    }
+    .card .apps {
+      font-size: .82rem;
+      color: var(--text-dim);
+      margin-bottom: 1rem;
+      padding: .5rem .75rem;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .card .apps b { color: var(--text); font-weight: 600; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: .95rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      color: white;
+      background: var(--accent-dim);
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .15s ease, transform .05s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover, .btn:focus { background: var(--accent); }
+    .btn:active { transform: scale(.985); }
+    .btn.secondary {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      font-weight: 500;
+      margin-top: .6rem;
+    }
+    .btn.secondary:hover { background: var(--card-hover); color: var(--text); }
+
+    .hint {
+      font-size: .82rem;
+      color: var(--text-dim);
+      margin-top: .85rem;
+      text-align: center;
+    }
+    .hint a { color: var(--text-dim); text-decoration: underline; }
+
+    details {
+      margin-top: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .85rem 1.1rem;
+    }
+    details[open] { padding-bottom: 1rem; }
+    summary { cursor: pointer; font-weight: 600; user-select: none; }
+    details ol, details ul { margin: .75rem 0 0 1.25rem; }
+    details li { margin: .35rem 0; color: var(--text-dim); }
+    details code {
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      background: var(--bg);
+      padding: .1rem .35rem;
+      border-radius: 4px;
+      font-size: .85em;
+      color: var(--text);
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: .78rem;
+      color: var(--text-dim);
+      text-align: center;
+      max-width: 540px;
+      padding: 0 .5rem;
+    }
+    footer p { margin: .4rem 0; }
+    footer a { color: var(--text-dim); }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 1.5rem;
+      transform: translateX(-50%) translateY(2rem);
+      background: var(--text);
+      color: var(--bg);
+      padding: .65rem 1.1rem;
+      border-radius: 999px;
+      font-size: .9rem;
+      font-weight: 500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      box-shadow: 0 6px 20px rgba(0,0,0,.4);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f5f5f7;
+        --card: #ffffff;
+        --card-hover: #f0f0f2;
+        --text: #1a1a1a;
+        --text-dim: #555;
+        --border: #e1e1e4;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="logo" aria-hidden="true">📺</div>
+      <h1>YouTube Personal</h1>
+      <p class="subtitle">YouTube + YT Music sin anuncios, en celular y TV</p>
+    </header>
+
+    <section class="card">
+      <h2>📱 Para celular Android</h2>
+      <p class="desc">3 apps: YouTube Morphe + YT Music Morphe + MicroG Services.</p>
+      <div class="apps"><b>Incluye:</b> ad-block, background, SponsorBlock, descargas.</div>
+      <button class="btn" data-import="https://alexyoj123-tech.github.io/yt-personal/obtainium-phone.json"
+              data-label="Configuración de celular">Importar a Obtainium</button>
+      <p class="hint">¿No tenés Obtainium? <a href="#guia">Ver guía abajo</a>.</p>
+    </section>
+
+    <section class="card">
+      <h2>📺 Para Android TV / TV Box</h2>
+      <p class="desc">2 apps: YouTube Origin (UI oficial) + SmartTube (backup OSS).</p>
+      <div class="apps"><b>Incluye:</b> 4K, Widevine HD, ad-block, SponsorBlock, sin anuncios.</div>
+      <button class="btn" data-import="https://alexyoj123-tech.github.io/yt-personal/obtainium-tv.json"
+              data-label="Configuración de TV">Importar a Obtainium</button>
+      <p class="hint">El TV Box debe tener Android 9+ y arm64-v8a.</p>
+    </section>
+
+    <details id="guia">
+      <summary>¿Cómo funciona? (guía rápida)</summary>
+      <ol>
+        <li>Instalá <a href="https://github.com/ImranR98/Obtainium/releases/latest" target="_blank" rel="noopener">Obtainium</a> en el dispositivo (también en F-Droid y Accrescent).</li>
+        <li>Abrí esta página desde ese dispositivo y tocá el botón "Importar a Obtainium" de la sección que corresponda.</li>
+        <li>Obtainium se abre con las apps preconfiguradas. Tocá <b>Add</b> en cada una y luego <b>Install</b>.</li>
+        <li>Android te pedirá permiso para instalar APKs no de Play Store la primera vez — aceptá.</li>
+        <li>De ahí en más Obtainium chequea actualizaciones solo y te notifica cuando hay versión nueva.</li>
+      </ol>
+      <p class="hint" style="text-align:left; margin-top:1rem;">Si el botón no abre Obtainium, copiá el link manualmente:</p>
+      <ul>
+        <li>Celular: <code>obtainium-phone.json</code></li>
+        <li>TV: <code>obtainium-tv.json</code></li>
+      </ul>
+      <p class="hint" style="text-align:left;">Pegá la URL completa en Obtainium → menú ⋮ → Import → From URL.</p>
+    </details>
+
+    <details>
+      <summary>¿Qué es esto exactamente?</summary>
+      <p style="margin-top:.75rem; color: var(--text-dim);">
+        Pipeline automatizado que cada día arma versiones de YouTube y YT Music
+        sin anuncios usando los patches públicos de
+        <a href="https://github.com/MorpheApp" target="_blank" rel="noopener">MorpheApp</a>
+        (sucesor de ReVanced/inotia00). Para TV usa
+        <a href="https://gitlab.com/energylove/originproject" target="_blank" rel="noopener">YouTube Origin</a>
+        (wrapper oficial con ad-block) y
+        <a href="https://github.com/yuliskov/SmartTube" target="_blank" rel="noopener">SmartTube</a>.
+        Código completo del pipeline:
+        <a href="https://github.com/alexyoj123-tech/yt-personal" target="_blank" rel="noopener">github.com/alexyoj123-tech/yt-personal</a>.
+      </p>
+    </details>
+  </main>
+
+  <footer>
+    <p><b>Uso personal y educativo.</b> No afiliado con Google ni YouTube.</p>
+    <p>Compartido con familia y amigos cercanos. No redistribuir comercialmente.</p>
+    <p>Las apps incluidas son obras de terceros (MorpheApp, energylove, yuliskov, microG team) bajo sus respectivas licencias.</p>
+    <p style="margin-top: 1rem;"><a href="https://github.com/alexyoj123-tech/yt-personal" target="_blank" rel="noopener">github.com/alexyoj123-tech/yt-personal</a></p>
+  </footer>
+
+  <div class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // Click handler: try to deeplink Obtainium first, fallback to copying URL.
+    const toast = document.querySelector('.toast');
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    document.querySelectorAll('button[data-import]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const url = btn.dataset.import;
+        const label = btn.dataset.label || 'Configuración';
+
+        // Obtainium aún no soporta deeplink universal de import-from-url.
+        // El patrón funcional: copiar URL → usuario pega en Obtainium "Import → URL".
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(() => {
+            showToast('URL copiada — pegá en Obtainium → ⋮ → Import → URL');
+          }).catch(() => {
+            window.prompt(`Copiá esta URL y pegala en Obtainium → ⋮ → Import → URL\n(${label})`, url);
+          });
+        } else {
+          window.prompt(`Copiá esta URL y pegala en Obtainium → ⋮ → Import → URL\n(${label})`, url);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "apps": [
+    {
+      "id": "origin.youtube.myapplication",
+      "url": "https://github.com/alexyoj123-tech/yt-personal",
+      "author": "alexyoj123",
+      "name": "YouTube Origin",
+      "preferredApkIndex": 0,
+      "additionalSettings": "{\"includePrereleases\":false,\"fallbackToOlderReleases\":true,\"filterReleaseTitlesByRegEx\":\"YouTube Origin\",\"filterReleaseNotesByRegEx\":\"\",\"verifyLatestTag\":false,\"dontSortReleasesList\":false,\"useLatestAssetDateAsReleaseDate\":false,\"trackOnly\":false,\"versionExtractionRegEx\":\"ytp-d-origin-([0-9.]+)\",\"matchGroupToUseV2\":\"1\",\"versionDetection\":true,\"releaseDateAsVersion\":false,\"useVersionCodeAsOSVersion\":false,\"apkFilterRegEx\":\"^youtube-origin-[0-9].*\\\\.apk$\",\"invertAPKFilter\":false,\"autoApkFilterByArch\":false,\"appName\":\"YouTube Origin\",\"appAuthor\":\"alexyoj123\",\"shizukuPretendToBeGooglePlay\":false,\"allowInsecure\":false,\"exemptFromBackgroundUpdates\":false,\"skipUpdateNotifications\":false,\"about\":\"YouTube TV oficial wrappeado con uBlock + SponsorBlock + ad-block. Para Google TV / Android TV / TV Boxes.\",\"refreshBeforeDownload\":false}",
+      "lastUpdateCheck": null,
+      "pinned": false,
+      "categories": ["YT Personal TV"],
+      "releaseDate": null,
+      "changeLog": "",
+      "overrideSource": null,
+      "allowIdChange": false
+    },
+    {
+      "id": "org.smarttube.stable",
+      "url": "https://github.com/alexyoj123-tech/yt-personal",
+      "author": "alexyoj123",
+      "name": "SmartTube",
+      "preferredApkIndex": 0,
+      "additionalSettings": "{\"includePrereleases\":false,\"fallbackToOlderReleases\":true,\"filterReleaseTitlesByRegEx\":\"Daily ReVanced Build\",\"filterReleaseNotesByRegEx\":\"\",\"verifyLatestTag\":false,\"dontSortReleasesList\":false,\"useLatestAssetDateAsReleaseDate\":false,\"trackOnly\":false,\"versionExtractionRegEx\":\"SmartTube:\\\\s*([0-9.a-z]+)\",\"matchGroupToUseV2\":\"1\",\"versionDetection\":true,\"releaseDateAsVersion\":false,\"useVersionCodeAsOSVersion\":false,\"apkFilterRegEx\":\"^smarttube-[0-9].*\\\\.apk$\",\"invertAPKFilter\":false,\"autoApkFilterByArch\":false,\"appName\":\"SmartTube\",\"appAuthor\":\"alexyoj123\",\"shizukuPretendToBeGooglePlay\":false,\"allowInsecure\":false,\"exemptFromBackgroundUpdates\":false,\"skipUpdateNotifications\":false,\"about\":\"SmartTube — cliente OSS de YouTube para Android TV con SponsorBlock y 4K. Backup de YouTube Origin.\",\"refreshBeforeDownload\":false}",
+      "lastUpdateCheck": null,
+      "pinned": false,
+      "categories": ["YT Personal TV"],
+      "releaseDate": null,
+      "changeLog": "",
+      "overrideSource": null,
+      "allowIdChange": false
+    }
+  ]
+}

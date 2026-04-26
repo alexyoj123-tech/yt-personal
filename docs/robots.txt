@@ -1,3 +1,5 @@
 User-agent: *
 Disallow: /tienda.html
 Disallow: /familia.html
+Disallow: /admin-ventas.html
+Disallow: /instalar.html

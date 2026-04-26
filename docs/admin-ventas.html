@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0E1A">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+  <meta name="googlebot" content="noindex, nofollow">
+  <title>Helios Media · Ventas</title>
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%230A0E1A'/%3E%3Ccircle cx='50' cy='50' r='18' fill='%23C9A961'/%3E%3C/svg%3E">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+  <style>
+    :root {
+      --bg-deep:   #0A0E1A;
+      --bg-mid:    #111827;
+      --bg-elev:   #1A2238;
+      --gold:      #C9A961;
+      --gold-soft: #B8954D;
+      --gold-glow: rgba(201, 169, 97, 0.18);
+      --accent:    #4F7CFF;
+      --text:      #F5F5F7;
+      --text-dim:  #94A3B8;
+      --text-mute: #64748B;
+      --border:    rgba(255, 255, 255, 0.08);
+      --border-hi: rgba(255, 255, 255, 0.14);
+      --glass:     rgba(255, 255, 255, 0.03);
+      --glass-hi:  rgba(255, 255, 255, 0.06);
+      --success:   #4ADE80;
+      --danger:    #E07478;
+      --warn:      #E8B349;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-deep);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(79, 124, 255, 0.10), transparent 70%),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(201, 169, 97, 0.06), transparent 70%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* gate */
+    .gate-block { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center; }
+    .gate-block svg { width: 56px; height: 56px; margin-bottom: 1.25rem; opacity: .5; }
+    .gate-block h1 { font-size: 1.45rem; font-weight: 600; margin-bottom: .5rem; }
+    .gate-block p  { color: var(--text-dim); font-size: .92rem; max-width: 420px; }
+
+    main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+    /* header */
+    .top {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-brand { display: flex; align-items: center; gap: .9rem; }
+    .top-logo {
+      width: 44px; height: 44px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: var(--bg-deep); font-size: 1.05rem;
+      box-shadow: 0 4px 14px var(--gold-glow);
+    }
+    .top-titles h1 { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; line-height: 1.15; }
+    .top-titles p  { color: var(--text-dim); font-size: .82rem; }
+    .top-month {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .85rem; color: var(--text-dim);
+    }
+    .top-month input {
+      background: var(--glass-hi); border: 1px solid var(--border);
+      color: var(--text); font-family: inherit; font-size: .85rem;
+      border-radius: 8px; padding: .4rem .6rem;
+      color-scheme: dark;
+    }
+
+    /* card base */
+    .card {
+      background: var(--glass);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+    .card-h { display: flex; align-items: center; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
+    .card-h h2 { font-size: 1rem; font-weight: 600; letter-spacing: -0.005em; }
+    .card-h .hint { font-size: .76rem; color: var(--text-mute); }
+
+    /* metrics */
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: .85rem; margin-bottom: 1.25rem; }
+    @media (max-width: 800px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+    .metric {
+      padding: 1rem 1.1rem;
+      background: var(--glass);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+    }
+    .metric-label { font-size: .72rem; color: var(--text-dim); letter-spacing: .12em; text-transform: uppercase; margin-bottom: .35rem; }
+    .metric-value { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.025em; line-height: 1; }
+    .metric-value.gold { color: var(--gold); }
+    .metric-sub { font-size: .76rem; color: var(--text-mute); margin-top: .35rem; }
+
+    /* chart */
+    .chart-wrap { width: 100%; height: 180px; position: relative; }
+    .chart-wrap svg { width: 100%; height: 100%; display: block; }
+    .chart-bar {
+      fill: var(--gold);
+      opacity: .85;
+      transition: opacity .15s ease;
+    }
+    .chart-bar:hover { opacity: 1; }
+    .chart-label { fill: var(--text-mute); font-size: 9px; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+    .chart-empty {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-mute); font-size: .85rem;
+      pointer-events: none;
+    }
+
+    /* form */
+    form .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .85rem;
+    }
+    @media (max-width: 700px) { form .grid { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: .35rem; }
+    .field.full { grid-column: 1 / -1; }
+    .field label {
+      font-size: .76rem; color: var(--text-dim);
+      font-weight: 500; letter-spacing: .04em; text-transform: uppercase;
+    }
+    .field input, .field select, .field textarea {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .65rem .85rem;
+      border-radius: 9px;
+      font-family: inherit; font-size: .92rem;
+      transition: border-color .15s ease;
+      color-scheme: dark;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: none; border-color: var(--gold);
+    }
+    .field textarea { resize: vertical; min-height: 70px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: .5rem;
+      padding: .8rem 1.1rem;
+      font-family: inherit; font-size: .9rem; font-weight: 600;
+      color: var(--bg-deep);
+      background: linear-gradient(180deg, #E8C977, var(--gold));
+      border: 0; border-radius: 10px;
+      cursor: pointer;
+      transition: filter .15s ease, transform .1s ease;
+    }
+    .btn:hover { filter: brightness(1.05); }
+    .btn:active { transform: scale(.99); }
+    .btn.btn-secondary {
+      background: var(--glass-hi);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn.btn-secondary:hover { background: rgba(255,255,255,.08); }
+    .btn.btn-danger { background: linear-gradient(180deg, #F08589, var(--danger)); color: #2d0b0d; }
+
+    .form-actions { display: flex; gap: .65rem; margin-top: 1rem; flex-wrap: wrap; }
+
+    /* table */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: .87rem; min-width: 720px; }
+    thead th {
+      text-align: left; font-weight: 600; color: var(--text-dim);
+      font-size: .72rem; letter-spacing: .08em; text-transform: uppercase;
+      padding: .55rem .65rem; border-bottom: 1px solid var(--border);
+    }
+    tbody td { padding: .7rem .65rem; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    tbody tr:hover { background: var(--glass-hi); }
+    tbody td.amount { color: var(--gold); font-weight: 600; }
+    tbody td.notes { color: var(--text-dim); font-size: .82rem; max-width: 220px; }
+    .empty {
+      padding: 2.5rem 1rem; text-align: center;
+      color: var(--text-mute); font-size: .9rem;
+    }
+    .row-del {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--danger); padding: .3rem .55rem;
+      border-radius: 7px; cursor: pointer;
+      font-size: .8rem;
+      transition: background .15s ease;
+    }
+    .row-del:hover { background: rgba(224, 116, 120, 0.1); }
+
+    .pill {
+      display: inline-block;
+      padding: .15rem .55rem;
+      font-size: .72rem; font-weight: 600;
+      border-radius: 999px;
+      letter-spacing: .04em;
+    }
+    .pill.A     { background: rgba(79, 124, 255, .14); color: #8AAEFF; }
+    .pill.B     { background: rgba(167, 139, 250, .14); color: #C0AAFC; }
+    .pill.Combo { background: rgba(201, 169, 97, .14); color: var(--gold); }
+    .pill.PayPal   { background: rgba(36, 132, 209, .12); color: #6FB8F2; }
+    .pill.Banrural { background: rgba(74, 222, 128, .10); color: #6FE6A1; }
+    .pill.Otro     { background: rgba(148, 163, 184, .12); color: var(--text-dim); }
+
+    /* backup */
+    .backup-row { display: flex; gap: .65rem; flex-wrap: wrap; }
+    .backup-warn {
+      margin-top: .85rem;
+      padding: .75rem .9rem;
+      background: rgba(232, 179, 73, .08);
+      border: 1px solid rgba(232, 179, 73, .25);
+      border-radius: 9px;
+      color: var(--warn);
+      font-size: .8rem; line-height: 1.5;
+    }
+
+    /* toast */
+    .toast {
+      position: fixed; left: 50%; bottom: 1.5rem;
+      transform: translateX(-50%) translateY(2rem);
+      background: var(--gold); color: var(--bg-deep);
+      padding: .65rem 1.1rem; border-radius: 999px;
+      font-size: .88rem; font-weight: 600;
+      opacity: 0; pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+      box-shadow: 0 8px 24px rgba(201,169,97,.3);
+      z-index: 200;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { background: var(--danger); color: #2d0b0d; box-shadow: 0 8px 24px rgba(224, 116, 120, .3); }
+  </style>
+</head>
+<body>
+  <div id="gate-fail" hidden>
+    <div class="gate-block">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2"/>
+        <path d="M7 11V7a5 5 0 0110 0v4"/>
+      </svg>
+      <h1>Acceso restringido</h1>
+      <p>Página interna del operador. Doble token requerido.</p>
+    </div>
+  </div>
+
+  <div id="app" hidden>
+    <main>
+      <header class="top">
+        <div class="top-brand">
+          <div class="top-logo">H</div>
+          <div class="top-titles">
+            <h1>Helios Media · Ventas</h1>
+            <p>Registro privado del operador</p>
+          </div>
+        </div>
+        <div class="top-month">
+          <label for="month-filter">Mes:</label>
+          <input type="month" id="month-filter">
+        </div>
+      </header>
+
+      <!-- Métricas -->
+      <section class="metrics" aria-label="Métricas del mes">
+        <div class="metric">
+          <div class="metric-label">Ventas del mes</div>
+          <div class="metric-value" id="m-count">0</div>
+          <div class="metric-sub" id="m-count-sub">acceso registrado</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Ingreso del mes</div>
+          <div class="metric-value gold" id="m-revenue">Q0</div>
+          <div class="metric-sub" id="m-revenue-sub">total bruto</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Plan más vendido</div>
+          <div class="metric-value" id="m-top-plan">—</div>
+          <div class="metric-sub" id="m-top-plan-sub">de 0 ventas</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Top método pago</div>
+          <div class="metric-value" id="m-top-method">—</div>
+          <div class="metric-sub" id="m-top-method-sub">de 0 ventas</div>
+        </div>
+      </section>
+
+      <!-- Chart -->
+      <section class="card">
+        <div class="card-h">
+          <h2>Ventas por día</h2>
+          <span class="hint" id="chart-hint">—</span>
+        </div>
+        <div class="chart-wrap">
+          <svg id="chart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+          <div class="chart-empty" id="chart-empty" hidden>Sin ventas registradas en este mes</div>
+        </div>
+      </section>
+
+      <!-- Form -->
+      <section class="card">
+        <div class="card-h">
+          <h2>Nueva venta</h2>
+        </div>
+        <form id="sale-form" autocomplete="off">
+          <div class="grid">
+            <div class="field">
+              <label for="f-fecha">Fecha</label>
+              <input type="date" id="f-fecha" name="fecha" required>
+            </div>
+            <div class="field">
+              <label for="f-plan">Plan</label>
+              <select id="f-plan" name="plan" required>
+                <option value="A">Plan A — Streaming (Q50)</option>
+                <option value="B">Plan B — Audio (Q50)</option>
+                <option value="Combo">Plan Combo — Streaming + Audio (Q90)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-monto">Monto (Q)</label>
+              <input type="number" id="f-monto" name="monto" min="0" step="0.01" required>
+            </div>
+            <div class="field">
+              <label for="f-metodo">Método de pago</label>
+              <select id="f-metodo" name="metodo" required>
+                <option value="PayPal">PayPal</option>
+                <option value="Banrural">Banrural</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="f-cliente">Cliente (nombre o WhatsApp)</label>
+              <input type="text" id="f-cliente" name="cliente" required maxlength="100" placeholder="ej: Juan +50255555555">
+            </div>
+            <div class="field full">
+              <label for="f-notas">Notas (opcional)</label>
+              <textarea id="f-notas" name="notas" maxlength="500" placeholder="comprobante, observaciones, etc."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn">Guardar venta</button>
+            <button type="reset" class="btn btn-secondary">Limpiar</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Table -->
+      <section class="card">
+        <div class="card-h">
+          <h2>Histórico</h2>
+          <span class="hint" id="hist-count">0 ventas</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Plan</th>
+                <th>Monto</th>
+                <th>Método</th>
+                <th>Cliente</th>
+                <th>Notas</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="sales-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="empty-msg" hidden>Sin ventas en el rango. Cambiá el filtro de mes o registrá una venta nueva.</div>
+      </section>
+
+      <!-- Backup -->
+      <section class="card">
+        <div class="card-h">
+          <h2>Backup &amp; restauración</h2>
+        </div>
+        <div class="backup-row">
+          <button class="btn" id="export-csv">📊 Exportar CSV</button>
+          <button class="btn btn-secondary" id="export-json">💾 Exportar JSON</button>
+          <button class="btn btn-secondary" id="import-trigger">📥 Importar JSON</button>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+          <button class="btn btn-danger" id="wipe">🗑 Borrar TODO</button>
+        </div>
+        <div class="backup-warn">
+          ⚠️ Las ventas viven en <code>localStorage</code> de este navegador. Si limpiás caché o cambiás de dispositivo, se pierden. Exportá JSON cada semana como backup.
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script>
+    (function () {
+      // ────────── Doble gate ──────────
+      const KEY       = "H3liosM3dia2026";
+      const ADMIN_KEY = "Sol4Hel1os2026";
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("k") !== KEY || params.get("admin") !== ADMIN_KEY) {
+        document.getElementById("gate-fail").hidden = false;
+        return;
+      }
+      document.getElementById("app").hidden = false;
+
+      // ────────── Storage helpers ──────────
+      const LS_KEY = "helios_ventas_v1";
+      const PLAN_PRICE = { "A": 50, "B": 50, "Combo": 90 };
+
+      function loadAll() {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          if (!raw) return [];
+          const obj = JSON.parse(raw);
+          if (Array.isArray(obj)) return obj;
+          if (obj && Array.isArray(obj.ventas)) return obj.ventas;
+          return [];
+        } catch (e) {
+          console.error("loadAll error", e);
+          return [];
+        }
+      }
+      function saveAll(arr) {
+        try {
+          localStorage.setItem(LS_KEY, JSON.stringify({ version: 1, ventas: arr }));
+          return true;
+        } catch (e) {
+          showToast("Error guardando: " + e.message, true);
+          return false;
+        }
+      }
+
+      // ────────── Toast ──────────
+      const toastEl = document.querySelector(".toast");
+      function showToast(msg, isError) {
+        toastEl.textContent = msg;
+        toastEl.classList.toggle("error", !!isError);
+        toastEl.classList.add("show");
+        clearTimeout(toastEl._t);
+        toastEl._t = setTimeout(() => toastEl.classList.remove("show"), 2500);
+      }
+
+      // ────────── Helpers fechas ──────────
+      function pad2(n) { return String(n).padStart(2, "0"); }
+      function todayIso() {
+        const d = new Date();
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+      }
+      function monthIso(d) {
+        return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+      }
+      function ymOf(iso) { return (iso || "").slice(0, 7); }
+      function daysInMonth(yyyymm) {
+        const [y, m] = yyyymm.split("-").map(Number);
+        return new Date(y, m, 0).getDate();
+      }
+      function escapeHtml(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+      }
+      function uuid() {
+        if (crypto && crypto.randomUUID) return crypto.randomUUID();
+        return "id-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 9);
+      }
+
+      // ────────── DOM refs ──────────
+      const monthInput = document.getElementById("month-filter");
+      const tbody      = document.getElementById("sales-tbody");
+      const emptyMsg   = document.getElementById("empty-msg");
+      const histCount  = document.getElementById("hist-count");
+      const form       = document.getElementById("sale-form");
+      const fFecha     = document.getElementById("f-fecha");
+      const fPlan      = document.getElementById("f-plan");
+      const fMonto     = document.getElementById("f-monto");
+
+      // Defaults
+      fFecha.value = todayIso();
+      fMonto.value = PLAN_PRICE[fPlan.value];
+      monthInput.value = monthIso(new Date());
+
+      fPlan.addEventListener("change", () => {
+        // Solo auto-rellenar si el monto coincide con un default conocido
+        // (no pisar valor custom del operador).
+        const cur = parseFloat(fMonto.value);
+        const all = Object.values(PLAN_PRICE);
+        if (!cur || all.includes(cur)) fMonto.value = PLAN_PRICE[fPlan.value];
+      });
+
+      // ────────── Render ──────────
+      function render() {
+        const ventas = loadAll();
+        const ym = monthInput.value;
+        const filtered = ventas.filter(v => ymOf(v.fecha) === ym);
+
+        renderMetrics(filtered);
+        renderChart(filtered, ym);
+        renderTable(filtered);
+        histCount.textContent = `${filtered.length} venta${filtered.length === 1 ? "" : "s"} en ${ym}`;
+      }
+
+      function renderMetrics(list) {
+        const count = list.length;
+        const revenue = list.reduce((s, v) => s + (Number(v.monto) || 0), 0);
+
+        const planTally = {};
+        list.forEach(v => { planTally[v.plan] = (planTally[v.plan] || 0) + 1; });
+        const topPlanEntry = Object.entries(planTally).sort((a,b) => b[1]-a[1])[0];
+
+        const methodTally = {};
+        list.forEach(v => { methodTally[v.metodo] = (methodTally[v.metodo] || 0) + 1; });
+        const topMethodEntry = Object.entries(methodTally).sort((a,b) => b[1]-a[1])[0];
+
+        document.getElementById("m-count").textContent = count;
+        document.getElementById("m-count-sub").textContent =
+          count === 1 ? "acceso registrado" : "accesos registrados";
+        document.getElementById("m-revenue").textContent = `Q${revenue.toFixed(0)}`;
+        document.getElementById("m-revenue-sub").textContent =
+          count > 0 ? `${(revenue/count).toFixed(0)} Q/venta promedio` : "total bruto";
+
+        if (topPlanEntry) {
+          document.getElementById("m-top-plan").textContent = topPlanEntry[0];
+          document.getElementById("m-top-plan-sub").textContent = `${topPlanEntry[1]} de ${count} ventas`;
+        } else {
+          document.getElementById("m-top-plan").textContent = "—";
+          document.getElementById("m-top-plan-sub").textContent = "de 0 ventas";
+        }
+        if (topMethodEntry) {
+          document.getElementById("m-top-method").textContent = topMethodEntry[0];
+          document.getElementById("m-top-method-sub").textContent = `${topMethodEntry[1]} de ${count} ventas`;
+        } else {
+          document.getElementById("m-top-method").textContent = "—";
+          document.getElementById("m-top-method-sub").textContent = "de 0 ventas";
+        }
+      }
+
+      function renderChart(list, ym) {
+        const svg = document.getElementById("chart");
+        const empty = document.getElementById("chart-empty");
+        const hint = document.getElementById("chart-hint");
+
+        if (!list.length) {
+          svg.innerHTML = "";
+          empty.hidden = false;
+          hint.textContent = "—";
+          return;
+        }
+        empty.hidden = true;
+
+        const dim = daysInMonth(ym);
+        const buckets = Array(dim + 1).fill(0); // 1-indexed
+        list.forEach(v => {
+          const day = parseInt(v.fecha.slice(8, 10), 10);
+          if (day >= 1 && day <= dim) buckets[day] += Number(v.monto) || 0;
+        });
+        const max = Math.max(...buckets, 1);
+        const VBW = 600, VBH = 180, padTop = 10, padBot = 22, padX = 4;
+        const bandW = (VBW - padX * 2) / dim;
+        const barW = Math.max(2, bandW * 0.78);
+
+        let parts = "";
+        for (let d = 1; d <= dim; d++) {
+          const v = buckets[d];
+          const h = ((v / max) * (VBH - padTop - padBot));
+          const x = padX + (d - 1) * bandW + (bandW - barW) / 2;
+          const y = VBH - padBot - h;
+          if (v > 0) {
+            parts += `<rect class="chart-bar" x="${x.toFixed(2)}" y="${y.toFixed(2)}" width="${barW.toFixed(2)}" height="${h.toFixed(2)}" rx="1.5">
+              <title>Día ${d}: Q${v.toFixed(0)}</title>
+            </rect>`;
+          }
+          if (d === 1 || d === dim || d % 5 === 0) {
+            parts += `<text class="chart-label" x="${(x + barW/2).toFixed(2)}" y="${VBH - 6}" text-anchor="middle">${d}</text>`;
+          }
+        }
+        svg.innerHTML = parts;
+        const total = buckets.reduce((s, x) => s + x, 0);
+        hint.textContent = `Q${total.toFixed(0)} en ${list.length} ventas · pico Q${max.toFixed(0)}`;
+      }
+
+      function renderTable(list) {
+        const sorted = [...list].sort((a, b) => (b.fecha || "").localeCompare(a.fecha || "") || (b.id||"").localeCompare(a.id||""));
+        if (!sorted.length) {
+          tbody.innerHTML = "";
+          emptyMsg.hidden = false;
+          return;
+        }
+        emptyMsg.hidden = true;
+        tbody.innerHTML = sorted.map(v => `
+          <tr data-id="${escapeHtml(v.id)}">
+            <td>${escapeHtml(v.fecha)}</td>
+            <td><span class="pill ${escapeHtml(v.plan)}">${escapeHtml(v.plan)}</span></td>
+            <td class="amount">Q${escapeHtml((Number(v.monto)||0).toFixed(0))}</td>
+            <td><span class="pill ${escapeHtml(v.metodo)}">${escapeHtml(v.metodo)}</span></td>
+            <td>${escapeHtml(v.cliente)}</td>
+            <td class="notes">${escapeHtml(v.notas || "")}</td>
+            <td><button class="row-del" data-del="${escapeHtml(v.id)}">Eliminar</button></td>
+          </tr>
+        `).join("");
+        tbody.querySelectorAll("[data-del]").forEach(b => {
+          b.addEventListener("click", () => {
+            const id = b.dataset.del;
+            const target = list.find(x => x.id === id);
+            if (!target) return;
+            if (!confirm(`¿Eliminar venta de ${target.cliente} (${target.fecha}, Q${target.monto})?`)) return;
+            const all = loadAll().filter(x => x.id !== id);
+            if (saveAll(all)) {
+              showToast("Venta eliminada");
+              render();
+            }
+          });
+        });
+      }
+
+      // ────────── Eventos ──────────
+      monthInput.addEventListener("change", render);
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const venta = {
+          id:      uuid(),
+          fecha:   fFecha.value,
+          plan:    fPlan.value,
+          monto:   parseFloat(fMonto.value),
+          metodo:  document.getElementById("f-metodo").value,
+          cliente: document.getElementById("f-cliente").value.trim(),
+          notas:   document.getElementById("f-notas").value.trim(),
+          ts:      Date.now()
+        };
+        if (!venta.fecha || !venta.cliente || !(venta.monto >= 0)) {
+          showToast("Datos inválidos", true);
+          return;
+        }
+        const all = loadAll();
+        all.push(venta);
+        if (saveAll(all)) {
+          showToast(`Venta guardada — ${venta.plan} · Q${venta.monto}`);
+          form.reset();
+          fFecha.value = todayIso();
+          fMonto.value = PLAN_PRICE[fPlan.value];
+          // Si la venta cae fuera del mes filtrado, saltar al mes correcto.
+          const venyM = ymOf(venta.fecha);
+          if (venyM !== monthInput.value) monthInput.value = venyM;
+          render();
+        }
+      });
+
+      // ────────── Backup / restore ──────────
+      function downloadBlob(content, filename, mime) {
+        const blob = new Blob([content], { type: mime });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click();
+        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+      }
+
+      document.getElementById("export-csv").addEventListener("click", () => {
+        const all = loadAll();
+        if (!all.length) { showToast("Nada para exportar", true); return; }
+        const csvEsc = (s) => {
+          const v = String(s == null ? "" : s);
+          return /[",\n;]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v;
+        };
+        const head = ["fecha","plan","monto","metodo","cliente","notas"];
+        const rows = [head.join(",")];
+        [...all].sort((a,b) => (a.fecha||"").localeCompare(b.fecha||""))
+          .forEach(v => rows.push(head.map(h => csvEsc(v[h])).join(",")));
+        downloadBlob("﻿" + rows.join("\n"), `ventas-${todayIso()}.csv`, "text/csv;charset=utf-8");
+        showToast("CSV exportado");
+      });
+
+      document.getElementById("export-json").addEventListener("click", () => {
+        const all = loadAll();
+        const payload = JSON.stringify({ version: 1, exported_at: new Date().toISOString(), ventas: all }, null, 2);
+        downloadBlob(payload, `helios-ventas-backup-${todayIso()}.json`, "application/json");
+        showToast(`Backup exportado (${all.length} ventas)`);
+      });
+
+      const importFile = document.getElementById("import-file");
+      document.getElementById("import-trigger").addEventListener("click", () => importFile.click());
+      importFile.addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const obj = JSON.parse(reader.result);
+            const incoming = Array.isArray(obj) ? obj : (obj && Array.isArray(obj.ventas) ? obj.ventas : null);
+            if (!incoming) throw new Error("formato no reconocido");
+            const current = loadAll();
+            const seenIds = new Set(current.map(x => x.id));
+            let added = 0;
+            incoming.forEach(v => {
+              if (!v || !v.fecha) return;
+              if (!v.id) v.id = uuid();
+              if (seenIds.has(v.id)) return;
+              current.push(v);
+              seenIds.add(v.id);
+              added++;
+            });
+            if (saveAll(current)) {
+              showToast(`Importadas ${added} ventas (${incoming.length - added} duplicadas omitidas)`);
+              render();
+            }
+          } catch (err) {
+            showToast("Import inválido: " + err.message, true);
+          } finally {
+            importFile.value = "";
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById("wipe").addEventListener("click", () => {
+        const all = loadAll();
+        if (!all.length) { showToast("Ya está vacío"); return; }
+        if (!confirm(`¿Borrar TODAS las ${all.length} ventas? Esto NO se puede deshacer.\n\nExportá JSON antes si dudás.`)) return;
+        if (!confirm(`Confirmación final: vas a perder ${all.length} ventas registradas. ¿Seguro?`)) return;
+        saveAll([]);
+        showToast("Histórico borrado");
+        render();
+      });
+
+      // initial render
+      render();
+    })();
+  </script>
+</body>
+</html>

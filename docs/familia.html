@@ -171,9 +171,6 @@
   <div class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    const REPO = "alexyoj123-tech/yt-personal";
-    const TAG_PREFIX = "ytp-f-family-";
-
     const toast = document.querySelector(".toast");
     function showToast(msg) {
       toast.textContent = msg;
@@ -182,22 +179,10 @@
       toast._t = setTimeout(() => toast.classList.remove("show"), 2500);
     }
 
-    async function fetchLatestRelease() {
-      const res = await fetch(`https://api.github.com/repos/${REPO}/releases?per_page=30`, {
-        headers: { "Accept": "application/vnd.github+json" }
-      });
-      if (!res.ok) throw new Error(`API returned ${res.status}`);
-      const all = await res.json();
-      const family = all.filter(r => (r.tag_name || "").startsWith(TAG_PREFIX));
-      if (!family.length) return null;
-      // Sorted by published_at desc by API default; take first.
-      return family[0];
-    }
-
-    async function fetchManifest(release) {
-      const manifestAsset = release.assets.find(a => a.name === "manifest.json");
-      if (!manifestAsset) throw new Error("manifest.json no encontrado en el release");
-      const res = await fetch(manifestAsset.browser_download_url);
+    async function loadManifest() {
+      // Same-origin fetch — el workflow committee este archivo a docs/
+      // en cada run para evitar CORS de release-assets.githubusercontent.com.
+      const res = await fetch("./family-manifest.json", { cache: "no-store" });
       if (!res.ok) throw new Error(`manifest fetch failed: ${res.status}`);
       return await res.json();
     }
@@ -216,7 +201,7 @@
       `;
     }
 
-    function renderRelease(release, manifest) {
+    function renderRelease(manifest) {
       const today = new Date();
       const expires = new Date(manifest.expires_date);
       const daysLeft = daysBetween(today, expires);
@@ -272,17 +257,11 @@
 
     (async () => {
       try {
-        const release = await fetchLatestRelease();
-        if (!release) {
-          document.getElementById("content").innerHTML =
-            `<div class="expired-msg">No hay builds disponibles.<br><br>Tocá <b>Regenerar</b> abajo para crear el primer release.</div>`;
-          return;
-        }
-        const manifest = await fetchManifest(release);
-        renderRelease(release, manifest);
+        const manifest = await loadManifest();
+        renderRelease(manifest);
       } catch (e) {
         document.getElementById("content").innerHTML =
-          `<div class="expired-msg">Error cargando build: ${e.message}</div>`;
+          `<div class="expired-msg">Error cargando build: ${e.message}<br><br>Tocá <b>Regenerar</b> abajo para crear/actualizar el manifest.</div>`;
       }
     })();
   </script>

@@ -1,0 +1,85 @@
+name: project-f-family · daily build links familia
+# Toma APKs YT + YT Music ya parcheados del último release ytp-a-*,
+# los renombra con nombres random y publica como ytp-f-family-YYYY-MM-DD.
+# Cleanup automático: borra releases ytp-f-family-* con más de 90 días.
+# NO modifica los APKs (re-publica intactos). NO toca otros proyectos.
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # diario 05:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-f-family
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Generate familia links
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      REPO: ${{ github.repository }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Compute today's tag
+        id: tag
+        run: echo "TAG=ytp-f-family-$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if today's tag already exists (cron idempotente)
+        id: check
+        run: |
+          if gh release view "${{ steps.tag.outputs.TAG }}" --repo "$REPO" >/dev/null 2>&1; then
+            echo "SKIP=1" >> "$GITHUB_OUTPUT"
+            echo "Tag ${{ steps.tag.outputs.TAG }} ya existe — skipping build."
+          else
+            echo "SKIP=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Copy APKs from latest ytp-a-*
+        if: steps.check.outputs.SKIP != '1'
+        env:
+          OUT_DIR: ${{ runner.temp }}/source-apks
+        run: bash project-f-family/scripts/copy-from-project-a.sh
+
+      - name: Generate random names + manifest.json
+        if: steps.check.outputs.SKIP != '1'
+        env:
+          IN_DIR:  ${{ runner.temp }}/source-apks
+          OUT_DIR: ${{ runner.temp }}/release-assets
+          TAG:     ${{ steps.tag.outputs.TAG }}
+        run: bash project-f-family/scripts/rename-random.sh
+
+      - name: Create release with random-named assets
+        if: steps.check.outputs.SKIP != '1'
+        env:
+          ASSETS_DIR: ${{ runner.temp }}/release-assets
+          TAG:        ${{ steps.tag.outputs.TAG }}
+        run: |
+          # El body del release intencionalmente NO menciona "YouTube"
+          # ni "Morphe" — solo metadatos neutros + link a la página
+          # privada de control que solo el dueño conoce.
+          BUILD_DATE=$(date -u +%Y-%m-%d)
+          EXPIRES=$(date -u -d "+90 days" +%Y-%m-%d)
+          NOTES_FILE=$(mktemp)
+          cat > "$NOTES_FILE" <<EOF
+          Build: $BUILD_DATE
+          Expires: $EXPIRES (auto-cleanup por workflow daily)
+          Manifest: see manifest.json adjunto
+          EOF
+          gh release create "$TAG" --repo "$REPO" \
+            --title "Build $BUILD_DATE" \
+            --notes-file "$NOTES_FILE" \
+            "$ASSETS_DIR"/*.apk "$ASSETS_DIR"/manifest.json
+
+      - name: Cleanup releases ytp-f-family-* > 90 días
+        if: steps.check.outputs.SKIP != '1'
+        env:
+          MAX_DAYS: 90
+        run: bash project-f-family/scripts/cleanup-old-releases.sh

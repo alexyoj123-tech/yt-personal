@@ -241,9 +241,81 @@ Usage: revanced-cli list-patches [--descriptions] [--index] [--options]
 
 ---
 
+### <a id="bug-8"></a>Bug #8 — revanced-cli v6 incompat binaria con patches inotia00 v5.x (`MutableMethod`)
+
+**Run afectado:** #6 · **Resuelto en:** [`7aabc3e`](https://github.com/alexyoj123-tech/yt-personal/commit/7aabc3e) · **Archivos tocados:** `.github/actions/revanced-build/action.yml`, `project-a/scripts/apply-patches.sh`
+
+**Síntoma (literal del log):**
+```
+SEVERE: Failed to load patches from .../revanced-patches.rvp:
+java.lang.NoClassDefFoundError: app/revanced/patcher/util/proxy/mutableTypes/MutableMethod
+  at app.revanced.patcher.patch.PatchKt.getPatches$getPatchMethods(Patch.kt:293)
+  ...
+INFO: Decoding manifest         ← cli sigue como si nada
+INFO: Compiling patched dex
+INFO: Saved to youtube-patched.apk    ← exit 0, pero APK SIN parches aplicados
+[OK] YouTube parcheado: 178M
+```
+
+**Causa raíz:** revanced-cli v6.0.0 actualizó internamente `revanced-patcher` a v2+ que **removió la clase `MutableMethod`** que TODOS los patches v5.x (incluido inotia00 v5.14.1) referencian. El cli loguea `SEVERE: Failed to load patches`, descarta el bundle entero (0 patches cargados), pero **continúa el flujo como si todo estuviera bien**: decompila, recompila el APK original, lo firma, y sale con exit 0. APK final = original sin modificar (verificable con `aapt2 dump badging`: package sigue siendo `com.google.android.youtube`, no `app.rvx.android.youtube`).
+
+Run #7 fue una "falsa victoria" — released APKs que parecían exitosos pero NO tenían ningún patch aplicado.
+
+**Fix:** pinear cli a v5.0.1 (la última que carga `.rvp` legacy con la API v1 que usa MutableMethod).
+```diff
+  revanced_cli_tag:
+-   default: 'latest'
++   default: 'v5.0.1'
+```
+
+Y añadir verificación defensiva post-patch en `apply-patches.sh` para que NUNCA volvamos a publicar un APK no-parcheado:
+```bash
+# Verificar que el package name efectivamente cambió tras el patch
+EXPECTED_YT_PACKAGE="app.rvx.android.youtube"
+ACTUAL=$(aapt2 dump badging "$out_apk" | awk -F"'" '/^package/ {print $2}')
+if [ "$ACTUAL" != "$EXPECTED_YT_PACKAGE" ]; then
+  die "Patches NO se aplicaron — package=$ACTUAL esperado=$EXPECTED_YT_PACKAGE"
+fi
+```
+
+**Lección:** **NUNCA confiar solo en exit code 0 de un CLI** que hace pipeline complejo. El cli puede no fallar pero entregar resultado inválido (silent fail). Verificar el output esperado con tooling externo (`aapt2 dump badging` para APKs). Esta lección originó el patrón de verificación defensiva post-cada-step que ahora todos los scripts del repo aplican.
+
+---
+
+### <a id="bug-9"></a>Bug #9 — cli v5.0.1 rechaza sintaxis `-O "PatchName:key=value"` de v6
+
+**Run afectado:** rebuild post-#8 · **Resuelto en:** [`d88c815`](https://github.com/alexyoj123-tech/yt-personal/commit/d88c815) · **Archivos tocados:** `project-a/scripts/apply-patches.sh`
+
+**Síntoma (literal):**
+```
+Unknown option: -O "Custom branding icon for YouTube:appIcon=youtube"
+Usage: revanced-cli patch [options] <apk>
+##[error]Process completed with exit code 2.
+```
+
+**Causa raíz:** cli v6 introdujo la sintaxis combinada `-O "PatchName:key=value"` (especificar patch + opción en un solo flag). cli v5.0.1 NO la soporta — usa el modelo viejo de `-e PatchName` para enable + `-O key=value` aplicado al último patch enabled. Tras pinear a v5 (Bug #8), las opciones tipo v6 que escribí en `apply-patches.sh` quedaron rechazadas como flags inválidos.
+
+**Fix:** reescribir invocación de patch al modelo v5:
+```diff
+- java -jar cli.jar patch \
+-   -O "Custom branding icon for YouTube:appIcon=youtube" \
+-   -O "Custom branding name for YouTube:appName=YouTube" \
+-   ...
++ java -jar cli.jar patch \
++   -e "Custom branding icon for YouTube" -O "appIcon=youtube" \
++   -e "Custom branding name for YouTube" -O "appName=YouTube" \
++   ...
+```
+
+Cada `-O key=value` se asocia al `-e PatchName` que lo precede inmediatamente. El orden importa.
+
+**Lección:** APIs de CLI cambian entre majors igual que APIs de librería. La sintaxis `-O "Patch:key=val"` parecía "obvia y mejor", pero v5 simplemente no la implementa. Cuando se hace pin de versión por compat (Bug #8), revisar que TODAS las invocaciones del CLI usen la sintaxis válida para esa versión, no la moderna.
+
+---
+
 ## Patrones que vimos repetidos
 
-Metadata de los 7 bugs, para referencia:
+Metadata de los 12 bugs, para referencia:
 
 | # | Clase | Pattern |
 |---|-------|---------|
@@ -255,6 +327,11 @@ Metadata de los 7 bugs, para referencia:
 | 6 | Bash | stdout = retorno; stderr = logging (convención no opcional) |
 | 7 | Integration | Major version bump añade args requeridos |
 | 7b | Integration | Major version bump remueve features |
+| 8 | Integration | CLI exit 0 con resultado inválido (silent fail) — verificar output con tooling externo |
+| 9 | Integration | Sintaxis CLI cambia entre majors — pinear versión y revisar TODAS las invocaciones |
+| 10 | Upstream | Maintainer abandona + server-side block del producto = doble crisis simultánea |
+| 11 | Config | Composite action YAML defaults ganan sobre bash `${VAR:-default}` |
+| 12 | Heuristic | Selección automática naive ("primer match") rompe cuando hay variantes nuevas |
 
 **Observación estructural:** 5 de 7 bugs fueron de **integración con upstream**. Mitigaciones aplicadas:
 - Parametrización por env de repos + regexes (permite override sin código).
@@ -333,6 +410,46 @@ revanced_gmscore_regex: default: 'microg-[0-9.]+\.apk$'
 **Lección (regla del repo):** cuando un composite action declara un `input.default` Y el bash script que lo consume usa `${VAR:-fallback}`, **el default del YAML SIEMPRE gana** (porque el YAML setea el env con un valor no-vacío antes de que el bash lo evalúe). Dos fuentes de verdad = desync garantizada.
 
 Política adoptada: **defaults EN UN SOLO LUGAR (action.yml)**. El bash usa `${VAR:?required}` o verifica vacío explícitamente con `die` — nunca `${VAR:-...}` salvo para valores genuinamente opcionales (ej. `VERSION:-latest`).
+
+---
+
+### <a id="bug-12"></a>Bug #12 — Scraper APKMirror eligió variant arm-v7a por orden alfabético
+
+**Run afectado:** v7 rebuild #2 (post-Bug #11) · **Resuelto en:** [`6f88d05`](https://github.com/alexyoj123-tech/yt-personal/commit/6f88d05) · **Archivo tocado:** `project-a/scripts/apkmirror_download.py`
+
+**Síntoma (literal del log CI):**
+```
+[apkmirror] inspecting variant: youtube-music-8-47-56-android-apk-download
+[apkmirror]   title: 'YouTube Music 8.47.56 (arm-v7a) (120-640dpi)'
+[apkmirror]     → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: youtube-music-8-47-56-2-android-apk-download
+[apkmirror]   title: 'YouTube Music 8.47.56 (arm-v7a) (nodpi)'
+[apkmirror] chose variant: 'YouTube Music 8.47.56 (arm-v7a) (nodpi)'    ← arm-v7a, NO arm64-v8a
+[apkmirror] download failed: HTTP 403 Forbidden    ← APKMirror rechaza CDN para esta arch
+```
+
+**Causa raíz:** el scraper `apkmirror_download.py` recorría las variants disponibles **en orden alfabético** y elegía la primera con título `(nodpi)` que no fuera bundle. Para YT Music 8.47.56, APKMirror lista 4 variants:
+1. `arm-v7a (120-640dpi)` ← bundle, skipped OK
+2. `arm-v7a (nodpi)` ← elegido (PRIMERO con nodpi, pero arch equivocada)
+3. `arm64-v8a (120-640dpi)` ← bundle
+4. `arm64-v8a (nodpi)` ← QUE QUERÍAMOS
+
+Para YT 19.x sólo había 1 variant universal nodpi → la heurística simple funcionaba. Para versiones 20.x+ con multi-arch, falla silenciosamente. El HTTP 403 del CDN de APKMirror para variant arm-v7a fue casualidad — el problema raíz era la selección de arch.
+
+**Fix:** sistema de prioridad explícito en lugar de "primer match":
+```python
+priority = [
+    ("arm64-v8a", "nodpi", "P1: arm64+nodpi ideal"),
+    ("arm64-v8a", None, "P2: arm64 cualquier dpi"),
+    (None, "nodpi", "P3: universal nodpi"),
+    (None, None, "P4: cualquier non-bundle"),
+]
+# Recorre TODAS las variants, selecciona la que matchea la prioridad más alta
+```
+
+Además: rechazo explícito de variants `arm-v7a` (arch incompat con A04e arm64-v8a) y density-range bundles `(X-Ydpi)`.
+
+**Lección:** "primer match" funciona accidentalmente cuando solo hay 1-2 opciones. Cuando el upstream añade variantes (multi-arch, multi-DPI), la heurística simple elige mal sin ruido. **Cuando hay enumeración de opciones, siempre orden por prioridad explícita** — no confiar en orden alfabético/temporal/lo-que-sea del proveedor.
 
 ---
 

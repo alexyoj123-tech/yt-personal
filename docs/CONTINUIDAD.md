@@ -270,7 +270,97 @@ Para compartir con familia/amigos sin fricción, el repo se hizo
 - No es publicación masiva: link no se promociona, solo se comparte
   uno-a-uno con familia.
 
-## 9. Reconocimientos
+## 10. Estado final 2026-04-27
+
+Snapshot del proyecto al cierre de la fase de construcción inicial.
+
+### Lo que está vivo
+
+| Componente | Estado | Trigger | Fuente |
+|-----------|--------|---------|--------|
+| Pipeline Morphe (project A) | ✅ activo | cron diario 06:00 UTC + dispatch | `MorpheApp/morphe-{patches,cli}` + `MicroG-RE` |
+| Pipeline YouTube Origin (project D) | ✅ activo | cron domingo 04:00 UTC + dispatch | `gitlab.com/energylove/originproject` |
+| Health monitor (anti-frágil) | ✅ activo | cron lunes 06:00 UTC | audita 5 upstreams |
+| GitHub Pages landing | ✅ live | auto-deploy en push a `docs/` | `https://alexyoj123-tech.github.io/yt-personal/` |
+| Releases publicados | 4 streams | manual + cron | `ytp-a-*`, `ytp-d-origin-*` |
+| Repo visibility | público desde 2026-04-26 | — | github.com/alexyoj123-tech/yt-personal |
+
+### Apps que el usuario y su familia tienen instaladas (target final)
+
+**📱 Celular Android 8+:**
+- YouTube (Morphe) — `app.morphe.android.youtube` v20.47.62
+- YouTube Music (Morphe) — `app.morphe.android.apps.youtube.music` v8.47.56
+- MicroG Services — `app.revanced.android.gms` v6.1.3
+
+**📺 Android TV / TV Box:**
+- YouTube Origin — `origin.youtube.myapplication` v1.4.6 (firma original de energylove para preservar Widevine)
+- SmartTube (backup OSS) — `org.smarttube.stable` v31.57s
+
+### Métricas de la construcción
+
+- ~50 commits en `main` desde el bootstrap (2026-04-19) hasta el cierre.
+- 12 bugs documentados con fix + SHA en `docs/TROUBLESHOOTING.md`.
+- 5 workflows GitHub Actions activos (3 que producen artefactos, 1 health, 1 deploy Pages).
+- 13 documentos en `docs/` totalizando ~1500 líneas markdown.
+- 1 keystore (RSA 4096, 100 años validez) firmando los APKs producidos por el pipeline.
+- 1 Project D pipeline para Origin (no se firma, preserva firma original).
+
+### Decisiones técnicas críticas tomadas y por qué
+
+1. **Stack Morphe vs ReVanced/inotia00:** inotia00 fue archivado en marzo 2026, ReVanced original sigue 451-bloqueado desde 2025. MorpheApp (mismo equipo ex-ReVanced) ofrece sucesión limpia + el patch `Spoof video streams` que resuelve HTTP 400 server-side. Sin discusión, era la única ruta viable.
+2. **Plan B (Pages + Obtainium) vs Plan A (Android Studio installer nativo) para Project C:** estimé 3-5h + alto riesgo CI para Plan A vs 30min + cero riesgo para Plan B con UX equivalente para el usuario final. Decisión obvia.
+3. **Repo público vs privado:** auditoría confirmó cero secret leaks. Pages requiere público (o $4/mes Pro). El pipeline + scripts son educativos. Trade-off resuelto a favor de público.
+4. **Cron asimétrico para health monitor:** thresholds 90d para upstreams diarios y 180d para bimensuales. Evita falsos positivos para SmartTube y Origin que tienen cadencia naturalmente lenta.
+5. **NO re-firmar YouTube Origin con `yt-personal`:** el wrapper depende de la firma original de energylove para preservar Widevine DRM HD/4K. Re-firmar lo rompería. Documentado en `docs/MIGRATION-GUIDE-TV.md §firma`.
+6. **Íconos Q4 2024 oficiales extraídos con apktool y commiteados** (~50 KB en `project-a/assets/morphe-icons/`): única vía para que el patch Morphe `Custom branding` use el ícono real de Google. Re-extraer solo si Google rebrandea (raro, ~cada 5 años).
+
+## 11. Si esto se rompe en X años
+
+Orden de checks para mantenedor (humano o Claude futuro):
+
+### Nivel 1 — issues automáticos (chequeo de 1 minuto)
+
+1. Ir a <https://github.com/alexyoj123-tech/yt-personal/issues?q=label%3Ahealth+is%3Aopen>.
+2. Si hay issues abiertos: cada uno tiene síntoma + fallback recomendado + comando exacto. Seguir las instrucciones del issue.
+3. Si no hay issues pero algo no anda: el cron del lunes no detectó porque pasaron <90/180 días, hacer trigger manual:
+   ```
+   gh workflow run health-check-manual.yml --repo alexyoj123-tech/yt-personal -f dry_run=false
+   ```
+
+### Nivel 2 — runbook por componente (chequeo de 5 minutos)
+
+| Si rompe... | Empezar por |
+|-------------|-------------|
+| Pipeline Morphe falla | `docs/TROUBLESHOOTING.md` (buscar síntoma) → `docs/MIGRATION-GUIDE.md §patches` |
+| APKMirror cambia HTML | `docs/APKMIRROR-SCRAPER.md §riesgos-y-qué-hacer-si-se-rompen` |
+| GmsCore/MicroG-RE cae | `docs/MIGRATION-GUIDE.md §gmscore` |
+| Origin (TV) cae | `docs/MIGRATION-GUIDE-TV.md` |
+| GitHub Pages caída general | `gh api repos/alexyoj123-tech/yt-personal/pages` para ver status |
+| YouTube bloquea TODOS los clientes parcheados | escalación final: cliente nativo Project B (WIP) o `docs/IOS-FUTURO.md §recomendación-honesta` ($12/mes Premium) |
+
+### Nivel 3 — pegarle a un Claude nuevo (chequeo de 15 minutos)
+
+Si nada funciona, abrir conversación con Claude (Opus 4.7+ recomendado) y pegar:
+
+> "Retomo el proyecto yt-personal. Lee estos 3 archivos:
+> - https://github.com/alexyoj123-tech/yt-personal/blob/main/docs/CONTINUIDAD.md
+> - https://github.com/alexyoj123-tech/yt-personal/blob/main/docs/MIGRATION-GUIDE.md
+> - https://github.com/alexyoj123-tech/yt-personal/blob/main/docs/ANTI-FRAGIL.md
+>
+> El error actual es: [pegar log o screenshot]
+>
+> Propón diagnóstico + fix. Espera mi luz verde antes de commit."
+
+### Nivel 4 — apocalipsis del ecosistema Android-YouTube parcheado
+
+Si en 2028+ todo el ecosistema OSS de YouTube parcheado se cae simultáneamente (improbable pero documentado):
+
+1. **Cliente nativo Project B** — está documentado, no implementado. Activar con ~2-3 días de trabajo guiado por Claude.
+2. **Pagar YouTube Premium $12/mes** — funciona en celular, TV, futuro iPhone, sin fricción técnica. Documentado en `docs/IOS-FUTURO.md §recomendación-honesta` y aplicable también para Android.
+
+Sin opciones más allá de eso. El proyecto cumplió su propósito durante los años en que el ecosistema OSS fue viable.
+
+## 12. Reconocimientos
 
 Este proyecto es posible gracias a:
 

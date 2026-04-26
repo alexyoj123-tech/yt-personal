@@ -416,6 +416,104 @@
     @media (prefers-reduced-motion: reduce) {
       .reveal { opacity: 1; transform: none; transition: none; }
     }
+
+    /* ────────── Admin panel (doble gate) ────────── */
+    .admin-panel {
+      margin: 0 0 3rem;
+      padding: 1.5rem 1.5rem 1.25rem;
+      background:
+        linear-gradient(180deg, rgba(201,169,97,.08) 0%, rgba(201,169,97,.02) 100%),
+        var(--glass);
+      backdrop-filter: blur(24px) saturate(140%);
+      -webkit-backdrop-filter: blur(24px) saturate(140%);
+      border: 1px solid rgba(201, 169, 97, 0.32);
+      border-radius: 18px;
+      box-shadow: 0 0 0 1px rgba(201,169,97,.08), 0 12px 30px -12px var(--gold-glow);
+    }
+    .admin-head {
+      display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: baseline;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+    .admin-eyebrow {
+      font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--gold);
+      display: inline-flex; align-items: center; gap: .45rem;
+    }
+    .admin-eyebrow::before {
+      content: ""; width: 8px; height: 8px; border-radius: 999px;
+      background: var(--gold); box-shadow: 0 0 8px var(--gold);
+    }
+    .admin-title { font-size: 1.05rem; font-weight: 600; color: var(--text); letter-spacing: -0.01em; }
+    .admin-meta { font-size: .8rem; color: var(--text-dim); margin-left: auto; }
+    .admin-meta strong { color: var(--gold); font-weight: 600; }
+    .admin-meta .warn   { color: #E8B349; }
+    .admin-meta .danger { color: #E07478; }
+
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 720px) { .admin-grid { grid-template-columns: 1fr; } }
+
+    .admin-card {
+      padding: 1rem 1.1rem;
+      background: rgba(0, 0, 0, 0.18);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .admin-card-h {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: .65rem;
+    }
+    .admin-card-name { font-size: .92rem; font-weight: 600; color: var(--text); }
+    .admin-card-tag  { font-size: .7rem; color: var(--text-dim); letter-spacing: .04em; text-transform: uppercase; }
+    .admin-url {
+      display: block;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: .72rem; color: var(--text-dim);
+      word-break: break-all;
+      padding: .55rem .7rem;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: .55rem;
+      max-height: 4.5em; overflow: hidden;
+    }
+    .admin-info {
+      font-size: .76rem; color: var(--text-mute);
+      margin-bottom: .65rem;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    }
+    .admin-actions { display: flex; gap: .5rem; }
+    .btn-mini {
+      flex: 1;
+      padding: .55rem .75rem;
+      font-size: .82rem; font-weight: 600;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--glass-hi); color: var(--text);
+      cursor: pointer; font-family: inherit;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    .btn-mini:hover { background: rgba(255,255,255,.1); border-color: var(--border-hi); }
+    .btn-mini.gold {
+      background: linear-gradient(180deg, #E8C977, var(--gold));
+      color: var(--bg-deep);
+      border-color: transparent;
+    }
+    .btn-mini.gold:hover { filter: brightness(1.05); }
+
+    .admin-footer {
+      margin-top: 1rem; padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex; gap: .65rem; align-items: center; justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .admin-footer .hint { font-size: .76rem; color: var(--text-mute); }
+    .admin-error {
+      padding: .9rem 1rem; border-radius: 10px;
+      background: rgba(224, 116, 120, 0.08);
+      border: 1px solid rgba(224, 116, 120, 0.3);
+      color: #E07478; font-size: .85rem;
+    }
   </style>
 </head>
 <body>
@@ -466,6 +564,8 @@
         <p class="brand-tag reveal">Configuración Android Premium</p>
         <p class="brand-sub reveal">Servicios técnicos profesionales con soporte personalizado</p>
       </header>
+
+      <div id="admin-mount"></div>
 
       <section class="grid" id="products">
         <!-- Plan A -->
@@ -623,9 +723,11 @@
   <script>
     (function () {
       // ────────── GATE ──────────
-      const KEY = "H3liosM3dia2026";
+      const KEY       = "H3liosM3dia2026";
+      const ADMIN_KEY = "Sol4Hel1os2026";
       const params = new URLSearchParams(window.location.search);
       const unlocked = params.get("k") === KEY;
+      const isAdmin  = unlocked && params.get("admin") === ADMIN_KEY;
 
       const app = document.getElementById("app");
       const fail = document.getElementById("gate-fail");
@@ -635,6 +737,9 @@
         return;
       }
       app.hidden = false;
+
+      // Si pasa el doble gate, montar panel admin (sino: sección no se inyecta al DOM).
+      if (isAdmin) loadAdminPanel();
 
       // ────────── Datos / config ──────────
       const PAYPAL_LINK   = "paypal.me/AQUI_TU_LINK"; // ← reemplazar por paypal.me real cuando esté
@@ -704,6 +809,123 @@
       modalClose.addEventListener("click", closeModal);
       modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
       window.addEventListener("keydown", (e) => { if (e.key === "Escape") closeModal(); });
+
+      // ────────── Toast helper (admin copy) ──────────
+      const toast = document.querySelector(".toast");
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add("show");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(
+            () => showToast("URL copiada"),
+            () => window.prompt("Copiá manualmente:", text)
+          );
+        } else {
+          window.prompt("Copiá manualmente:", text);
+        }
+      }
+
+      function daysBetween(d1, d2) {
+        return Math.floor((d2.getTime() - d1.getTime()) / 86400000);
+      }
+      function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        }[c]));
+      }
+      function fmtMB(b) { return (b / 1048576).toFixed(1) + " MB"; }
+      function fmtSha(s) { return s ? s.slice(0, 12) + "…" : "—"; }
+
+      // ────────── Admin panel ──────────
+      async function loadAdminPanel() {
+        const mount = document.getElementById("admin-mount");
+        try {
+          const res = await fetch("./family-manifest.json", { cache: "no-store" });
+          if (!res.ok) throw new Error(`manifest fetch failed: HTTP ${res.status}`);
+          const manifest = await res.json();
+          renderAdminPanel(mount, manifest);
+        } catch (e) {
+          mount.innerHTML = `
+            <section class="admin-panel">
+              <div class="admin-head">
+                <span class="admin-eyebrow">Admin</span>
+                <span class="admin-title">Error cargando manifest</span>
+              </div>
+              <div class="admin-error">No pude leer family-manifest.json: ${escapeHtml(e.message)}.<br>
+              Verificá que el último cron de project-f-family haya corrido (workflow_dispatch manual desde Actions).</div>
+            </section>`;
+        }
+      }
+
+      function renderAdminPanel(mount, m) {
+        const today = new Date();
+        const expires = new Date(m.expires_date);
+        const daysLeft = daysBetween(today, expires);
+        const buildDate = m.build_date || "—";
+        const tag = m.tag || "—";
+        const sourceTag = m.source_release || "—";
+
+        let daysClass = "";
+        if (daysLeft < 0)       daysClass = "danger";
+        else if (daysLeft <= 7) daysClass = "danger";
+        else if (daysLeft <= 30) daysClass = "warn";
+
+        const cardHtml = (key, label, badge) => {
+          const a = (m.apps || {})[key];
+          if (!a) return "";
+          return `
+            <div class="admin-card">
+              <div class="admin-card-h">
+                <span class="admin-card-name">${escapeHtml(label)}</span>
+                <span class="admin-card-tag">${escapeHtml(badge)}</span>
+              </div>
+              <div class="admin-info">
+                ${escapeHtml(a.filename)}<br>
+                ${fmtMB(a.size_bytes)} · sha256 ${escapeHtml(fmtSha(a.sha256))}
+              </div>
+              <code class="admin-url">${escapeHtml(a.url)}</code>
+              <div class="admin-actions">
+                <button class="btn-mini gold" data-admin-copy="${escapeHtml(a.url)}">📋 Copiar URL</button>
+                <a class="btn-mini" href="${escapeHtml(a.url)}" target="_blank" rel="noopener">🔗 Abrir</a>
+              </div>
+            </div>
+          `;
+        };
+
+        mount.innerHTML = `
+          <section class="admin-panel" aria-label="Panel administrador">
+            <div class="admin-head">
+              <span class="admin-eyebrow">Admin · operador</span>
+              <span class="admin-title">URLs del release vigente</span>
+              <span class="admin-meta">
+                Tag <strong>${escapeHtml(tag)}</strong> ·
+                build ${escapeHtml(buildDate)} ·
+                source <strong>${escapeHtml(sourceTag)}</strong> ·
+                <span class="${daysClass}">${daysLeft >= 0 ? daysLeft + " días restantes" : "EXPIRADO"}</span>
+              </span>
+            </div>
+            <div class="admin-grid">
+              ${cardHtml("yt",  "Plan A — Streaming", "App 1")}
+              ${cardHtml("ytm", "Plan B — Audio",     "App 2")}
+            </div>
+            <div class="admin-footer">
+              <span class="hint">Compartí estas URLs por WhatsApp después de confirmar pago. Random rotation diaria.</span>
+              <button class="btn-mini" id="admin-refresh">🔄 Refrescar manifest</button>
+            </div>
+          </section>
+        `;
+
+        mount.querySelectorAll("[data-admin-copy]").forEach(b => {
+          b.addEventListener("click", () => copyToClipboard(b.dataset.adminCopy));
+        });
+        const refresh = mount.querySelector("#admin-refresh");
+        if (refresh) refresh.addEventListener("click", () => { mount.innerHTML = ""; loadAdminPanel(); });
+      }
     })();
   </script>
 </body>

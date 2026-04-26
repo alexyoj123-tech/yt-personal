@@ -61,4 +61,7 @@ echo "[cleanup] Resumen:"
 echo "  preservados (no ytp-f-family-*): $preserved"
 echo "  ytp-f-family-* dentro de ${MAX_DAYS}d (mantenidos): $skipped"
 echo "  ytp-f-family-* > ${MAX_DAYS}d (borrados): $deleted"
-[ "$DRY_RUN" = "1" ] && echo "  Modo: DRY_RUN (no se borró nada)"
+if [ "$DRY_RUN" = "1" ]; then
+  echo "  Modo: DRY_RUN (no se borró nada)"
+fi
+exit 0

@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-04-27",
-  "build_date": "2026-04-27",
-  "expires_date": "2026-07-26",
+  "tag": "ytp-f-family-2026-04-28",
+  "build_date": "2026-04-28",
+  "expires_date": "2026-07-27",
   "expires_days": 90,
   "source_release": "ytp-a-2026.04.23",
   "apps": {
     "yt": {
-      "filename": "FBjb-Py6p-5WTY-Wjt2-43EK-PdJV-zSPa-g7VrW.apk",
+      "filename": "sLdb-FnF9-3MJ2-W2xN-agfw-LJAR-q6Y5-qKzRW.apk",
       "size_bytes": 180957753,
       "sha256": "0bcc51cef3487f226a9e123867ef0385d60ee911aec2dee5f909432c28e51b15",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-04-27/FBjb-Py6p-5WTY-Wjt2-43EK-PdJV-zSPa-g7VrW.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-04-28/sLdb-FnF9-3MJ2-W2xN-agfw-LJAR-q6Y5-qKzRW.apk"
     },
     "ytm": {
-      "filename": "FjPx-Uvkw-A5jC-8zRP-HbKd-KJfx-nhf6-FhTzp.apk",
+      "filename": "f9y9-th3C-D4yJ-Y5sY-UCVM-dtbT-6mQh-utL7g.apk",
       "size_bytes": 71187887,
       "sha256": "70039efbaa04dd1baf38fd3100c17eba15546dccab47ecbbe2a975c7ef98eb2e",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-04-27/FjPx-Uvkw-A5jC-8zRP-HbKd-KJfx-nhf6-FhTzp.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-04-28/f9y9-th3C-D4yJ-Y5sY-UCVM-dtbT-6mQh-utL7g.apk"
     }
   }
 }

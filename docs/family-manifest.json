@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-05-02",
-  "build_date": "2026-05-02",
-  "expires_date": "2026-07-31",
+  "tag": "ytp-f-family-2026-05-03",
+  "build_date": "2026-05-03",
+  "expires_date": "2026-08-01",
   "expires_days": 90,
   "source_release": "ytp-a-2026.04.23",
   "apps": {
     "yt": {
-      "filename": "utTk-Xy25-dzAU-D7fZ-zh6p-tmRx-gsYQ-e3fLK.apk",
+      "filename": "PZvS-ZvBE-mDvX-8hVH-7jXk-tRwG-bLwt-fn33j.apk",
       "size_bytes": 180957753,
       "sha256": "0bcc51cef3487f226a9e123867ef0385d60ee911aec2dee5f909432c28e51b15",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-02/utTk-Xy25-dzAU-D7fZ-zh6p-tmRx-gsYQ-e3fLK.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-03/PZvS-ZvBE-mDvX-8hVH-7jXk-tRwG-bLwt-fn33j.apk"
     },
     "ytm": {
-      "filename": "Dvxa-MUgv-yDTN-qtYq-v259-gqcP-vL8j-Q4f6r.apk",
+      "filename": "T2Xn-LDfc-Q55v-h2bT-pNTY-DzdK-gHHj-zsfbC.apk",
       "size_bytes": 71187887,
       "sha256": "70039efbaa04dd1baf38fd3100c17eba15546dccab47ecbbe2a975c7ef98eb2e",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-02/Dvxa-MUgv-yDTN-qtYq-v259-gqcP-vL8j-Q4f6r.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-03/T2Xn-LDfc-Q55v-h2bT-pNTY-DzdK-gHHj-zsfbC.apk"
     }
   }
 }

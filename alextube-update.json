@@ -1,0 +1,12 @@
+{
+  "latest_version": "1.0.0",
+  "latest_version_code": 1,
+  "min_supported_version_code": 1,
+  "release_date": "2026-05-11",
+  "apk_url": "https://github.com/alexyoj123-tech/alextube-releases/releases/download/v1.0.0/AlexTube-v1.0.0.apk",
+  "apk_sha256": "placeholder_will_be_set_on_first_release",
+  "apk_size_bytes": 138000000,
+  "release_notes_es": "Versión inicial de AlexTube.\n\nApp creada y propiedad de Alex Yoj S.\n© 2026. Uso personal exclusivo.",
+  "force_update": false,
+  "owner": "Alex Yoj S."
+}

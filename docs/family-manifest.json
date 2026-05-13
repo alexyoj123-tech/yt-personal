@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-05-12",
-  "build_date": "2026-05-12",
-  "expires_date": "2026-08-10",
+  "tag": "ytp-f-family-2026-05-13",
+  "build_date": "2026-05-13",
+  "expires_date": "2026-08-11",
   "expires_days": 90,
   "source_release": "ytp-a-2026.04.23",
   "apps": {
     "yt": {
-      "filename": "rNav-M2KR-trxB-WvRW-JHkL-gEU8-Wq9B-jiSaL.apk",
+      "filename": "375J-7Gux-eWsb-RwJK-zFvX-RqBf-x5f2-56XFf.apk",
       "size_bytes": 180957753,
       "sha256": "0bcc51cef3487f226a9e123867ef0385d60ee911aec2dee5f909432c28e51b15",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-12/rNav-M2KR-trxB-WvRW-JHkL-gEU8-Wq9B-jiSaL.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-13/375J-7Gux-eWsb-RwJK-zFvX-RqBf-x5f2-56XFf.apk"
     },
     "ytm": {
-      "filename": "NWuL-fZDU-GMVC-xKGm-KjYQ-bM5n-tidw-cZXxq.apk",
+      "filename": "bZBR-Ent7-yzC4-mRPW-xVnu-Tzeb-gqLn-yFX3X.apk",
       "size_bytes": 71187887,
       "sha256": "70039efbaa04dd1baf38fd3100c17eba15546dccab47ecbbe2a975c7ef98eb2e",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-12/NWuL-fZDU-GMVC-xKGm-KjYQ-bM5n-tidw-cZXxq.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-13/bZBR-Ent7-yzC4-mRPW-xVnu-Tzeb-gqLn-yFX3X.apk"
     }
   }
 }

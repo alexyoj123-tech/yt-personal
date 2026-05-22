@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-05-21",
-  "build_date": "2026-05-21",
-  "expires_date": "2026-08-19",
+  "tag": "ytp-f-family-2026-05-22",
+  "build_date": "2026-05-22",
+  "expires_date": "2026-08-20",
   "expires_days": 90,
   "source_release": "ytp-a-2026.04.23",
   "apps": {
     "yt": {
-      "filename": "ieTK-VXzw-yhbk-94t2-NmNh-KH5L-zFPH-A2J5v.apk",
+      "filename": "QBhq-fSGH-WHK6-uTPk-FxGU-WvpA-Ay7z-s55Fp.apk",
       "size_bytes": 180957753,
       "sha256": "0bcc51cef3487f226a9e123867ef0385d60ee911aec2dee5f909432c28e51b15",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-21/ieTK-VXzw-yhbk-94t2-NmNh-KH5L-zFPH-A2J5v.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-22/QBhq-fSGH-WHK6-uTPk-FxGU-WvpA-Ay7z-s55Fp.apk"
     },
     "ytm": {
-      "filename": "nQ4z-n4Jm-UciN-z5qT-btpv-dBcQ-YWg6-EjS8n.apk",
+      "filename": "4pRk-5TcM-yPsA-cgBj-F2hK-VU8y-Lvfx-986LP.apk",
       "size_bytes": 71187887,
       "sha256": "70039efbaa04dd1baf38fd3100c17eba15546dccab47ecbbe2a975c7ef98eb2e",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-21/nQ4z-n4Jm-UciN-z5qT-btpv-dBcQ-YWg6-EjS8n.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-05-22/4pRk-5TcM-yPsA-cgBj-F2hK-VU8y-Lvfx-986LP.apk"
     }
   }
 }

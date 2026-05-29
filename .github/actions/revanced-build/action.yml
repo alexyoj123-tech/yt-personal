@@ -8,11 +8,11 @@ inputs:
   youtube_version:
     description: 'Versión de YouTube a parchear (vacío = la más alta compatible)'
     required: false
-    default: ''
+    default: '20.47.62'
   ytmusic_version:
     description: 'Versión de YT Music a parchear (vacío = la más alta compatible)'
     required: false
-    default: ''
+    default: '8.47.56'
   publish_release:
     description: '¿Publicar Release con los APKs firmados?'
     required: false

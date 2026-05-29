@@ -32,7 +32,7 @@ inputs:
   revanced_cli_tag:
     description: 'Tag del CLI a usar. Default v1.7.0 (morphe-cli compat con patches Morphe v1.24.0). Migrado de revanced-cli v5.0.1 tras archivado de inotia00.'
     required: false
-    default: 'v1.7.0'
+    default: 'v1.8.1'
   revanced_patches_repo:
     description: 'Owner/repo de los patches. Default MorpheApp/morphe-patches (formato .mpp, sucesor oficial tras archivado de inotia00 en marzo 2026).'
     required: false

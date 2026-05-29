@@ -19,6 +19,8 @@ jobs:
     name: Pipeline ReVanced (YT + YTM + GmsCore)
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # ← fix Node.js 20 en checkout@v4
     steps:
       - name: Checkout
         uses: actions/checkout@v4

@@ -113,7 +113,7 @@ MORPHE_ICONS="$REPO_ROOT/project-a/assets/morphe-icons"
 
 YT_OPTS=(
   -e "Custom branding"
-  -O "customName=YouTube"
+  -O "customName=PREMIUM"
   -O "customIcon=$MORPHE_ICONS/youtube"
   -e "Change package name"
   -O "packageName=Default"

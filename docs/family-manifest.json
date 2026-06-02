@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-06-01",
-  "build_date": "2026-06-01",
-  "expires_date": "2026-08-30",
+  "tag": "ytp-f-family-2026-06-02",
+  "build_date": "2026-06-02",
+  "expires_date": "2026-08-31",
   "expires_days": 90,
-  "source_release": "ytp-a-2026.05.31-4",
+  "source_release": "ytp-a-2026.06.01",
   "apps": {
     "yt": {
-      "filename": "4TFe-SdBg-aDJv-t9dP-pEGP-xv8y-ZvjS-vuNBY.apk",
+      "filename": "7V9u-McKr-vtg3-wPwd-ptCF-rNuc-N6uk-TcpLj.apk",
       "size_bytes": 180209904,
-      "sha256": "9daa0db2b1e22a8e5abb72dfd37f7c0f2fac2bd8937ed3b1e2eed2ac7e734f95",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-01/4TFe-SdBg-aDJv-t9dP-pEGP-xv8y-ZvjS-vuNBY.apk"
+      "sha256": "d0a76359be3dc634397771985f1904b34f6232a200690b7283e3684e5dd2c122",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-02/7V9u-McKr-vtg3-wPwd-ptCF-rNuc-N6uk-TcpLj.apk"
     },
     "ytm": {
-      "filename": "EPD2-QedX-TxLQ-MVKJ-RiVG-Nu4Q-V6P4-BfUiN.apk",
+      "filename": "gmq9-tVQn-iGjx-kHZ9-wxve-nrcz-YxN7-vVpnZ.apk",
       "size_bytes": 70169050,
-      "sha256": "33007a2c802043815b0024bf4e6f4c2aab16bb34d03f0dda942b977cb0caf90d",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-01/EPD2-QedX-TxLQ-MVKJ-RiVG-Nu4Q-V6P4-BfUiN.apk"
+      "sha256": "8dd73aa4359d0674e5c31a7bba22f3700ade63ecedf82e08da2a7f6798ea5c67",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-02/gmq9-tVQn-iGjx-kHZ9-wxve-nrcz-YxN7-vVpnZ.apk"
     }
   }
 }

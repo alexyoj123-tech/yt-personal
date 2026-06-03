@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-06-02",
-  "build_date": "2026-06-02",
-  "expires_date": "2026-08-31",
+  "tag": "ytp-f-family-2026-06-03",
+  "build_date": "2026-06-03",
+  "expires_date": "2026-09-01",
   "expires_days": 90,
-  "source_release": "ytp-a-2026.06.01",
+  "source_release": "ytp-a-2026.06.02",
   "apps": {
     "yt": {
-      "filename": "7V9u-McKr-vtg3-wPwd-ptCF-rNuc-N6uk-TcpLj.apk",
+      "filename": "dvSY-DgH8-bpqu-GwEx-dWi9-Wx8V-dku4-bLaPv.apk",
       "size_bytes": 180209904,
-      "sha256": "d0a76359be3dc634397771985f1904b34f6232a200690b7283e3684e5dd2c122",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-02/7V9u-McKr-vtg3-wPwd-ptCF-rNuc-N6uk-TcpLj.apk"
+      "sha256": "f866bb991c722a776fd8ba39e4d2d26382d2ce2db490685a9ab1caf15f88e981",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-03/dvSY-DgH8-bpqu-GwEx-dWi9-Wx8V-dku4-bLaPv.apk"
     },
     "ytm": {
-      "filename": "gmq9-tVQn-iGjx-kHZ9-wxve-nrcz-YxN7-vVpnZ.apk",
+      "filename": "ejPc-U5hd-xUW2-Uiwp-PbqF-KEEu-MvzC-SRkkm.apk",
       "size_bytes": 70169050,
-      "sha256": "8dd73aa4359d0674e5c31a7bba22f3700ade63ecedf82e08da2a7f6798ea5c67",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-02/gmq9-tVQn-iGjx-kHZ9-wxve-nrcz-YxN7-vVpnZ.apk"
+      "sha256": "af0c16180cf355f7f682e984d4b237e77f92505a3bc6519974e57a5df9befd0b",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-03/ejPc-U5hd-xUW2-Uiwp-PbqF-KEEu-MvzC-SRkkm.apk"
     }
   }
 }

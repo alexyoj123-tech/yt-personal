@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-06-11",
-  "build_date": "2026-06-11",
-  "expires_date": "2026-09-09",
+  "tag": "ytp-f-family-2026-06-12",
+  "build_date": "2026-06-12",
+  "expires_date": "2026-09-10",
   "expires_days": 90,
-  "source_release": "ytp-a-2026.06.09",
+  "source_release": "ytp-a-2026.06.11",
   "apps": {
     "yt": {
-      "filename": "Mrmn-JQB8-4rj5-4Ygf-5B97-8UK9-kJRk-vdyfJ.apk",
+      "filename": "Djpg-y3up-5FNS-PfAq-WuuK-ft8h-edZi-rXty6.apk",
       "size_bytes": 180209904,
-      "sha256": "d83f0d892e7ee39b684d222c121b256dadfcd8c678e8e53eec63ada3200994f8",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-11/Mrmn-JQB8-4rj5-4Ygf-5B97-8UK9-kJRk-vdyfJ.apk"
+      "sha256": "56204677003ba893bf339398e3d1dbbe777082dbad3583f700a5dd56c77c31c7",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-12/Djpg-y3up-5FNS-PfAq-WuuK-ft8h-edZi-rXty6.apk"
     },
     "ytm": {
-      "filename": "ikFx-GEKT-HaVn-inBE-3UKV-7eKC-T7wd-Jybvb.apk",
+      "filename": "Tna4-V2c2-8NJn-Hhz7-xUGP-jZPd-n4rS-D7JRJ.apk",
       "size_bytes": 70169050,
-      "sha256": "48545ef99d281a3f4fe4d6f2d2a6bda11a204d970323266418036c1545cbc771",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-11/ikFx-GEKT-HaVn-inBE-3UKV-7eKC-T7wd-Jybvb.apk"
+      "sha256": "983af9aa1309f62d81daa18e02a585726e9e8b3539ed456330c76e7a36d01feb",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-12/Tna4-V2c2-8NJn-Hhz7-xUGP-jZPd-n4rS-D7JRJ.apk"
     }
   }
 }

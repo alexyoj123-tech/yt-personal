@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-06-14",
-  "build_date": "2026-06-14",
-  "expires_date": "2026-09-12",
+  "tag": "ytp-f-family-2026-06-15",
+  "build_date": "2026-06-15",
+  "expires_date": "2026-09-13",
   "expires_days": 90,
   "source_release": "ytp-a-2026.06.12",
   "apps": {
     "yt": {
-      "filename": "a2im-uJxT-Rmh9-94sp-Fzse-bGSj-kKaL-gRW9y.apk",
+      "filename": "dREx-FWNR-nPae-QmEk-75Er-rfzm-BZLs-64vBC.apk",
       "size_bytes": 180209904,
       "sha256": "9d752ef9575cc705014a6d7fb9364f1a22bb4280b1b008e3f5a26ad24052895f",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-14/a2im-uJxT-Rmh9-94sp-Fzse-bGSj-kKaL-gRW9y.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-15/dREx-FWNR-nPae-QmEk-75Er-rfzm-BZLs-64vBC.apk"
     },
     "ytm": {
-      "filename": "dvJq-LYMj-QceH-nxps-AQPu-qFAk-rfD3-wa26w.apk",
+      "filename": "2dag-2we2-3faT-KtGv-UxGM-gTkK-FB29-i4ny3.apk",
       "size_bytes": 70169050,
       "sha256": "149d965a8a0e92fe603a8aebf40351e89eef9a8cb64aec32d44ccffcf2f7b044",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-14/dvJq-LYMj-QceH-nxps-AQPu-qFAk-rfD3-wa26w.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-15/2dag-2we2-3faT-KtGv-UxGM-gTkK-FB29-i4ny3.apk"
     }
   }
 }

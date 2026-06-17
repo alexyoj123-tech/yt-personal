@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-06-16",
-  "build_date": "2026-06-16",
-  "expires_date": "2026-09-14",
+  "tag": "ytp-f-family-2026-06-17",
+  "build_date": "2026-06-17",
+  "expires_date": "2026-09-15",
   "expires_days": 90,
   "source_release": "ytp-a-2026.06.12",
   "apps": {
     "yt": {
-      "filename": "eWKw-8RqK-aZmf-emAM-Y78M-gJbm-zhCW-7MAmq.apk",
+      "filename": "iJFG-wpkM-td9n-ETpP-QhS5-Bdqa-HCbR-mw3MX.apk",
       "size_bytes": 180209904,
       "sha256": "9d752ef9575cc705014a6d7fb9364f1a22bb4280b1b008e3f5a26ad24052895f",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-16/eWKw-8RqK-aZmf-emAM-Y78M-gJbm-zhCW-7MAmq.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-17/iJFG-wpkM-td9n-ETpP-QhS5-Bdqa-HCbR-mw3MX.apk"
     },
     "ytm": {
-      "filename": "T8ZC-289P-k2pR-fgnk-jfsb-UXiP-bERe-6snWZ.apk",
+      "filename": "xfpm-hJJG-bQtc-4GBG-ZNVz-Gzsm-zntk-Ug5CR.apk",
       "size_bytes": 70169050,
       "sha256": "149d965a8a0e92fe603a8aebf40351e89eef9a8cb64aec32d44ccffcf2f7b044",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-16/T8ZC-289P-k2pR-fgnk-jfsb-UXiP-bERe-6snWZ.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-17/xfpm-hJJG-bQtc-4GBG-ZNVz-Gzsm-zntk-Ug5CR.apk"
     }
   }
 }

@@ -117,21 +117,14 @@ YT_OPTS=(
   -O "customIcon=$MORPHE_ICONS/youtube"
   -e "Change package name"
   -O "packageName=app.morphe.android.youtube"
-  -O "updatePermissions=true"
-  -O "updateProviders=true"
-  -O "updateProvidersStrings=true"
-  -e "GmsCore support"
-  -e "Spoof video streams"
 )
+
 YTM_OPTS=(
   -e "Custom branding"
   -O "customName=YouTube Music"
   -O "customIcon=$MORPHE_ICONS/ytmusic"
   -e "Change package name"
   -O "packageName=app.morphe.android.apps.youtube.music"
-  -O "updatePermissions=true"
-  -O "updateProviders=true"
-  -e "GmsCore support"
 )
 
 apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"

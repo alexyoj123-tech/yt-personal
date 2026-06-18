@@ -41,7 +41,7 @@ step "Descargando morphe-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), Mi
 # - revanced-cli-<ver>-all.jar (histórico, inotia00/ReVanced)
 # - morphe-cli-<ver>-all.jar   (actual, Morphe)
 CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe-cli)-.*-all\\.jar$" "$CLI_TAG")"
-PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\\.mpp$")"
+PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$" "v1.30.0")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
 info "CLI:       $CLI_JAR"

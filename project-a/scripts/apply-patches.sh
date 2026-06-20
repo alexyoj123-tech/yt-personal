@@ -41,7 +41,7 @@ step "Descargando morphe-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), Mi
 # - revanced-cli-<ver>-all.jar (histórico, inotia00/ReVanced)
 # - morphe-cli-<ver>-all.jar   (actual, Morphe)
 CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe-cli)-.*-all\\.jar$" "$CLI_TAG")"
-PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$" "v1.30.0")"
+PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
 info "CLI:       $CLI_JAR"
@@ -129,7 +129,14 @@ YTM_OPTS=(
 
 apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"
 apply_patch "$APKS_DIR/youtube-music.apk" "$PATCHED_DIR/youtube-music-patched.apk" "YouTube Music" "${YTM_OPTS[@]}"
-
+# ── Fix: INSTALL_FAILED_DUPLICATE_PERMISSION ─────────────────────────
+# El patch "Change package name" renombra el paquete pero deja la
+# DECLARACIÓN del permiso C2D_MESSAGE con el prefijo original, lo que
+# causa conflicto con la YouTube de sistema en cualquier dispositivo
+# (incluso deshabilitada). fix-manifest.py reemplaza el nombre del
+# permiso en el manifest binario (safe: misma longitud en UTF-16LE).
+step "Fix permiso C2D_MESSAGE (INSTALL_FAILED_DUPLICATE_PERMISSION)"
+python3 "$SCRIPT_DIR/fix-manifest.py" "$PATCHED_DIR/youtube-patched.apk"
 # GmsCore se copia tal cual al output; es un requisito externo pero se
 # redistribuye junto con los otros APKs en el Release.
 cp -f "$GMSCORE_APK" "$PATCHED_DIR/gmscore.apk"

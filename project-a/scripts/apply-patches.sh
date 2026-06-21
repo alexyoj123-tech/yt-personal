@@ -117,6 +117,7 @@ YT_OPTS=(
   -O "customIcon=$MORPHE_ICONS/youtube"
   -e "Change package name"
   -O "packageName=app.morphe.android.youtube"
+  -e "GmsCore support"
 )
 
 YTM_OPTS=(
@@ -125,6 +126,7 @@ YTM_OPTS=(
   -O "customIcon=$MORPHE_ICONS/ytmusic"
   -e "Change package name"
   -O "packageName=app.morphe.android.apps.youtube.music"
+  -e "GmsCore support"
 )
 
 apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"

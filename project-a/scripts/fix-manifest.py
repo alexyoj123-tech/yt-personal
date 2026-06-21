@@ -4,27 +4,36 @@ fix-manifest.py — Renombra el permiso C2D_MESSAGE en APKs parcheados de YouTub
 
 PROBLEMA
 --------
-El patch "Change package name" de Morphe cambia el paquete de la app de
-com.google.android.youtube a app.morphe.android.youtube, pero NO renombra
-la DECLARACIÓN del permiso personalizado en el AndroidManifest.xml binario:
+El patch "Change package name" de Morphe cambia el paquete principal de la
+app de com.google.android.youtube a app.morphe.android.youtube, pero NO
+renombra identificadores secundarios que el SDK/AndroidX inserta en el
+manifest compilado usando el applicationId original como prefijo, por
+ejemplo permisos personalizados:
 
   <permission android:name="com.google.android.youtube.permission.C2D_MESSAGE" …/>
+  <permission android:name="com.google.android.youtube.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" …/>
+
+(este segundo lo auto-inserta AndroidX core para receivers dinámicos no
+exportados, usando el applicationId de compilación original).
 
 En cualquier dispositivo que tenga la YouTube de sistema instalada (aunque
-esté deshabilitada), Android registra globalmente ese permiso bajo el paquete
-com.google.android.youtube. Al intentar instalar el APK parcheado, el
-PackageManager lanza:
+esté deshabilitada), Android registra esos permisos globalmente bajo el
+paquete com.google.android.youtube. Al intentar instalar el APK parcheado,
+el PackageManager lanza:
 
   INSTALL_FAILED_DUPLICATE_PERMISSION: Package app.morphe.android.youtube
-  attempting to redeclare permission
-  com.google.android.youtube.permission.C2D_MESSAGE
+  attempting to redeclare permission com.google.android.youtube.<X>
   already owned by com.google.android.youtube
 
 SOLUCIÓN
 --------
-Ambas cadenas tienen exactamente 49 caracteres (= 98 bytes en UTF-16LE,
-que es el encoding del manifest binario). El tamaño no cambia, por lo que
-la sustitución directa en el pool de strings no corrompe el formato binario.
+En vez de parchar un permiso a la vez (frágil — cada nuevo permiso
+huérfano rompe la instalación de nuevo), se reemplaza el PREFIJO completo
+"com.google.android.youtube." (con el punto final) por
+"app.morphe.android.youtube." en TODO el manifest binario. Ambos prefijos
+tienen exactamente 27 caracteres (54 bytes en UTF-16LE, el encoding del
+manifest binario), por lo que el reemplazo no corrompe el formato binario
+y cubre cualquier identificador con ese prefijo, presente o futuro.
 
 El script reescribe el archivo dentro del ZIP (APK) sin tocar ninguna otra
 entrada, y el resultado se vuelve a firmar normalmente por sign-apks.sh.
@@ -35,12 +44,17 @@ import zipfile
 import os
 import tempfile
 
-# Ambas cadenas: 49 caracteres = 98 bytes UTF-16LE. Longitud idéntica → safe.
-OLD_PERM = "com.google.android.youtube.permission.C2D_MESSAGE"
-NEW_PERM = "app.morphe.android.youtube.permission.C2D_MESSAGE"
+# Prefijo completo (con punto final) del paquete original vs el nuevo.
+# 27 caracteres cada uno = 54 bytes UTF-16LE. Longitud idéntica → safe.
+# El punto final asegura que solo se reemplacen identificadores DERIVADOS
+# (com.google.android.youtube.<algo>), nunca el nombre de paquete exacto
+# sin sufijo (ese ya lo renombra correctamente el patch "Change package
+# name" en otro lugar del manifest).
+OLD_PREFIX = "com.google.android.youtube."
+NEW_PREFIX = "app.morphe.android.youtube."
 
-OLD_BYTES = OLD_PERM.encode("utf-16-le")
-NEW_BYTES = NEW_PERM.encode("utf-16-le")
+OLD_BYTES = OLD_PREFIX.encode("utf-16-le")
+NEW_BYTES = NEW_PREFIX.encode("utf-16-le")
 
 assert len(OLD_BYTES) == len(NEW_BYTES), (
     f"BUG: longitudes distintas ({len(OLD_BYTES)} vs {len(NEW_BYTES)})"
@@ -78,10 +92,11 @@ def fix_apk(apk_path: str) -> bool:
     if OLD_BYTES not in manifest:
         print(
             f"[fix-manifest] {apk_path}: "
-            f"permiso '{OLD_PERM}' no encontrado — nada que hacer."
+            f"prefijo '{OLD_PREFIX}' no encontrado — nada que hacer."
         )
         return False
 
+    occurrences = manifest.count(OLD_BYTES)
     contents["AndroidManifest.xml"] = manifest.replace(OLD_BYTES, NEW_BYTES)
 
     # Escribir APK temporal en el mismo directorio y reemplazar atómicamente
@@ -110,7 +125,8 @@ def fix_apk(apk_path: str) -> bool:
 
     print(
         f"[fix-manifest] {apk_path}: "
-        f"'{OLD_PERM}' → '{NEW_PERM}' ✓ (compresión original preservada por entrada)"
+        f"{occurrences} ocurrencia(s) de '{OLD_PREFIX}' → '{NEW_PREFIX}' ✓ "
+        f"(compresión original preservada por entrada)"
     )
     return True
 

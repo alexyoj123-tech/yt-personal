@@ -4,19 +4,19 @@
   "build_date": "2026-06-21",
   "expires_date": "2026-09-19",
   "expires_days": 90,
-  "source_release": "ytp-a-2026.06.21-2",
+  "source_release": "ytp-a-2026.06.21-4",
   "apps": {
     "yt": {
-      "filename": "ircc-x8yp-ALGa-9Lrg-msET-5qn9-cJDQ-dw46d.apk",
-      "size_bytes": 171528595,
-      "sha256": "8db3f031e2cc119aaf44aaccf6922e084f20c525a680a448e5ae698a369e93ec",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-21/ircc-x8yp-ALGa-9Lrg-msET-5qn9-cJDQ-dw46d.apk"
+      "filename": "AgbQ-e9x2-zy5E-xtkL-e8Rg-QKt8-xR4L-WgSbw.apk",
+      "size_bytes": 180892753,
+      "sha256": "0ef4b95bd98b79040adc0a7e5877e9194d66c5bde74274444b2a30ba080db29d",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-21/AgbQ-e9x2-zy5E-xtkL-e8Rg-QKt8-xR4L-WgSbw.apk"
     },
     "ytm": {
-      "filename": "ByWc-bx6c-9ryz-wNYw-jkbV-7avi-5Gtb-GRVFb.apk",
-      "size_bytes": 70214945,
-      "sha256": "c4606e0e4ec823a16c9e57bcc362efb06b28ffdf329e9d74e74866edfd8d38f9",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-21/ByWc-bx6c-9ryz-wNYw-jkbV-7avi-5Gtb-GRVFb.apk"
+      "filename": "5ayP-WN8B-TjEp-Tbqq-8xfp-R8Bq-YwaP-m6YA2.apk",
+      "size_bytes": 70784411,
+      "sha256": "a6ec9e33f2a4b355396546f2c6a829d459b87283f70dcbeaa756faa1454693f4",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-06-21/5ayP-WN8B-TjEp-Tbqq-8xfp-R8Bq-YwaP-m6YA2.apk"
     }
   }
 }

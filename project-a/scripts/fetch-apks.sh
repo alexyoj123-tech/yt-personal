@@ -46,67 +46,68 @@ PY_SCRAPER="$SCRIPT_DIR/apkmirror_download.py"
 [ -f "$PY_SCRAPER" ] || die "Falta $PY_SCRAPER — scraper APKMirror."
 
 # ── 1+2. Bootstrap patches-meta.json ─────────────────────────────────
+# FIX 2026-06-21: el .mpp ya NO trae metadata JSON embebida (confirmado en
+# v1.31.0 — solo assets de UI). La metadata estructurada de compatibilidad
+# vive en un archivo separado en el repo de patches: patches-list.json
+# (rama main, no es asset de release). Lo bajamos directo por HTTP en vez
+# de intentar extraerlo del .mpp.
 resolve_patches_meta_if_needed() {
   [ -s "$META_DIR/patches-meta.json" ] && return 0
-  info "patches-meta.json no existe — extrayendo metadata del .mpp directamente."
-  require_cmd gh
-  require_cmd unzip
+  info "patches-meta.json no existe — descargando patches-list.json del repo de patches."
+  require_cmd curl
   require_cmd jq
 
-  # MIGRACIÓN 2026-04-23: inotia00/revanced-patches archivado. Nuevo default
-  # MorpheApp/morphe-patches con formato .mpp (ZIP igual, estructura similar).
   # Parametrizable via REVANCED_PATCHES_REPO por si cambiamos de fork.
   local patches_repo="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
+  local branch="${REVANCED_PATCHES_META_BRANCH:-main}"
+  local list_url="https://raw.githubusercontent.com/${patches_repo}/${branch}/patches-list.json"
 
-  local patches_rvp
-  patches_rvp="$(ensure_tool "revanced-patches.mpp" "$patches_repo" "patches-.*\\.mpp$")"
-
-  # Las versiones YT/YTM las pasamos siempre explícitamente vía workflow
-  # input — este bootstrap es best-effort para documentar compat internamente.
-  # El .mpp es un ZIP. Probamos rutas candidatas conocidas para metadata JSON.
-  info "Archivos JSON dentro del .mpp:"
-  unzip -l "$patches_rvp" 2>/dev/null | awk 'NR>3 && $4 ~ /\.json$/ {print "  • "$4}' >&2 || true
-
-  local candidates=(
-    "patches.json"
-    "META-INF/patches.json"
-    "META-INF/morphe/patches.json"
-    "morphe/patches.json"
-    "compatibility.json"
-    "compatiblePackages.json"
-  )
   local tmp
   tmp="$(mktemp)"
-  for path in "${candidates[@]}"; do
-    if unzip -p "$patches_rvp" "$path" > "$tmp" 2>/dev/null && \
-       [ -s "$tmp" ] && jq empty "$tmp" 2>/dev/null; then
-      mv "$tmp" "$META_DIR/patches-meta.json"
-      ok "patches-meta.json extraído de '$path' ($(wc -c < "$META_DIR/patches-meta.json") bytes)"
-      return 0
-    fi
-  done
+  if curl -sfL "$list_url" -o "$tmp" && [ -s "$tmp" ] && jq empty "$tmp" 2>/dev/null; then
+    mv "$tmp" "$META_DIR/patches-meta.json"
+    ok "patches-meta.json descargado de $list_url ($(wc -c < "$META_DIR/patches-meta.json") bytes)"
+    return 0
+  fi
   rm -f "$tmp"
 
-  warn "Ninguna ruta candidata contiene JSON válido en el .mpp — versiones se resolverán como 'latest'."
-  warn "(Si querés pinpoint de versión, revisa el listado de arriba y añade la ruta correcta a 'candidates' en fetch-apks.sh.)"
-  echo "[]" > "$META_DIR/patches-meta.json"
+  warn "No se pudo obtener '$list_url' — versiones se resolverán como vacío."
+  warn "(Revisá que el repo siga publicando patches-list.json en esa rama, o pasá YT_VERSION/YTM_VERSION a mano.)"
+  echo '{"patches":[]}' > "$META_DIR/patches-meta.json"
 }
 
 resolve_patches_meta_if_needed
 
 # ── 3. Resolución de versiones ───────────────────────────────────────
-# Preferencia: env override > patches-meta > latest
+# Preferencia: env override > patches-meta > (falla con mensaje útil)
+#
+# Esquema real de patches-list.json (v1.31.0+):
+#   { "patches": [ { "name": ..., "compatiblePackages": [
+#        { "packageName": "com.google.android.youtube",
+#          "targets": [ { "version": "20.51.39", "isExperimental": false }, ... ] }
+#   ] } ] }
+#
+# Tomamos, para el package pedido, la INTERSECCIÓN de versiones no-
+# experimentales entre TODOS los patches que mencionan ese package (así
+# garantizamos que la versión elegida sea compatible con cualquier patch
+# que se termine usando, no solo con uno) y devolvemos la más alta.
 resolve_version_from_meta() {
   local pkg="$1"
   jq -r --arg pkg "$pkg" '
-    [.[]
-     | select(.compatiblePackages?[]?.name == $pkg)
-     | .compatiblePackages[]
-     | select(.name == $pkg)
-     | .versions[]?]
-    | unique
-    | sort_by(split(".") | map(tonumber? // 0))
-    | last // empty
+    [.patches[]?
+     | .compatiblePackages[]?
+     | select(.packageName == $pkg)
+     | (.targets // []) | map(select(.isExperimental == false) | .version)
+     | select(length > 0)
+    ] as $lists
+    | if ($lists | length) == 0 then empty
+      else
+        ($lists[0] as $first
+         | reduce $lists[1:][] as $l ($first; . - (. - $l))
+        )
+        | sort_by(split(".") | map(tonumber? // 0))
+        | last // empty
+      end
   ' "$META_DIR/patches-meta.json" 2>/dev/null || true
 }
 
@@ -119,11 +120,12 @@ YTM_VERSION="${YTM_VERSION:-}"
 # su URL schema). Si no hay env ni meta, abortamos con mensaje útil que
 # lista las versiones conocidas-compatibles con inotia00 v5.14.1.
 if [ -z "$YT_VERSION" ] || [ -z "$YTM_VERSION" ]; then
-  die "Faltan versiones explícitas (YT_VERSION/YTM_VERSION) y no hay meta disponible.
-    Pasa versiones via workflow_dispatch. Últimas conocidas-compat con
-    MorpheApp/morphe-patches v1.24.0:
-      YouTube:       20.21.37, 20.31.42, 20.45.36, 20.47.62
-      YouTube Music: 7.29.52, 8.44.54, 8.47.56
+  die "Faltan versiones explícitas (YT_VERSION/YTM_VERSION) y no hay meta disponible
+    (falló la descarga/parseo de patches-list.json — revisá el warning de arriba).
+    Pasa versiones via workflow_dispatch. Últimas conocidas-compat
+    (no-experimentales) con MorpheApp/morphe-patches v1.31.0:
+      YouTube:       20.21.37, 20.31.42, 20.51.39
+      YouTube Music: 7.29.52, 8.47.56, 8.51.51
     Si APKMirror no tiene una, prueba la anterior de la lista.
     Ver docs/APKMIRROR-SCRAPER.md §versiones-soportadas."
 fi

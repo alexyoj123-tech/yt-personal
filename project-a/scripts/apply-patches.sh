@@ -118,6 +118,10 @@ YT_OPTS=(
   -e "Change package name"
   -O "packageName=app.morphe.android.youtube"
   -e "GmsCore support"
+  -e "Downloads"
+  -e "Spoof video streams"
+  -e "Spoof app version"
+  -e "Spoof device dimensions"
 )
 
 YTM_OPTS=(
@@ -127,6 +131,10 @@ YTM_OPTS=(
   -e "Change package name"
   -O "packageName=app.morphe.android.apps.youtube.music"
   -e "GmsCore support"
+  -e "Spoof video streams"
+  -e "Remove background playback restrictions"
+  -e "Hide music video ads"
+  -e "Hide ads"
 )
 
 apply_patch "$APKS_DIR/youtube.apk"       "$PATCHED_DIR/youtube-patched.apk"       "YouTube"       "${YT_OPTS[@]}"

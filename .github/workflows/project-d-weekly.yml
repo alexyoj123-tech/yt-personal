@@ -59,24 +59,7 @@ jobs:
 
           echo "Creando release $TAG ..."
           BODY_FILE=$(mktemp)
-          cat > "$BODY_FILE" <<EOF
-# YouTube Origin $VER (Google TV / Android TV)
-
-Wrapper del YouTube para Android TV con **uBlock Origin + Adblock Plus + SponsorBlock** inyectados, mantiene UI 100% oficial y Widevine DRM.
-
-**Arquitectura:** arm64-v8a · **Instalar en:** Google TV, Fire TV, Android TV, TV Boxes con Android 9+.
-
-## Firma
-
-⚠️ **APK con firma original de energylove** — NO re-firmado con keystore del repo. Re-firmar rompería Widevine DRM attestation y perdería HD/4K. Ver docs/MIGRATION-GUIDE-TV.md §firma.
-
-## Integridad
-- SHA-256: \`$SHA\`
-
-## Fuente
-- Upstream: $SOURCE
-- Mantenedor: [energylove](https://gitlab.com/energylove)
-EOF
+          printf '# YouTube Origin %s (Google TV / Android TV)\n\nYouTube para Android TV con uBlock Origin + SponsorBlock inyectados, UI oficial y Widevine DRM intactos.\n\n**Arquitectura:** arm64-v8a — Google TV, Fire TV, Android TV Box (Android 9+)\n\n## Firma\nAPK con firma original de energylove (NO re-firmado). Re-firmar rompe Widevine DRM.\n\n## Integridad\nSHA-256: `%s`\n\n## Fuente\nUpstream: %s\nMantenedor: [energylove](https://gitlab.com/energylove)\n' "$VER" "$SHA" "$SOURCE" > "$BODY_FILE"
 
           gh release create "$TAG" \
             --repo "$GITHUB_REPOSITORY" \

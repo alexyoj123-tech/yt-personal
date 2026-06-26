@@ -43,49 +43,46 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set -euo pipefail
           VER=$(jq -r '.version_clean' project-d/build/meta/fetch.json)
           TAG="ytp-d-origin-${VER}"
           APK=$(ls project-d/build/out/youtube-origin-*.apk | head -1)
           SHA=$(jq -r '.apk_sha256' project-d/build/meta/fetch.json)
           SOURCE=$(jq -r '.rar_source' project-d/build/meta/fetch.json)
 
+          echo "VERSION: $VER | TAG: $TAG | APK: $APK"
+
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "Release $TAG ya existe — skip (idempotente)."
             exit 0
           fi
 
+          echo "Creando release $TAG ..."
           BODY_FILE=$(mktemp)
           cat > "$BODY_FILE" <<EOF
-          # YouTube Origin $VER (Google TV / Android TV)
+# YouTube Origin $VER (Google TV / Android TV)
 
-          Wrapper del YouTube TV oficial de Google con **uBlock Origin + Adblock Plus + SponsorBlock** inyectados, mantiene UI 100% oficial y Widevine DRM para contenido gratis de Movies & TV.
+Wrapper del YouTube para Android TV con **uBlock Origin + Adblock Plus + SponsorBlock** inyectados, mantiene UI 100% oficial y Widevine DRM.
 
-          **Arquitectura:** arm64-v8a · **Instalar en:** Google TV, Fire TV, Android TV, TV Boxes (ej. Claro 4K Android TV Box) con Android 9+.
+**Arquitectura:** arm64-v8a · **Instalar en:** Google TV, Fire TV, Android TV, TV Boxes con Android 9+.
 
-          ## Firma
+## Firma
 
-          ⚠️ **Este APK mantiene la firma original de energylove** — NO está re-firmado con el keystore \`yt-personal\` del repo. Es la única app del release en este estado. Razón: re-firmar rompería la attestation Widevine del chip DRM del TV Box y perdería HD/4K en películas gratis de YouTube Movies & TV. Ver [docs/MIGRATION-GUIDE-TV.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/MIGRATION-GUIDE-TV.md) §firma.
+⚠️ **APK con firma original de energylove** — NO re-firmado con keystore del repo. Re-firmar rompería Widevine DRM attestation y perdería HD/4K. Ver docs/MIGRATION-GUIDE-TV.md §firma.
 
-          ## Integridad
+## Integridad
+- SHA-256: \`$SHA\`
 
-          - SHA-256 del APK: \`$SHA\`
-
-          ## Instalación
-
-          Ver [docs/INSTALL-TV.md](https://github.com/${GITHUB_REPOSITORY}/blob/main/docs/INSTALL-TV.md) — método **"Send Files to TV"** desde el celular (recomendado por energylove) o **Downloader by AFTVnews**.
-
-          ## Fuente
-
-          - Upstream: $SOURCE
-          - Mantenedor: [energylove](https://gitlab.com/energylove) · XDA: [hilo oficial](https://xdaforums.com/t/app-android-tv-youtube-origin-for-google-tv.4699190/)
-          - Frecuencia de releases upstream: ~bimensual (sin GitLab Releases API — distribuye via archivos commiteados).
-          EOF
+## Fuente
+- Upstream: $SOURCE
+- Mantenedor: [energylove](https://gitlab.com/energylove)
+EOF
 
           gh release create "$TAG" \
             --repo "$GITHUB_REPOSITORY" \
             --title "YouTube Origin $VER (Google TV / Android TV)" \
             --notes-file "$BODY_FILE" \
-            "$APK"
+            "$APK" && echo "Release $TAG creado OK." || { echo "ERROR creando release"; cat "$BODY_FILE"; exit 1; }
           rm -f "$BODY_FILE"
 
       - name: Upload meta como artifact (siempre)

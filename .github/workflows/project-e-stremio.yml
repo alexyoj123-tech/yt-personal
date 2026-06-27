@@ -1,0 +1,58 @@
+name: project-e · Stremio (daily auto-update)
+# Descarga Stremio oficial, re-firma con keystore del repo y publica
+# release ytp-e-stremio-X.X.X si la version cambio desde ayer.
+# Misma cadena de firma que YouTube Personal / YouTube Music / GmsCore.
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 06:00 UTC diario (antes del cron de project-a)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-e-stremio
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Fetch + sign + publish Stremio
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK (para zipalign + apksigner + aapt)
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar build-tools 34 + aapt
+        run: |
+          BT_DIR="$ANDROID_SDK_ROOT/build-tools/34.0.0"
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "build-tools;34.0.0"
+          echo "$BT_DIR" >> "$GITHUB_PATH"
+          sudo apt-get install -y -qq aapt jq
+
+      - name: Fetch, firmar y publicar Stremio
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: bash project-e/scripts/fetch-sign-stremio.sh
+
+      - name: Upload meta como artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-e-meta-${{ github.run_id }}
+          path: project-e/build/meta/
+          retention-days: 30

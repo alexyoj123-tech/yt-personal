@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
-# project-e: Descarga Stremio oficial, re-firma con keystore del repo,
-# publica release ytp-e-stremio-X.X.X si la version cambio.
+# project-e: Descarga Stremio (arm64 + armeabi-v7a), re-firma con keystore
+# del repo y publica release ytp-e-stremio-X.X.X si la version cambio.
 set -euo pipefail
 
-# ── Colores ──────────────────────────────────────────────────────────
 info()  { echo "[INFO]  $*"; }
 ok()    { echo "[OK]    $*"; }
 warn()  { echo "[WARN]  $*"; }
 die()   { echo "[ERR]   $*" >&2; exit 1; }
 step()  { echo ""; echo "──── $* ────"; }
 
-# ── Dirs ─────────────────────────────────────────────────────────────
 REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BUILD_DIR="$REPO_ROOT/project-e/build"
 OUT_DIR="$BUILD_DIR/out"
@@ -18,110 +16,110 @@ META_DIR="$BUILD_DIR/meta"
 TOOLS_DIR="$BUILD_DIR/tools"
 mkdir -p "$OUT_DIR" "$META_DIR" "$TOOLS_DIR"
 
-# ── Fuentes oficiales (en orden de preferencia) ──────────────────────
-STREMIO_URL_LATEST="https://dl.strem.io/android/latest/stremio.apk"
-STREMIO_RAW="/tmp/stremio-raw.apk"
+sign_apk() {
+  local input="$1" output="$2" label="$3"
+  local aligned="/tmp/aligned-$(basename "$input")"
+  zipalign -p -f 4 "$input" "$aligned"
+  apksigner sign \
+    --ks "$KS_PATH" \
+    --ks-pass "pass:$ANDROID_KEYSTORE_PASSWORD" \
+    --ks-key-alias "$ANDROID_KEY_ALIAS" \
+    --key-pass "pass:$ANDROID_KEY_PASSWORD" \
+    --v1-signing-enabled true \
+    --v2-signing-enabled true \
+    --v3-signing-enabled true \
+    --out "$output" "$aligned"
+  apksigner verify --print-certs "$output" >/dev/null
+  rm -f "$aligned"
+  ok "$label firmado: $(du -h "$output" | cut -f1)"
+}
 
-step "Descargando Stremio"
-if curl -fsSL --retry 3 --connect-timeout 30 \
-     "$STREMIO_URL_LATEST" -o "$STREMIO_RAW"; then
-  ok "Descargado desde CDN oficial"
-else
-  warn "CDN falló — usando última release de perpetus/stremio-android"
-  FALLBACK_URL=$(curl -fsSL \
-    -H "Authorization: token ${GH_TOKEN:-}" \
-    "https://api.github.com/repos/perpetus/stremio-android/releases/latest" \
-    | jq -r '.assets[] | select(.name | test("arm64-v8a")) | .browser_download_url')
-  [ -n "$FALLBACK_URL" ] || die "No se encontro URL de fallback"
-  curl -fsSL --location "$FALLBACK_URL" -o "$STREMIO_RAW"
-  ok "Descargado desde fallback: $FALLBACK_URL"
-fi
-
-[ -s "$STREMIO_RAW" ] || die "APK descargado esta vacio"
-info "Tamaño: $(du -h "$STREMIO_RAW" | cut -f1)"
-
-# ── Detectar version via aapt ─────────────────────────────────────────
-step "Detectando version"
-if command -v aapt2 &>/dev/null; then
-  AAPT_OUT=$(aapt2 dump badging "$STREMIO_RAW" 2>/dev/null || true)
-elif command -v aapt &>/dev/null; then
-  AAPT_OUT=$(aapt dump badging "$STREMIO_RAW" 2>/dev/null || true)
-else
-  die "No hay aapt/aapt2 en PATH"
-fi
-
-VERSION=$(echo "$AAPT_OUT" | grep -oP "versionName='[^']+'" | cut -d"'" -f2 || true)
-if [ -z "$VERSION" ]; then
-  VERSION="$(date -u +%Y.%m.%d)"
-  warn "No se pudo leer versionName — usando fecha: $VERSION"
-fi
-info "Version detectada: $VERSION"
-
-TAG="ytp-e-stremio-${VERSION}"
-
-# ── Chequeo idempotente ───────────────────────────────────────────────
-step "Verificando si el release ya existe"
-if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-  ok "Release $TAG ya existe — nada nuevo. Saliendo."
-  exit 0
-fi
-info "Version nueva detectada: $VERSION — procediendo a firmar y publicar."
-
-# ── Firma ─────────────────────────────────────────────────────────────
-step "Firmando con keystore del repo"
+# ── Preparar keystore ─────────────────────────────────────────────────
+step "Preparando keystore"
 [ -n "${ANDROID_KEYSTORE_BASE64:-}"   ] || die "Falta ANDROID_KEYSTORE_BASE64"
 [ -n "${ANDROID_KEYSTORE_PASSWORD:-}" ] || die "Falta ANDROID_KEYSTORE_PASSWORD"
 [ -n "${ANDROID_KEY_ALIAS:-}"         ] || die "Falta ANDROID_KEY_ALIAS"
 [ -n "${ANDROID_KEY_PASSWORD:-}"      ] || die "Falta ANDROID_KEY_PASSWORD"
-
 KS_PATH="$TOOLS_DIR/release.jks"
 printf "%s" "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$KS_PATH"
 [ -s "$KS_PATH" ] || die "Keystore vacio"
 
-ALIGNED="/tmp/stremio-aligned.apk"
-SIGNED_APK="$OUT_DIR/stremio-personal-${VERSION}.apk"
+# ── Obtener version y URLs desde fuente ───────────────────────────────
+step "Buscando ultima version de Stremio"
+API_URL="https://api.github.com/repos/perpetus/stremio-android/releases/latest"
+RELEASE_JSON=$(curl -fsSL -H "Authorization: token ${GH_TOKEN:-}" "$API_URL")
+VERSION=$(echo "$RELEASE_JSON" | python3 -c "import sys,json; r=json.load(sys.stdin); print(r['tag_name'].lstrip('v'))")
+info "Version: $VERSION"
 
-zipalign -p -f 4 "$STREMIO_RAW" "$ALIGNED"
-info "zipalign OK"
+TAG="ytp-e-stremio-${VERSION}"
 
-apksigner sign \
-  --ks "$KS_PATH" \
-  --ks-pass "pass:$ANDROID_KEYSTORE_PASSWORD" \
-  --ks-key-alias "$ANDROID_KEY_ALIAS" \
-  --key-pass "pass:$ANDROID_KEY_PASSWORD" \
-  --v1-signing-enabled true \
-  --v2-signing-enabled true \
-  --v3-signing-enabled true \
-  --out "$SIGNED_APK" \
-  "$ALIGNED"
+# ── Chequeo idempotente ───────────────────────────────────────────────
+if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+  ok "Release $TAG ya existe. Nada nuevo."
+  shred -u "$KS_PATH" 2>/dev/null || rm -f "$KS_PATH"
+  exit 0
+fi
+info "Version nueva: $VERSION — descargando y firmando."
 
-apksigner verify --print-certs "$SIGNED_APK" >/dev/null
-ok "Firmado y verificado: $SIGNED_APK ($(du -h "$SIGNED_APK" | cut -f1))"
+# ── Descargar arm64-v8a (telefono + TV box moderno) ──────────────────
+step "Descargando arm64-v8a"
+URL_ARM64=$(echo "$RELEASE_JSON" | python3 -c "
+import sys,json
+assets = json.load(sys.stdin)['assets']
+for a in assets:
+    if 'arm64-v8a' in a['name'] and '.apk' in a['name'] and 'mapping' not in a['name']:
+        print(a['browser_download_url']); break
+")
+[ -n "$URL_ARM64" ] || die "No encontre APK arm64-v8a"
+RAW_ARM64="/tmp/stremio-arm64-raw.apk"
+curl -fsSL --location "$URL_ARM64" -o "$RAW_ARM64"
+SIGNED_ARM64="$OUT_DIR/stremio-personal-${VERSION}-arm64.apk"
+sign_apk "$RAW_ARM64" "$SIGNED_ARM64" "arm64-v8a"
+
+# ── Descargar armeabi-v7a (dispositivos 32-bit) ───────────────────────
+step "Descargando armeabi-v7a"
+URL_ARM32=$(echo "$RELEASE_JSON" | python3 -c "
+import sys,json
+assets = json.load(sys.stdin)['assets']
+for a in assets:
+    if 'armeabi-v7a' in a['name'] and '.apk' in a['name']:
+        print(a['browser_download_url']); break
+")
+SIGNED_ARM32=""
+if [ -n "$URL_ARM32" ]; then
+  RAW_ARM32="/tmp/stremio-arm32-raw.apk"
+  curl -fsSL --location "$URL_ARM32" -o "$RAW_ARM32"
+  SIGNED_ARM32="$OUT_DIR/stremio-personal-${VERSION}-armeabi-v7a.apk"
+  sign_apk "$RAW_ARM32" "$SIGNED_ARM32" "armeabi-v7a"
+else
+  warn "No se encontro APK armeabi-v7a"
+fi
 
 shred -u "$KS_PATH" 2>/dev/null || rm -f "$KS_PATH"
-rm -f "$ALIGNED"
 
 # ── Metadata ──────────────────────────────────────────────────────────
-SHA=$(sha256sum "$SIGNED_APK" | cut -d' ' -f1)
-cat > "$META_DIR/stremio.json" << EOF
+SHA64=$(sha256sum "$SIGNED_ARM64" | cut -d' ' -f1)
+cat > "$META_DIR/stremio.json" << METAEOF
 {
   "version": "$VERSION",
   "tag": "$TAG",
   "signed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "sha256": "$SHA",
-  "apk": "stremio-personal-${VERSION}.apk"
+  "sha256_arm64": "$SHA64",
+  "apk_arm64": "stremio-personal-${VERSION}-arm64.apk"
 }
-EOF
+METAEOF
 
 # ── Publicar release ──────────────────────────────────────────────────
 step "Publicando release $TAG"
-BODY=$(printf '# Stremio Personal %s\n\nStremio re-firmado con el keystore del repo. Misma firma que YouTube, YouTube Music y GmsCore.\n\n## Configuracion inicial (una sola vez)\n\n### 1. Instalar addon Torrentio\nAbre Stremio → Buscar → Addons → pega esta URL:\n```\nhttps://torrentio.strem.fun/providers=yts,eztv,rarbg,1337x,thepiratebay,kickasstorrents/sort=qualitysize/language=spanish,multi/manifest.json\n```\nO entra a https://torrentio.strem.fun, configura a tu gusto, copia el link generado.\n\n### 2. Cuenta Stremio\nCreate una cuenta gratis en https://www.stremio.com — sincroniza tu lista en todos los dispositivos.\n\n## Integridad\nSHA-256: `%s`\n\n## Fuente\nStremio oficial: https://www.stremio.com\n' "$VERSION" "$SHA")
+printf '# Stremio Personal %s\n\n**Firmado con keystore del repo** — misma firma que YouTube, YouTube Music y GmsCore.\n\n## Cual APK instalar?\n\n- **stremio-personal-%s-arm64.apk** → Todos los telefonos modernos (2017+) y TV Boxes modernos (Claro, Xiaomi, etc.)\n- **stremio-personal-%s-armeabi-v7a.apk** → Dispositivos antiguos de 32-bit solamente\n\n## Configurar Torrentio (una sola vez)\n\n1. Abre el navegador de tu telefono y entra a:\n   `https://torrentio.strem.fun/configure`\n2. Configura: Sorting = **By quality then size** | Priority language = **Spanish**\n3. Toca **Install** — se abre Stremio automaticamente con el addon instalado\n\nO pega directamente en Stremio → Addons → URL:\n`https://torrentio.strem.fun/manifest.json`\n\n## Addons recomendados adicionales\n- **Cinemeta** (ya viene) — catalogo de peliculas y series\n- **WatchHub** (ya viene) — muestra en que servicio esta cada contenido\n\n## Integridad\nSHA-256 arm64: `%s`\n' "$VERSION" "$VERSION" "$VERSION" "$SHA64" > /tmp/stremio-notes.md
 
-printf '%s' "$BODY" > /tmp/stremio-release-notes.md
+UPLOAD_ARGS=("$SIGNED_ARM64")
+[ -n "$SIGNED_ARM32" ] && [ -f "$SIGNED_ARM32" ] && UPLOAD_ARGS+=("$SIGNED_ARM32")
+
 gh release create "$TAG" \
   --repo "$GITHUB_REPOSITORY" \
   --title "Stremio Personal $VERSION" \
-  --notes-file /tmp/stremio-release-notes.md \
-  "$SIGNED_APK" && ok "Release $TAG publicado." || die "Fallo al crear release"
-
-rm -f /tmp/stremio-release-notes.md
+  --notes-file /tmp/stremio-notes.md \
+  "${UPLOAD_ARGS[@]}" && ok "Release $TAG publicado con ${#UPLOAD_ARGS[@]} APK(s)." \
+  || die "Fallo al crear release"
+rm -f /tmp/stremio-notes.md

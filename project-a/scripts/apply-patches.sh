@@ -157,7 +157,8 @@ YT_OPTS=(
   -e "Double tap to seek"
   -e "Seekbar"
   -e "Playback speed"
-  -e "Miniplayer"
+  # Miniplayer DESACTIVADO — reemplaza PiP del sistema con mini-reproductor interno
+  # que desaparece al salir de YouTube. Usar PiP nativo de Android en su lugar.
   -e "Ambient mode"
   -e "Custom player overlay opacity"
   -e "Force original audio"
@@ -177,7 +178,7 @@ YT_OPTS=(
   -e "Hide related video overlay"
   -e "Hide info cards"
   -e "Hide timestamp"
-  -e "Disable player popup panels"
+  # Disable player popup panels DESACTIVADO — bloquea el trigger de PiP del sistema
   -e "Disable rolling number animations"
   -e "Disable sign in to TV popup"
   -e "Disable haptic feedback"

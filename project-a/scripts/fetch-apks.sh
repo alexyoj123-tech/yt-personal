@@ -116,6 +116,31 @@ YTM_VERSION="${YTM_VERSION:-}"
 [ -z "$YT_VERSION"  ] && YT_VERSION="$(resolve_version_from_meta  "$YT_PKG"  || true)"
 [ -z "$YTM_VERSION" ] && YTM_VERSION="$(resolve_version_from_meta "$YTM_PKG" || true)"
 
+# ── Piso de versión mínima ────────────────────────────────────────────
+# Evita que patches-list.json inestable haga retroceder a versiones viejas.
+# Actualizar manualmente cada vez que se publique una versión más nueva.
+YT_VERSION_FLOOR="20.51.39"
+YTM_VERSION_FLOOR="9.15.51"
+
+version_gte() {
+  # Retorna 0 (true) si $1 >= $2 comparando semver
+  python3 -c "
+import sys
+a=[int(x) for x in sys.argv[1].split('.')]
+b=[int(x) for x in sys.argv[2].split('.')]
+sys.exit(0 if a>=b else 1)
+" "$1" "$2"
+}
+
+if [ -n "$YT_VERSION" ] && ! version_gte "$YT_VERSION" "$YT_VERSION_FLOOR"; then
+  warn "Version YT detectada ($YT_VERSION) < piso ($YT_VERSION_FLOOR) — usando piso."
+  YT_VERSION="$YT_VERSION_FLOOR"
+fi
+if [ -n "$YTM_VERSION" ] && ! version_gte "$YTM_VERSION" "$YTM_VERSION_FLOOR"; then
+  warn "Version YTM detectada ($YTM_VERSION) < piso ($YTM_VERSION_FLOOR) — usando piso."
+  YTM_VERSION="$YTM_VERSION_FLOOR"
+fi
+
 # El scraper APKMirror requiere versión explícita (no existe "latest" en
 # su URL schema). Si no hay env ni meta, abortamos con mensaje útil que
 # lista las versiones conocidas-compatibles con inotia00 v5.14.1.

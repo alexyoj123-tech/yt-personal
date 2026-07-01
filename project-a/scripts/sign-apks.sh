@@ -63,7 +63,7 @@ sign_apk() {
     --key-pass "pass:$ANDROID_KEY_PASSWORD" \
     --v1-signing-enabled true \
     --v2-signing-enabled true \
-    --v3-signing-enabled true \
+    --v3-signing-enabled false \
     --out "$out_apk" \
     "$aligned"
 

@@ -189,12 +189,13 @@ YT_OPTS=(
 )
 
 YTM_OPTS=(
-  # ── Identidad y firma ──────────────────────────────────────────────
+  # ── Identidad ─────────────────────────────────────────────────────
+  # NOTA: Change package name NO se aplica a YTM para mantener el package
+  # original com.google.android.apps.youtube.music — Android Auto requiere
+  # este package exacto en su whitelist para reconocer la app.
   -e "Custom branding"
   -O "customName=YouTube Music"
   -O "customIcon=$MORPHE_ICONS/ytmusic"
-  -e "Change package name"
-  -O "packageName=app.morphe.android.apps.youtube.music"
   # ── Compatibilidad y estabilidad ──────────────────────────────────
   -e "GmsCore support"
   -e "Spoof video streams"
@@ -276,7 +277,7 @@ verify_package() {
 # (patrón consistente con morphe-* de sus forks). Si el primer build da otro
 # nombre, aapt2 del log lo confirma — override via env EXPECTED_*_PACKAGE.
 EXPECTED_YT_PACKAGE="${EXPECTED_YT_PACKAGE:-app.morphe.android.youtube}"
-EXPECTED_YTM_PACKAGE="${EXPECTED_YTM_PACKAGE:-app.morphe.android.apps.youtube.music}"
+EXPECTED_YTM_PACKAGE="${EXPECTED_YTM_PACKAGE:-com.google.android.apps.youtube.music}"
 
 verify_package "$PATCHED_DIR/youtube-patched.apk"       "$EXPECTED_YT_PACKAGE"  "YouTube"
 verify_package "$PATCHED_DIR/youtube-music-patched.apk" "$EXPECTED_YTM_PACKAGE" "YouTube Music"

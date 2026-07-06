@@ -190,12 +190,13 @@ YT_OPTS=(
 
 YTM_OPTS=(
   # ── Identidad ─────────────────────────────────────────────────────
-  # NOTA: Change package name NO se aplica a YTM para mantener el package
-  # original com.google.android.apps.youtube.music — Android Auto requiere
-  # este package exacto en su whitelist para reconocer la app.
+  # Android Auto: package ORIGINAL com.google.android.apps.youtube.music
+  # para que Android Auto lo reconozca en su whitelist.
   -e "Custom branding"
   -O "customName=YouTube Music"
   -O "customIcon=$MORPHE_ICONS/ytmusic"
+  -e "Change package name"
+  -O "packageName=com.google.android.apps.youtube.music"
   # ── Compatibilidad y estabilidad ──────────────────────────────────
   -e "GmsCore support"
   -e "Spoof video streams"

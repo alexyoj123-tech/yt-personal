@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-07-05",
-  "build_date": "2026-07-05",
-  "expires_date": "2026-10-03",
+  "tag": "ytp-f-family-2026-07-06",
+  "build_date": "2026-07-06",
+  "expires_date": "2026-10-04",
   "expires_days": 90,
   "source_release": "ytp-a-2026.07.04",
   "apps": {
     "yt": {
-      "filename": "t8Db-8jkN-5PzW-GVtE-PgyD-iyQa-8jw9-J3Xhv.apk",
+      "filename": "v66r-CdS3-2qbv-JFZR-hNfG-LM8D-fSHm-2mqZh.apk",
       "size_bytes": 181347566,
       "sha256": "abcc2c34334e50bbb1cfd09c6430e3b9ef4dd87f1f027cd3fd2acca7b1ec2810",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-05/t8Db-8jkN-5PzW-GVtE-PgyD-iyQa-8jw9-J3Xhv.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-06/v66r-CdS3-2qbv-JFZR-hNfG-LM8D-fSHm-2mqZh.apk"
     },
     "ytm": {
-      "filename": "Ajui-scwH-S6uF-VmbP-55qd-8Cgw-sZqr-QxDqW.apk",
+      "filename": "pWsJ-FZWe-9C89-7hwa-ftHi-YKUH-5FMd-9Jd2C.apk",
       "size_bytes": 79746027,
       "sha256": "a769a8335ab8d4506907fb366766fecac1c3838ba4f64b92985a0c4e32dbc185",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-05/Ajui-scwH-S6uF-VmbP-55qd-8Cgw-sZqr-QxDqW.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-06/pWsJ-FZWe-9C89-7hwa-ftHi-YKUH-5FMd-9Jd2C.apk"
     }
   }
 }

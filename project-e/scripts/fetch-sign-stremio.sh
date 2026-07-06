@@ -51,7 +51,7 @@ RELEASE_JSON=$(curl -fsSL -H "Authorization: token ${GH_TOKEN:-}" "$API_URL")
 VERSION=$(echo "$RELEASE_JSON" | python3 -c "import sys,json; r=json.load(sys.stdin); print(r['tag_name'].lstrip('v'))")
 info "Version: $VERSION"
 
-TAG="ytp-e-stremio-${VERSION}"
+TAG="ytp-e-StremioAleS-${VERSION}"
 
 # ── Chequeo idempotente ───────────────────────────────────────────────
 if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
@@ -105,7 +105,7 @@ cat > "$META_DIR/stremio.json" << METAEOF
   "tag": "$TAG",
   "signed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "sha256_arm64": "$SHA64",
-  "apk_arm64": "stremio-personal-${VERSION}-arm64.apk"
+  "apk_arm64": "StremioAleS-${VERSION}-arm64.apk"
 }
 METAEOF
 
@@ -118,7 +118,7 @@ UPLOAD_ARGS=("$SIGNED_ARM64")
 
 gh release create "$TAG" \
   --repo "$GITHUB_REPOSITORY" \
-  --title "Stremio Personal $VERSION" \
+  --title "StremioAleS $VERSION" \
   --notes-file /tmp/stremio-notes.md \
   "${UPLOAD_ARGS[@]}" && ok "Release $TAG publicado con ${#UPLOAD_ARGS[@]} APK(s)." \
   || die "Fallo al crear release"

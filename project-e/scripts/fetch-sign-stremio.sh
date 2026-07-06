@@ -73,7 +73,7 @@ for a in assets:
 [ -n "$URL_ARM64" ] || die "No encontre APK arm64-v8a"
 RAW_ARM64="/tmp/stremio-arm64-raw.apk"
 curl -fsSL --location "$URL_ARM64" -o "$RAW_ARM64"
-SIGNED_ARM64="$OUT_DIR/stremio-personal-${VERSION}-arm64.apk"
+SIGNED_ARM64="$OUT_DIR/StremioAleS-${VERSION}-arm64.apk"
 sign_apk "$RAW_ARM64" "$SIGNED_ARM64" "arm64-v8a"
 
 # ── Descargar armeabi-v7a (dispositivos 32-bit) ───────────────────────
@@ -89,7 +89,7 @@ SIGNED_ARM32=""
 if [ -n "$URL_ARM32" ]; then
   RAW_ARM32="/tmp/stremio-arm32-raw.apk"
   curl -fsSL --location "$URL_ARM32" -o "$RAW_ARM32"
-  SIGNED_ARM32="$OUT_DIR/stremio-personal-${VERSION}-armeabi-v7a.apk"
+  SIGNED_ARM32="$OUT_DIR/StremioAleS-${VERSION}-armeabi-v7a.apk"
   sign_apk "$RAW_ARM32" "$SIGNED_ARM32" "armeabi-v7a"
 else
   warn "No se encontro APK armeabi-v7a"

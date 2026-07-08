@@ -134,7 +134,7 @@ printf '{"version":"%s","tag":"%s","sha256":"%s"}\n' "$VERSION" "$TAG" "$SHA64" 
   > "$META_DIR/stremio.json"
 
 gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
-  --title "H.A.P.E.R Y.C $VERSION" \
+  --title "HAPERYC $VERSION - H.A.P.E.R Y.C" \
   --notes "H.A.P.E.R Y.C $VERSION — Firmado con keystore propio. SHA-256: $SHA64" \
   "$SIGNED64" ${SIGNED32:+"$SIGNED32"}
 ok "Publicado: $TAG"

@@ -159,6 +159,8 @@ YT_OPTS=(
   -e "Playback speed"
   # Miniplayer DESACTIVADO — reemplaza PiP del sistema con mini-reproductor interno
   # que desaparece al salir de YouTube. Usar PiP nativo de Android en su lugar.
+  # NOTA: Reactivar si en el futuro Morphe agrega opcion de "System PiP" en Miniplayer.
+  -e "Add to queue"
   -e "Ambient mode"
   -e "Custom player overlay opacity"
   -e "Force original audio"

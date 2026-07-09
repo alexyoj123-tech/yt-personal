@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-07-08",
-  "build_date": "2026-07-08",
-  "expires_date": "2026-10-06",
+  "tag": "ytp-f-family-2026-07-09",
+  "build_date": "2026-07-09",
+  "expires_date": "2026-10-07",
   "expires_days": 90,
-  "source_release": "ytp-a-2026.07.08",
+  "source_release": "ytp-a-2026.07.08-2",
   "apps": {
     "yt": {
-      "filename": "arHp-DE2M-cKg7-cjvc-tSVg-fi9S-nrEt-n6Nxw.apk",
+      "filename": "iRiG-qveK-NCtB-7M9e-VFLr-6JQ2-UwQQ-9V6dH.apk",
       "size_bytes": 181347566,
-      "sha256": "31ae94f7dbface51eabba2974d2e2c03cc86fe9b500d40ec6af00ef0d703088f",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-08/arHp-DE2M-cKg7-cjvc-tSVg-fi9S-nrEt-n6Nxw.apk"
+      "sha256": "621a3b68f78071eb0509e11dbd573c4b8e22389252f3085bdc716aca9580c8e9",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-09/iRiG-qveK-NCtB-7M9e-VFLr-6JQ2-UwQQ-9V6dH.apk"
     },
     "ytm": {
-      "filename": "SktV-ApMN-EXRN-wFLx-8Zrc-Araq-teKW-f5uQa.apk",
+      "filename": "FfSR-JMWx-ZSj6-xknN-SwGm-hc7V-JwmB-tVYdt.apk",
       "size_bytes": 79746027,
-      "sha256": "65d8d6359da7b91b32c017bd730b59cf4f8311a6c5d835de7703cfd327b9f25c",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-08/SktV-ApMN-EXRN-wFLx-8Zrc-Araq-teKW-f5uQa.apk"
+      "sha256": "ff0d06a86d89e4a31419b5dd3798bd116d19ab126046d3bb07f20bbd9bdda8ce",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-09/FfSR-JMWx-ZSj6-xknN-SwGm-hc7V-JwmB-tVYdt.apk"
     }
   }
 }

@@ -119,7 +119,7 @@ YTM_VERSION="${YTM_VERSION:-}"
 # ── Piso de versión mínima ────────────────────────────────────────────
 # Evita que patches-list.json inestable haga retroceder a versiones viejas.
 # Actualizar manualmente cada vez que se publique una versión más nueva.
-YT_VERSION_FLOOR="20.51.39"  # morphe-patches v1.33.0 soporta hasta 20.51.39
+YT_VERSION_FLOOR="21.04.223"  # morphe-patches v1.33.0 soporta hasta 20.51.39
 YTM_VERSION_FLOOR="9.15.51"
 
 version_gte() {

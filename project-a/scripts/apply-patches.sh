@@ -204,6 +204,8 @@ YTM_OPTS=(
   -e "Check watch history domain name resolution"
   -e "Disable DRC audio"
   -e "Disable QUIC protocol"
+  # ── Descarga externa (YTDLnis) ────────────────────────────────────
+  -e "Downloads"
   # ── Eliminar anuncios ─────────────────────────────────────────────
   -e "Hide ads"
   -e "Hide music video ads"

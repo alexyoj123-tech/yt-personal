@@ -120,7 +120,7 @@ YT_OPTS=(
   -O "packageName=app.morphe.android.youtube"
   # ── Compatibilidad y estabilidad ──────────────────────────────────
   -e "GmsCore support"
-  -e "Spoof video streams"
+  # Spoof video streams QUITADO — cliente TV causa corte exacto al minuto 1:00
   -e "Spoof app version"
   -e "Spoof device dimensions"
   -e "Bypass image region restrictions"
@@ -199,7 +199,7 @@ YTM_OPTS=(
   -O "packageName=app.morphe.android.apps.youtube.music"
   # ── Compatibilidad y estabilidad ──────────────────────────────────
   -e "GmsCore support"
-  -e "Spoof video streams"
+  # Spoof video streams QUITADO — mismo bug 1:00 en YTMusic
   -e "Bypass certificate checks"
   -e "Check watch history domain name resolution"
   -e "Disable DRC audio"

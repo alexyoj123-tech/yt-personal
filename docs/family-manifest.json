@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-07-25",
-  "build_date": "2026-07-25",
-  "expires_date": "2026-10-23",
+  "tag": "ytp-f-family-2026-07-26",
+  "build_date": "2026-07-26",
+  "expires_date": "2026-10-24",
   "expires_days": 90,
   "source_release": "ytp-a-2026.07.23",
   "apps": {
     "yt": {
-      "filename": "LBPn-ySMg-J5uG-wGFk-6jdT-puGT-twSY-jHyQD.apk",
+      "filename": "LefD-kgqD-4jaL-yArq-UnZC-xTEs-2Kwh-jp5m4.apk",
       "size_bytes": 182633477,
       "sha256": "ccba4da951575c0dccfc08fce321bc039ee1983a58e7baac21410b3fedd97bb8",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-25/LBPn-ySMg-J5uG-wGFk-6jdT-puGT-twSY-jHyQD.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-26/LefD-kgqD-4jaL-yArq-UnZC-xTEs-2Kwh-jp5m4.apk"
     },
     "ytm": {
-      "filename": "NT4G-bzKx-Hz6G-Dta4-vJy5-NBMZ-2Mv4-HW9Nb.apk",
+      "filename": "KCdz-WYeH-Ybcj-N9EJ-5ivt-S5Yr-JZeb-APrEh.apk",
       "size_bytes": 80139243,
       "sha256": "34b8231a04abeeee2b5c230a27b741026792ee1ecf3932af4421ecfed7d3a475",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-25/NT4G-bzKx-Hz6G-Dta4-vJy5-NBMZ-2Mv4-HW9Nb.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-26/KCdz-WYeH-Ybcj-N9EJ-5ivt-S5Yr-JZeb-APrEh.apk"
     }
   }
 }

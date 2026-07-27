@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-07-26",
-  "build_date": "2026-07-26",
-  "expires_date": "2026-10-24",
+  "tag": "ytp-f-family-2026-07-27",
+  "build_date": "2026-07-27",
+  "expires_date": "2026-10-25",
   "expires_days": 90,
   "source_release": "ytp-a-2026.07.23",
   "apps": {
     "yt": {
-      "filename": "LefD-kgqD-4jaL-yArq-UnZC-xTEs-2Kwh-jp5m4.apk",
+      "filename": "uWxR-PbWP-sjU3-6Pyp-uNzW-JYn2-KEW3-rGqVT.apk",
       "size_bytes": 182633477,
       "sha256": "ccba4da951575c0dccfc08fce321bc039ee1983a58e7baac21410b3fedd97bb8",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-26/LefD-kgqD-4jaL-yArq-UnZC-xTEs-2Kwh-jp5m4.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-27/uWxR-PbWP-sjU3-6Pyp-uNzW-JYn2-KEW3-rGqVT.apk"
     },
     "ytm": {
-      "filename": "KCdz-WYeH-Ybcj-N9EJ-5ivt-S5Yr-JZeb-APrEh.apk",
+      "filename": "F6hF-649R-UGB7-kXBP-jKjr-cxth-Pv4A-Fp27N.apk",
       "size_bytes": 80139243,
       "sha256": "34b8231a04abeeee2b5c230a27b741026792ee1ecf3932af4421ecfed7d3a475",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-26/KCdz-WYeH-Ybcj-N9EJ-5ivt-S5Yr-JZeb-APrEh.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-27/F6hF-649R-UGB7-kXBP-jKjr-cxth-Pv4A-Fp27N.apk"
     }
   }
 }

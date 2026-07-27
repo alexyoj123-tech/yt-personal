@@ -23,13 +23,13 @@ require_cmd jq
 # - morphe-patches v1.24.0+ (formato .mpp)
 # - morphe-cli v1.7.0+ (drop-in syntax compat con revanced-cli v5)
 # - MicroG-RE v6.1.3+ (reemplazo ligero 12.8 MB vs 100 MB de ReVanced/GmsCore)
-CLI_REPO="${REVANCED_CLI_REPO:-MorpheApp/morphe-cli}"
+CLI_REPO="${REVANCED_CLI_REPO:-MorpheApp/morphe-desktop}"
 PATCHES_REPO="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
 GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-MorpheApp/MicroG-RE}"
 
 # CLI pineada a v1.7.0 por estabilidad. Actualizar cuando Morphe publique
 # nueva stable + verificar compat con .mpp correspondiente.
-CLI_TAG="${REVANCED_CLI_TAG:-v1.7.0}"
+CLI_TAG="${REVANCED_CLI_TAG:-v1.12.0}"
 
 # Regex del asset MicroG-RE: 'microg-<ver>.apk'. Si el naming cambia,
 # override con env REVANCED_GMSCORE_REGEX.
@@ -40,7 +40,7 @@ step "Descargando morphe-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), Mi
 # El regex de CLI acepta ambos formatos histórico y actual:
 # - revanced-cli-<ver>-all.jar (histórico, inotia00/ReVanced)
 # - morphe-cli-<ver>-all.jar   (actual, Morphe)
-CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe-cli)-.*-all\\.jar$" "$CLI_TAG")"
+CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe-cli|morphe-desktop)-.*-all\\.jar$" "$CLI_TAG")"
 PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 

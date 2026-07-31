@@ -50,12 +50,10 @@ info "GmsCore:   $GMSCORE_APK"
 
 # ── Meta de patches (usado también por fetch-apks.sh en próximos runs) ──
 info "Extrayendo metadata de patches (compatible_packages + versions)"
-java -jar "$CLI_JAR" list-patches --with-packages --with-versions --json "$PATCHES_RVP" \
-  > "$META_DIR/patches-meta.json" 2>/dev/null || {
-  warn "list-patches --json no soportado por este CLI — uso fallback text."
-  java -jar "$CLI_JAR" list-patches "$PATCHES_RVP" \
-    > "$META_DIR/patches-meta.txt" || true
-}
+java -jar "$CLI_JAR" list-patches \
+  --patches="$PATCHES_RVP" \
+  --with-packages --with-versions \
+  --out "$META_DIR/patches-meta.txt" 2>/dev/null || warn "list-patches falló (no bloqueante)."
 
 # ── Función: aplicar patches a un APK ────────────────────────────────
 # Uso: apply_patch <input_apk> <out_apk> <label> [-- <extra_opts>...]
@@ -81,7 +79,7 @@ apply_patch() {
   #   --purge               : limpia temporales
   # NO pasamos --keystore; el APK sale sin firmar gracias a --unsigned.
   java -jar "$CLI_JAR" patch \
-    -p "$PATCHES_RVP" \
+    --patches="$PATCHES_RVP" \
     "${extra_opts[@]}" \
     -o "$out_apk" \
     --unsigned \

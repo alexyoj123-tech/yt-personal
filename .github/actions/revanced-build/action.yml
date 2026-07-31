@@ -136,7 +136,13 @@ runs:
         REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
         REVANCED_GMSCORE_REPO: ${{ inputs.revanced_gmscore_repo }}
         REVANCED_GMSCORE_REGEX: ${{ inputs.revanced_gmscore_regex }}
-      run: bash project-a/scripts/apply-patches.sh
+        JAVA_TOOL_OPTIONS: "-Djava.awt.headless=true"
+        DISPLAY: ":99"
+      run: |
+        sudo apt-get install -y -qq xvfb 2>/dev/null || true
+        Xvfb :99 -screen 0 1024x768x24 &
+        sleep 2
+        bash project-a/scripts/apply-patches.sh
 
     - name: sign-apks
       shell: bash

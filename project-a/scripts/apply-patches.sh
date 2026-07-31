@@ -48,6 +48,18 @@ info "CLI:       $CLI_JAR"
 info "Patches:   $PATCHES_RVP"
 info "GmsCore:   $GMSCORE_APK"
 
+# ── DIAGNÓSTICO (temporal, remover después) ────────────────────────
+info "=== DIAGNÓSTICO CLI ==="
+info "CLI_REPO=$CLI_REPO CLI_TAG=$CLI_TAG"
+info "REVANCED_CLI_TAG env=${REVANCED_CLI_TAG:-NO_SET}"
+java -version 2>&1 || true
+# Intentar descargar CLI y mostrar resultado
+CLI_TEST_PATH="$(ensure_tool "revanced-cli-test.jar" "$CLI_REPO" "(revanced-cli|morphe-cli|morphe-desktop)-.*-all\.jar$" "$CLI_TAG" 2>&1)" && {
+  info "CLI descargado: $CLI_TEST_PATH ($(du -h "$CLI_TEST_PATH" | cut -f1))"
+  java -jar "$CLI_TEST_PATH" --version 2>&1 || java -jar "$CLI_TEST_PATH" --help 2>&1 | head -5 || true
+} || info "CLI download falló"
+info "=== FIN DIAGNÓSTICO ==="
+
 # ── Meta de patches (usado también por fetch-apks.sh en próximos runs) ──
 info "Extrayendo metadata de patches (compatible_packages + versions)"
 java -jar "$CLI_JAR" list-patches \

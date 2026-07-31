@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-07-30",
-  "build_date": "2026-07-30",
-  "expires_date": "2026-10-28",
+  "tag": "ytp-f-family-2026-07-31",
+  "build_date": "2026-07-31",
+  "expires_date": "2026-10-29",
   "expires_days": 90,
   "source_release": "ytp-a-2026.07.23",
   "apps": {
     "yt": {
-      "filename": "beEw-KHHS-BGzM-TQ5a-82cu-GKyB-gbuu-QLbMB.apk",
+      "filename": "qXg7-KySc-Q2pK-xa8q-8Bg6-Qi5b-8rf6-JUmwY.apk",
       "size_bytes": 182633477,
       "sha256": "ccba4da951575c0dccfc08fce321bc039ee1983a58e7baac21410b3fedd97bb8",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-30/beEw-KHHS-BGzM-TQ5a-82cu-GKyB-gbuu-QLbMB.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-31/qXg7-KySc-Q2pK-xa8q-8Bg6-Qi5b-8rf6-JUmwY.apk"
     },
     "ytm": {
-      "filename": "aNTs-eegf-9e3W-eC7V-pW73-U64p-GZ5W-acjPp.apk",
+      "filename": "Yqed-6Bke-V2ZP-z8A9-Sb2u-XZYZ-gmP3-GjLGV.apk",
       "size_bytes": 80139243,
       "sha256": "34b8231a04abeeee2b5c230a27b741026792ee1ecf3932af4421ecfed7d3a475",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-30/aNTs-eegf-9e3W-eC7V-pW73-U64p-GZ5W-acjPp.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-07-31/Yqed-6Bke-V2ZP-z8A9-Sb2u-XZYZ-gmP3-GjLGV.apk"
     }
   }
 }

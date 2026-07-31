@@ -130,7 +130,6 @@ YT_OPTS=(
   -e "Downloads"
   # ── Eliminar anuncios ─────────────────────────────────────────────
   -e "Hide ads"
-  -e "Video ads"
   # ── Funciones premium desbloqueadas ──────────────────────────────
   -e "Remove background playback restrictions"
   -e "Remove viewer discretion dialog"

@@ -88,7 +88,8 @@ apply_patch() {
   #   --unsigned            : NO firma (Morphe-specific flag, ideal — firmamos
   #                           con apksigner en sign-apks.sh)
   #   --continue-on-error   : continúa si un patch menor falla
-  #   --purge               : limpia temporales
+  # NOTA: en CLI v1.12.0 --purge fue removido (purge es default; para desactivar
+  # se usa --disable-purge). Antes existía como flag afirmativo en v1.9.0.
   # NO pasamos --keystore; el APK sale sin firmar gracias a --unsigned.
   java -jar "$CLI_JAR" patch \
     --patches="$PATCHES_RVP" \
@@ -96,7 +97,6 @@ apply_patch() {
     -o "$out_apk" \
     --unsigned \
     --continue-on-error \
-    --purge \
     "$input_apk"
   [ -f "$out_apk" ] || die "Patch OK pero no existe $out_apk"
   ok "$label parcheado: $(du -h "$out_apk" | cut -f1)"

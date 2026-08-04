@@ -30,7 +30,7 @@ inputs:
     required: false
     default: 'MorpheApp/morphe-cli'
   revanced_cli_tag:
-    description: 'Tag del CLI a usar. Default v1.7.0 (morphe-cli compat con patches Morphe v1.24.0). Migrado de revanced-cli v5.0.1 tras archivado de inotia00.'
+    description: 'Tag del CLI a usar. Default v1.12.0 — obligatorio para patches >= v1.36.0 (necesitan PathOptionsKt). OJO: el asset del release se llama morphe-desktop-<ver>-all.jar desde v1.11.'
     required: false
     default: 'v1.12.0'
   revanced_patches_repo:

@@ -1,0 +1,81 @@
+{
+  "app_version": "0.29.0",
+  "app_version_int": 1000,
+  "subscriptions": [
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@msrachel",
+      "name": "Ms Rachel - Toddler Learning Videos"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@SuperSimpleSongs",
+      "name": "Super Simple Songs - Kids Songs"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@SuperSimpleABCs",
+      "name": "Super Simple ABCs"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@MotherGooseClub",
+      "name": "Mother Goose Club"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@TheSingingWalrus",
+      "name": "The Singing Walrus - English Songs For Kids"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@Numberblocks",
+      "name": "Numberblocks"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@Alphablocks",
+      "name": "Alphablocks"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@JackHartmann",
+      "name": "Jack Hartmann Kids Music Channel"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@Numberjacks",
+      "name": "Numberjacks"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@StoryBots",
+      "name": "StoryBots"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@SesameStreet",
+      "name": "Sesame Street"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@khanacademykids",
+      "name": "Khan Academy Kids"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@SaddlebackKids",
+      "name": "Saddleback Kids"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@SuperbookTV",
+      "name": "Superbook"
+    },
+    {
+      "service_id": 0,
+      "url": "https://www.youtube.com/@MinnoKids",
+      "name": "Minno"
+    }
+  ]
+}

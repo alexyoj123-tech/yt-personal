@@ -1,0 +1,60 @@
+run_id=31299206878  fecha=2026-08-09T06:35:27Z
+
+===================== /tmp/fetch-apks.log =====================
+[INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (273606 bytes)
+[WARN]  Version YT detectada (20.47.62) < piso (21.04.223) — usando piso.
+[WARN]  Version YTM detectada (8.47.56) < piso (9.15.51) — usando piso.
+[INFO]  YouTube        → 21.04.223  (com.google.android.youtube)
+[INFO]  YouTube Music  → 9.15.51 (com.google.android.apps.youtube.music)
+
+═══ Descargando com.google.android.youtube@21.04.223 desde APKMirror (google-inc/youtube) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-04-223-release/
+[apkmirror] variant hrefs found: 4
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-3-android-apk-download/
+[apkmirror]   title: 'YouTube 21.04.223 (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-2-android-apk-download/
+[apkmirror]   title: 'YouTube 21.04.223 (arm64-v8a + arm-v7a) (480-640dpi) (Android 9.0+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-4-android-apk-download/
+[apkmirror]   title: 'YouTube 21.04.223 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/
+[apkmirror]   title: 'YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] chose variant: YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=b53042cbc7a3f3d287fd3fa37f67313749abe1fc&forcebaseapk=true
+[apkmirror] unexpected error: <HTTPError 403: 'Forbidden'>
+Traceback (most recent call last):
+  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 371, in main
+    download_version(app_org, app_slug, version, out_path)
+  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 337, in download_version
+    key_html = fetch_text(key_url, referer=variant_url)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 87, in fetch_text
+    with urllib.request.urlopen(req, timeout=30) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
+    response = self.parent.error(
+               ^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 403: Forbidden
+[ERR]   APKMirror scraper falló para com.google.android.youtube@21.04.223.
+    Pasos de diagnóstico:
+      1. Revisá el exit code arriba (2=version 404, 3=sin variantes,
+         4=key missing, 5=download.php missing, 6=download inválido).
+      2. Si el HTML de APKMirror cambió, revisar docs/APKMIRROR-SCRAPER.md
+         §mantenimiento y actualizar los regex en apkmirror_download.py.

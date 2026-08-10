@@ -126,7 +126,7 @@ YT_OPTS=(
   -e "Custom branding"
   -O "customName=YouTube"
   -O "customIcon=$MORPHE_ICONS/youtube"
-  -e "Change package name"
+  -e "Clone app"
   -O "packageName=app.morphe.android.youtube"
   # ── Compatibilidad y estabilidad ──────────────────────────────────
   -e "GmsCore support"
@@ -204,7 +204,7 @@ YTM_OPTS=(
   -e "Custom branding"
   -O "customName=YouTube Music"
   -O "customIcon=$MORPHE_ICONS/ytmusic"
-  -e "Change package name"
+  -e "Clone app"
   -O "packageName=app.morphe.android.apps.youtube.music"
   # ── Compatibilidad y estabilidad ──────────────────────────────────
   -e "GmsCore support"
@@ -217,13 +217,12 @@ YTM_OPTS=(
   -e "Downloads"
   # ── Eliminar anuncios ─────────────────────────────────────────────
   -e "Hide ads"
-  -e "Hide music video ads"
   # ── Funciones premium desbloqueadas ──────────────────────────────
   -e "Remove background playback restrictions"
   -e "Enable exclusive audio playback"
   -e "Force original audio"
-  -e "Permanent repeat"
-  -e "Track crossfade"
+  -e "Remember repeat state"
+  -e "Crossfade"
   # ── Reproductor / UI ──────────────────────────────────────────────
   -e "Theme"
   -e "Navigation bar"
@@ -232,7 +231,7 @@ YTM_OPTS=(
   -e "Enable swipe to dismiss miniplayer"
   -e "Change miniplayer color"
   -e "Hide buttons"
-  -e "Hide category bar"
+  -e "Hide filter bar"
   -e "Change start page"
   -e "Sanitize sharing links"
 )

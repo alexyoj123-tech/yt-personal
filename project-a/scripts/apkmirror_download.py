@@ -37,6 +37,7 @@ from __future__ import annotations
 
 import html.parser
 import os
+import http.cookiejar
 import re
 import sys
 import time
@@ -44,9 +45,18 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+# FIX 2026-08-10: APKMirror empezó a devolver 403 en /download/?key= porque
+# valida una cookie de sesión que se setea al cargar la página de versión.
+# urlopen() sin cookie jar no la propagaba. install_opener() hace que TODAS
+# las llamadas a urlopen() de este módulo compartan el mismo jar.
+_COOKIE_JAR = http.cookiejar.CookieJar()
+urllib.request.install_opener(
+    urllib.request.build_opener(urllib.request.HTTPCookieProcessor(_COOKIE_JAR))
+)
+
 UA = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+    "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
 )
 BASE = "https://www.apkmirror.com"
 REFERER = "https://www.apkmirror.com/"
@@ -75,6 +85,12 @@ def _build_request(url: str, referer: str | None = None) -> urllib.request.Reque
     )
     req.add_header("Accept-Language", "en-US,en;q=0.9")
     req.add_header("Accept-Encoding", "identity")  # no gzip — keep it simple
+    # Cloudflare valida estos en el endpoint de descarga.
+    req.add_header("Sec-Fetch-Dest", "document")
+    req.add_header("Sec-Fetch-Mode", "navigate")
+    req.add_header("Sec-Fetch-Site", "same-origin")
+    req.add_header("Sec-Fetch-User", "?1")
+    req.add_header("Upgrade-Insecure-Requests", "1")
     return req
 
 
@@ -91,10 +107,15 @@ def fetch_text(url: str, retries: int = 5, referer: str | None = None) -> str:
                     url, resp.status, resp.reason, resp.headers, None
                 )
         except urllib.error.HTTPError as e:
-            # Don't retry on client errors (404, 403, etc.) — they won't heal.
-            if 400 <= e.code < 500:
+            # 403 de Cloudflare SÍ puede curarse (rate limit / challenge
+            # transitorio), así que se reintenta. El resto de 4xx no.
+            if e.code == 403:
+                log(f"403 en intento {attempt + 1}/{retries} — reintentando")
+                last_err = e
+            elif 400 <= e.code < 500:
                 raise
-            last_err = e
+            else:
+                last_err = e
         except (urllib.error.URLError, TimeoutError, OSError) as e:
             last_err = e
         wait = 2 ** attempt

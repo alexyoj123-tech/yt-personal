@@ -35,7 +35,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
+          # OJO: sin 'cache: gradle' — setup-java busca archivos Gradle en la
+          # raiz del repo y falla si no los encuentra. Aqui la fuente se clona
+          # despues, dentro de project-g/build/src, asi que no hay nada que cachear.
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3

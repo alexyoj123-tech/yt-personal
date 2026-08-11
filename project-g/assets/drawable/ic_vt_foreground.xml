@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- VallEthTube — figura del icono. Diseño original: play redondeado,
+     estrella y burbujas. No deriva de ninguna marca existente. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Play principal, esquinas redondeadas -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineJoin="round"
+        android:strokeLineCap="round"
+        android:pathData="M47,40 L47,68 L71,54 Z"/>
+
+    <!-- Estrella amarilla, arriba a la derecha -->
+    <path
+        android:fillColor="#FFFFD24A"
+        android:pathData="M76,32 l2.3,4.8 5.3,0.8 -3.8,3.8 0.9,5.3 -4.7,-2.5 -4.7,2.5 0.9,-5.3 -3.8,-3.8 5.3,-0.8 z"/>
+
+    <!-- Burbujas, abajo a la izquierda -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.85"
+        android:pathData="M35,72 a3.4,3.4 0 1,0 6.8,0 a3.4,3.4 0 1,0 -6.8,0 z"/>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:fillAlpha="0.55"
+        android:pathData="M30,79 a2.3,2.3 0 1,0 4.6,0 a2.3,2.3 0 1,0 -4.6,0 z"/>
+</vector>

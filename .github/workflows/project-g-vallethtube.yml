@@ -1,0 +1,83 @@
+name: project-g · VallEthTube (build from source)
+# Compila VallEthTube desde el codigo fuente de LibreTube (rama master),
+# con nombre e icono propios, y lo firma con el keystore del repo.
+# Compilar desde fuente (en vez de re-firmar el APK oficial) es lo que
+# incluye el fix del bug de pantalla negra — ver el script para el detalle.
+
+on:
+  schedule:
+    - cron: '0 7 * * 0'   # domingos 07:00 UTC (semanal: compilar es caro)
+  workflow_dispatch:
+    inputs:
+      libretube_branch:
+        description: 'Rama de LibreTube a compilar'
+        required: false
+        default: 'master'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-g-vallethtube
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build + sign + publish VallEthTube
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Instalar build-tools + aapt
+        run: |
+          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
+            "build-tools;36.0.0" "platforms;android-36"
+          echo "$ANDROID_SDK_ROOT/build-tools/36.0.0" >> "$GITHUB_PATH"
+          sudo apt-get install -y -qq aapt
+
+      - name: Compilar, firmar y publicar
+        env:
+          ANDROID_KEYSTORE_BASE64:   ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS:         ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD:      ${{ secrets.ANDROID_KEY_PASSWORD }}
+          GH_TOKEN:                  ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY:         ${{ github.repository }}
+          LIBRETUBE_BRANCH:          ${{ inputs.libretube_branch || 'master' }}
+          GRADLE_OPTS:               '-Dorg.gradle.jvmargs=-Xmx4g -Dkotlin.daemon.jvm.options=-Xmx2g'
+        run: |
+          set -o pipefail
+          bash project-g/scripts/build-vallethtube.sh 2>&1 | tee /tmp/vallethtube.log
+
+      - name: Guardar log si falla
+        if: failure()
+        run: |
+          mkdir -p debug
+          tail -200 /tmp/vallethtube.log > debug/last-error-vallethtube.log 2>/dev/null || true
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f debug/last-error-vallethtube.log
+          git commit -m "debug: log VallEthTube fallido (run ${{ github.run_id }})" || exit 0
+          git pull --rebase --autostash || true
+          git push || echo "push fallo (no bloqueante)"
+
+      - name: Subir meta como artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-g-meta-${{ github.run_id }}
+          path: project-g/build/meta/
+          retention-days: 14
+          if-no-files-found: ignore

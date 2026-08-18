@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cuerpo de control remoto + cursor. Todo dentro de la zona segura de
+     72dp centrada en el lienzo de 108dp de un adaptive icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- cuerpo del remoto -->
+    <path
+        android:fillColor="#4ADE9B"
+        android:pathData="M43,26 L65,26 A9,9 0 0 1 74,35 L74,73 A9,9 0 0 1 65,82 L43,82 A9,9 0 0 1 34,73 L34,35 A9,9 0 0 1 43,26 Z" />
+    <!-- pantalla / zona superior -->
+    <path
+        android:fillColor="#0E1116"
+        android:pathData="M41,33 L67,33 A3,3 0 0 1 70,36 L70,45 A3,3 0 0 1 67,48 L41,48 A3,3 0 0 1 38,45 L38,36 A3,3 0 0 1 41,33 Z" />
+    <!-- anillo del d-pad -->
+    <path
+        android:fillColor="#0E1116"
+        android:pathData="M54,52 m-11,0 a11,11 0 1,0 22,0 a11,11 0 1,0 -22,0 Z" />
+    <path
+        android:fillColor="#4ADE9B"
+        android:pathData="M54,52 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+    <!-- botones inferiores -->
+    <path
+        android:fillColor="#0E1116"
+        android:pathData="M43,70 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0 Z" />
+    <path
+        android:fillColor="#0E1116"
+        android:pathData="M65,70 m-3.5,0 a3.5,3.5 0 1,0 7,0 a3.5,3.5 0 1,0 -7,0 Z" />
+
+    <!-- cursor flotante: lo que diferencia esta app de un remoto normal -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M76,44 L76,68 L82,62 L86,71 L91,69 L87,60 L95,59 Z" />
+    <path
+        android:strokeColor="#0E1116"
+        android:strokeWidth="1.6"
+        android:fillColor="#00000000"
+        android:pathData="M76,44 L76,68 L82,62 L86,71 L91,69 L87,60 L95,59 Z" />
+</vector>

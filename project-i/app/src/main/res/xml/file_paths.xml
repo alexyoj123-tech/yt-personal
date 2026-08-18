@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- Solo se comparte el log exportado del diagnostico. Nada mas. -->
+    <cache-path name="diagnostico" path="export/" />
+</paths>

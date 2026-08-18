@@ -1,0 +1,9 @@
+# El .gitignore de la raiz del repo ignora *.jar por seguridad. El wrapper de
+# Gradle es la excepcion legitima: sin el, `./gradlew` no existe en CI.
+!gradle/wrapper/gradle-wrapper.jar
+
+local.properties
+.gradle/
+build/
+app/build/
+.kotlin/

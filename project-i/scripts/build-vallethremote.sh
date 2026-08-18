@@ -75,21 +75,28 @@ log "verificando la firma"
 SHA_ESPERADA="484063e1f35e8b8e20d75b608b32cdd8e007ce57a133d2dccce9f48db9102987"
 SHA_FIRMA=""
 
-# apksigner es lo preferido, pero no siempre esta disponible ni devuelve 0 en
-# todos los entornos. Nunca se deja que un problema de herramienta se confunda
-# con un problema de firma: si apksigner no coopera se imprime su salida y se
-# verifica igual con keytool, que lee el certificado directo del APK.
-if command -v apksigner > /dev/null 2>&1 &&
-   apksigner verify --print-certs "$APK" > /tmp/project-i-certs.txt 2>&1; then
-  SHA_FIRMA="$(grep -iE 'Signer #1 certificate SHA-256 digest' /tmp/project-i-certs.txt | awk '{print $NF}')"
-  log "firma leida con apksigner"
+# apksigner es lo preferido, pero ni su disponibilidad ni el texto exacto de
+# su salida son estables entre versiones de build-tools. Todo lo de abajo
+# lleva `|| true` a proposito: con `set -euo pipefail`, un `grep` sin
+# coincidencias dentro de una sustitucion de comandos mata el script en
+# silencio — que es exactamente como fallaron los primeros runs.
+if command -v apksigner > /dev/null 2>&1; then
+  apksigner verify --print-certs "$APK" > /tmp/project-i-certs.txt 2>&1 || true
+  echo "--- salida de apksigner ---"
+  cat /tmp/project-i-certs.txt 2>/dev/null || true
+  echo "---------------------------"
+  SHA_FIRMA="$(grep -iE 'SHA-256 digest' /tmp/project-i-certs.txt 2>/dev/null |
+    head -1 | awk '{print $NF}' | tr -d ':' | tr 'A-Z' 'a-z' || true)"
+  [ -n "$SHA_FIRMA" ] && log "firma leida con apksigner"
 else
-  echo "--- salida de apksigner (no bloqueante) ---"
-  cat /tmp/project-i-certs.txt 2>/dev/null || echo "(apksigner no disponible)"
-  echo "-------------------------------------------"
+  log "apksigner no esta en el PATH"
+fi
+
+# keytool lee el certificado directo del APK y viene con cualquier JDK.
+if [ -z "$SHA_FIRMA" ]; then
   SHA_FIRMA="$(keytool -printcert -jarfile "$APK" 2>/dev/null |
-    grep -iE '^\s*SHA256:' | head -1 | awk '{print $2}' | tr -d ':' | tr 'A-Z' 'a-z')"
-  log "firma leida con keytool"
+    grep -iE 'SHA256:' | head -1 | awk '{print $2}' | tr -d ':' | tr 'A-Z' 'a-z' || true)"
+  [ -n "$SHA_FIRMA" ] && log "firma leida con keytool"
 fi
 
 [ -n "$SHA_FIRMA" ] || fail "no pude leer la firma del APK con ninguna herramienta"

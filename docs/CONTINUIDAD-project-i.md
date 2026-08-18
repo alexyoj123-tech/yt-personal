@@ -208,6 +208,27 @@ Ordenado por probabilidad de que muerda.
    `Net.subnetPrefix24()` la calcula sola — pero cualquier instrucción escrita
    con una IP fija envejece mal.
 
+### Gotchas del CI que ya mordieron (no repetirlos)
+
+- **El paquete de la platform es `platforms;android-37.0`, con el `.0`.**
+  `platforms;android-37` a secas no existe: `sdkmanager` imprime un
+  `Warning: Failed to find package` y sale con **código 1**, lo que aborta el
+  step aunque parezca solo un aviso. El workflow ahora tolera que falle esa
+  instalación porque AGP descarga la platform sola.
+- **`apksigner verify` salió con código 1 en el runner sin explicar por qué**,
+  y con `set -e` eso abortaba el build justo antes de publicar, sin imprimir
+  nada. El script ahora imprime siempre la salida de apksigner y verifica la
+  firma con `keytool -printcert -jarfile` como alternativa. Lo que sigue
+  abortando el build es lo que importa de verdad: que la SHA-256 no sea la del
+  keystore del repo.
+- **`sdk.dir` en `local.properties` con backslashes de Windows rompe el build**
+  (`java.io.IOException: El nombre de archivo… no son correctos`): los `.properties`
+  interpretan `\U` como escape. Usar barras normales:
+  `sdk.dir=C:/Users/alexy/AppData/Local/Android/Sdk`.
+- **`unzip -v` tiene las columnas `Length Method Size Cmpr Date Time CRC Name`**:
+  el método de compresión es `$2`, no `$6`. Un `awk` con el índice equivocado
+  hacía fallar la verificación de `resources.arsc` con un mensaje falso.
+
 ---
 
 ## 6. Pendientes, en orden

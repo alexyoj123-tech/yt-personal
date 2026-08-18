@@ -10,6 +10,7 @@ import android.os.Build
 import android.os.IBinder
 import androidx.core.app.ServiceCompat
 import io.github.alexyoj123.vallethremote.MainActivity
+import io.github.alexyoj123.vallethremote.core.DiagLog
 import io.github.alexyoj123.vallethremote.R
 
 /**
@@ -41,16 +42,28 @@ class HidForegroundService : android.app.Service() {
             .setOngoing(true)
             .build()
 
-        ServiceCompat.startForeground(
-            this,
-            NOTIFICATION_ID,
-            notification,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
-            } else {
-                0
-            },
-        )
+        // Un servicio de tipo connectedDevice exige BLUETOOTH_CONNECT concedido.
+        // Si el dueno lo rechazo, startForeground lanza SecurityException y la
+        // app se cae: se prefiere apagar el servicio en silencio. El trackpad
+        // sigue funcionando mientras la app este en primer plano.
+        val ok = runCatching {
+            ServiceCompat.startForeground(
+                this,
+                NOTIFICATION_ID,
+                notification,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CONNECTED_DEVICE
+                } else {
+                    0
+                },
+            )
+        }.isSuccess
+
+        if (!ok) {
+            DiagLog.w("hid", "no se pudo iniciar el servicio en primer plano (falta permiso de Bluetooth)")
+            stopSelf()
+            return START_NOT_STICKY
+        }
         return START_STICKY
     }
 

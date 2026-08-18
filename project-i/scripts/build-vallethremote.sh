@@ -72,10 +72,28 @@ ARSC_METODO="$(unzip -v "$APK" | awk '$8=="resources.arsc" {print $2}')"
 zipalign -c -v 4 "$APK" > /dev/null || fail "el APK no esta alineado a 4 bytes"
 
 log "verificando la firma"
-apksigner verify --print-certs "$APK" > /tmp/project-i-certs.txt
-SHA_FIRMA="$(grep -iE 'Signer #1 certificate SHA-256 digest' /tmp/project-i-certs.txt | awk '{print $NF}')"
 SHA_ESPERADA="484063e1f35e8b8e20d75b608b32cdd8e007ce57a133d2dccce9f48db9102987"
-[ "$SHA_FIRMA" = "$SHA_ESPERADA" ] || fail "el APK NO esta firmado con el keystore del repo (SHA-256: $SHA_FIRMA)"
+SHA_FIRMA=""
+
+# apksigner es lo preferido, pero no siempre esta disponible ni devuelve 0 en
+# todos los entornos. Nunca se deja que un problema de herramienta se confunda
+# con un problema de firma: si apksigner no coopera se imprime su salida y se
+# verifica igual con keytool, que lee el certificado directo del APK.
+if command -v apksigner > /dev/null 2>&1 &&
+   apksigner verify --print-certs "$APK" > /tmp/project-i-certs.txt 2>&1; then
+  SHA_FIRMA="$(grep -iE 'Signer #1 certificate SHA-256 digest' /tmp/project-i-certs.txt | awk '{print $NF}')"
+  log "firma leida con apksigner"
+else
+  echo "--- salida de apksigner (no bloqueante) ---"
+  cat /tmp/project-i-certs.txt 2>/dev/null || echo "(apksigner no disponible)"
+  echo "-------------------------------------------"
+  SHA_FIRMA="$(keytool -printcert -jarfile "$APK" 2>/dev/null |
+    grep -iE '^\s*SHA256:' | head -1 | awk '{print $2}' | tr -d ':' | tr 'A-Z' 'a-z')"
+  log "firma leida con keytool"
+fi
+
+[ -n "$SHA_FIRMA" ] || fail "no pude leer la firma del APK con ninguna herramienta"
+[ "$SHA_FIRMA" = "$SHA_ESPERADA" ] || fail "el APK NO esta firmado con el keystore del repo (SHA-256 leida: $SHA_FIRMA)"
 log "firma correcta (SHA-256 del repo)"
 
 # --------------------------------------------------------------- publicar

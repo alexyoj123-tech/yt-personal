@@ -258,9 +258,27 @@ class RemoteRepository(
         _activeDriver.value?.launchApp(app, deepLink)
             ?: Result.failure(IllegalStateException("Sin dispositivo conectado"))
 
-    suspend fun search(query: String, app: TvApp?): Result<Unit> =
-        _activeDriver.value?.search(query, app)
-            ?: Result.failure(IllegalStateException("Sin dispositivo conectado"))
+    /**
+     * Busqueda con cascada. En Android TV el driver la resuelve con intents y
+     * termina ahi. En Samsung, si el modelo tiene capado el texto por red, el
+     * que escribe es el teclado Bluetooth — y la app lo dice en vez de quedarse
+     * en silencio.
+     */
+    suspend fun search(query: String, app: TvApp?): Result<Unit> {
+        val driver = _activeDriver.value
+            ?: return Result.failure(IllegalStateException("Sin dispositivo conectado"))
+
+        val result = driver.search(query, app)
+        if (result.isSuccess) return result
+
+        if (hid.isConnected) {
+            DiagLog.w("repo", "la búsqueda por red falló, se escribe por Bluetooth HID")
+            app?.let { driver.launchApp(it) }
+            _notice.value = "Esta TV no acepta búsqueda por red; se escribió con el teclado Bluetooth."
+            return hid.typeText(query)
+        }
+        return result
+    }
 
     /** Resuelve un alias de voz ("youtube") a una app real del dispositivo. */
     fun resolveApp(alias: String): TvApp? {

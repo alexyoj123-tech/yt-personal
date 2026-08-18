@@ -371,18 +371,20 @@ class SamsungTizenDriver(
     }
 
     /**
-     * Samsung no tiene una busqueda global por WebSocket. Lo honesto es abrir
-     * la app y escribir: primero se intenta SendInputString, y si el modelo lo
-     * bloquea, el que escribe es el teclado Bluetooth HID (lo decide la capa
-     * de arriba mirando el resultado).
+     * Samsung no expone busqueda por WebSocket: no hay un equivalente a los
+     * intents de Android TV. Lo unico honesto es abrir la app y escribir.
+     *
+     * Se intenta con SendInputString; si el modelo lo bloquea (Samsung lo capo
+     * en varios modelos de 2021 en adelante) el fallo sube y quien escribe es
+     * el teclado Bluetooth HID, que lo decide [RemoteRepository].
      */
     override suspend fun search(query: String, app: TvApp?): Result<Unit> {
         app?.let {
             launchApp(it).onFailure { e -> return Result.failure(e) }
-            delay(2_500)
+            // La app necesita terminar de abrir antes de aceptar texto.
+            delay(3_000)
         }
-        sendKey(RemoteKey.SEARCH)
-        delay(800)
+        DiagLog.i("samsung", "escribiendo la búsqueda (${query.length} caracteres) en el campo activo")
         return sendText(query)
     }
 
@@ -482,7 +484,9 @@ class SamsungTizenDriver(
             RemoteKey.TOOLS to "KEY_TOOLS",
             RemoteKey.INFO to "KEY_INFO",
             RemoteKey.GUIDE to "KEY_GUIDE",
-            RemoteKey.SEARCH to "KEY_HOME",
+            // SEARCH no se mapea: Tizen no tiene una tecla de busqueda comun a
+            // todos los modelos, y mapearla a KEY_HOME haria que "buscar"
+            // saque al usuario de la app. Mejor devolver "no soportado".
             RemoteKey.PLAY to "KEY_PLAY",
             RemoteKey.PAUSE to "KEY_PAUSE",
             RemoteKey.PLAY_PAUSE to "KEY_PLAY",

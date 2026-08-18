@@ -17,6 +17,7 @@ que cobran ~$19/semana.
 | Prefijo de tag | `ytp-i-VallEthRemote-*` |
 | Workflow | `.github/workflows/project-i-vallethremote.yml` |
 | Script de build | `project-i/scripts/build-vallethremote.sh` |
+| Primer release | `ytp-i-VallEthRemote-1.0.0+20260818` (25 MB, firmado, CI en verde) |
 | minSdk / targetSdk / compileSdk | 28 / 36 / **37** |
 
 ---
@@ -142,7 +143,10 @@ Agregar una marca nueva = agregar un driver. No se toca ninguna pantalla.
 | Identidad del APK | `aapt2 dump badging` | ✅ `package=io.github.alexyoj123.vallethremote`, `label=VallEthRemote`, min 28 / target 36 |
 | `resources.arsc` sin comprimir + alineación 4 bytes | `unzip -v` + `zipalign -c -v 4` | ✅ `Stored`, alineado |
 | Firma con el keystore del repo | `keytool -printcert -jarfile` | ✅ SHA-256 `4840:63E1:…:2987`, el del repo |
-| Script de CI completo | Corrido local con `PUBLICAR=false` | ✅ Hasta la verificación de firma |
+| Script de CI completo | Corrido local con `PUBLICAR=false` | ✅ |
+| Workflow real en GitHub Actions | run 32090955391 | ✅ Verde, publicó `ytp-i-VallEthRemote-1.0.0+20260818` |
+| APK publicado (descargado del release) | `aapt2 dump badging` + `keytool -printcert -jarfile` | ✅ package y label correctos, firmado con la SHA-256 del repo |
+| Los otros proyectos siguen intactos | último run de cada workflow | ✅ a/b/c/d/e/f/g/health/pages, todos en `success` |
 
 ### NO probado contra hardware — esto es lo importante
 

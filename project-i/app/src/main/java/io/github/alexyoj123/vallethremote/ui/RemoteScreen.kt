@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import io.github.alexyoj123.vallethremote.core.Capability
 import io.github.alexyoj123.vallethremote.core.ConnectionState
 import io.github.alexyoj123.vallethremote.core.RemoteKey
+import io.github.alexyoj123.vallethremote.hid.HidState
 
 /**
  * Pantalla principal del remoto. Todo boton que aparece aca hace algo de
@@ -37,9 +38,13 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
     val apps by vm.apps.collectAsState()
     val listening by vm.listening.collectAsState()
     val voiceStatus by vm.voiceStatus.collectAsState()
+    // Se observa el estado del HID, no `hid.isConnected`: si no, la pantalla
+    // no se redibuja cuando el teclado Bluetooth se conecta y los botones
+    // quedan grises aunque el remoto ya este vivo.
+    val hidState by vm.hidState.collectAsState()
 
     val conectado = connection is ConnectionState.Connected
-    val hidConectado = vm.hid.isConnected
+    val hidConectado = hidState is HidState.Connected
     val vivo = conectado || hidConectado
     val caps = vm.capabilities
 

@@ -71,7 +71,10 @@ class Discovery(private val context: Context) {
 
         // El sondeo de puertos cubre lo que mDNS/SSDP no anunciaron: una TV
         // Samsung apagada no responde nada, y el ADB por red no se anuncia.
-        val sweep = withTimeoutOrNull(timeoutMs + 1_500) { sweepSubnet() } ?: emptyList()
+        // El acumulador se pasa por fuera a proposito: si se agota el tiempo,
+        // se conserva lo que ya se habia encontrado en vez de tirarlo todo.
+        val sweep = ConcurrentHashMap.newKeySet<String>()
+        withTimeoutOrNull(timeoutMs + 1_500) { sweepSubnet(sweep) }
         for (host in sweep) hints.putIfAbsent(host, Hint(host, null, "sondeo"))
 
         DiagLog.i("discovery", "candidatos: ${hints.keys.sorted().joinToString()}")
@@ -194,10 +197,9 @@ class Discovery(private val context: Context) {
     // ------------------------------------------------------- sondeo de red
 
     /** Sondea la /24 buscando cualquiera de los puertos conocidos. */
-    private suspend fun sweepSubnet(): List<String> = withContext(Dispatchers.IO) {
-        val prefix = Net.subnetPrefix24() ?: return@withContext emptyList()
+    private suspend fun sweepSubnet(found: MutableSet<String>) = withContext(Dispatchers.IO) {
+        val prefix = Net.subnetPrefix24() ?: return@withContext
         val gate = Semaphore(96)
-        val found = ConcurrentHashMap.newKeySet<String>()
         coroutineScope {
             for (last in 1..254) {
                 val host = "$prefix$last"
@@ -210,7 +212,6 @@ class Discovery(private val context: Context) {
                 }
             }
         }
-        found.toList()
     }
 
     private fun tcpOpen(host: String, port: Int, timeoutMs: Int): Boolean = try {

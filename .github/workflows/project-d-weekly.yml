@@ -6,7 +6,8 @@ name: project-d · YouTube Origin (TV Box) weekly check
 
 on:
   schedule:
-    - cron: '0 4 * * 0'   # domingos 04:00 UTC
+    - cron: '0 4 * * *'   # diario 04:00 UTC (antes: domingos). Dos horas antes
+                          # que project-a (06:00) para no pisarse.
   workflow_dispatch:
 
 permissions:

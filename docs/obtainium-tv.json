@@ -1,6 +1,23 @@
 {
   "apps": [
     {
+      "id": "app.revanced.android.gms",
+      "url": "https://github.com/alexyoj123-tech/yt-personal",
+      "author": "alexyoj123",
+      "name": "MicroG Services",
+      "preferredApkIndex": 0,
+      "additionalSettings": "{\"includePrereleases\": false, \"fallbackToOlderReleases\": true, \"filterReleaseTitlesByRegEx\": \"(^ytp-a-|Daily ReVanced Build)\", \"filterReleaseNotesByRegEx\": \"\", \"verifyLatestTag\": false, \"dontSortReleasesList\": false, \"useLatestAssetDateAsReleaseDate\": false, \"trackOnly\": false, \"versionExtractionRegEx\": \"\", \"matchGroupToUseV2\": \"\", \"versionDetection\": true, \"releaseDateAsVersion\": false, \"useVersionCodeAsOSVersion\": false, \"apkFilterRegEx\": \"^gmscore-.*\\\\.apk$\", \"invertAPKFilter\": false, \"autoApkFilterByArch\": true, \"appName\": \"MicroG Services\", \"appAuthor\": \"alexyoj123\", \"shizukuPretendToBeGooglePlay\": false, \"allowInsecure\": false, \"exemptFromBackgroundUpdates\": false, \"skipUpdateNotifications\": false, \"about\": \"MicroG-RE - reemplazo libre de Google Play Services. Se instala SIEMPRE antes que cualquier build de YouTube: al reves, la app abre y falla en el login.\", \"refreshBeforeDownload\": false}",
+      "lastUpdateCheck": null,
+      "pinned": false,
+      "categories": [
+        "YT Personal TV"
+      ],
+      "releaseDate": null,
+      "changeLog": "",
+      "overrideSource": null,
+      "allowIdChange": false
+    },
+    {
       "id": "origin.youtube.myapplication",
       "url": "https://github.com/alexyoj123-tech/yt-personal",
       "author": "alexyoj123",
@@ -9,7 +26,9 @@
       "additionalSettings": "{\"includePrereleases\":false,\"fallbackToOlderReleases\":true,\"filterReleaseTitlesByRegEx\":\"(^ytp-d-origin-|YouTube Origin)\",\"filterReleaseNotesByRegEx\":\"\",\"verifyLatestTag\":false,\"dontSortReleasesList\":false,\"useLatestAssetDateAsReleaseDate\":false,\"trackOnly\":false,\"versionExtractionRegEx\":\"\",\"matchGroupToUseV2\":\"\",\"versionDetection\":true,\"releaseDateAsVersion\":false,\"useVersionCodeAsOSVersion\":false,\"apkFilterRegEx\":\"^youtube-origin-.*\\\\.apk$\",\"invertAPKFilter\":false,\"autoApkFilterByArch\":true,\"appName\":\"YouTube Origin\",\"appAuthor\":\"alexyoj123\",\"shizukuPretendToBeGooglePlay\":false,\"allowInsecure\":false,\"exemptFromBackgroundUpdates\":false,\"skipUpdateNotifications\":false,\"about\":\"YouTube TV oficial wrappeado con uBlock + SponsorBlock + ad-block. Para Google TV / Android TV / TV Boxes.\",\"refreshBeforeDownload\":false}",
       "lastUpdateCheck": null,
       "pinned": false,
-      "categories": ["YT Personal TV"],
+      "categories": [
+        "YT Personal TV"
+      ],
       "releaseDate": null,
       "changeLog": "",
       "overrideSource": null,
@@ -24,7 +43,9 @@
       "additionalSettings": "{\"includePrereleases\":false,\"fallbackToOlderReleases\":true,\"filterReleaseTitlesByRegEx\":\"(^ytp-a-|Daily ReVanced Build)\",\"filterReleaseNotesByRegEx\":\"\",\"verifyLatestTag\":false,\"dontSortReleasesList\":false,\"useLatestAssetDateAsReleaseDate\":false,\"trackOnly\":false,\"versionExtractionRegEx\":\"\",\"matchGroupToUseV2\":\"\",\"versionDetection\":true,\"releaseDateAsVersion\":false,\"useVersionCodeAsOSVersion\":false,\"apkFilterRegEx\":\"^smarttube-.*\\\\.apk$\",\"invertAPKFilter\":false,\"autoApkFilterByArch\":true,\"appName\":\"SmartTube\",\"appAuthor\":\"alexyoj123\",\"shizukuPretendToBeGooglePlay\":false,\"allowInsecure\":false,\"exemptFromBackgroundUpdates\":false,\"skipUpdateNotifications\":false,\"about\":\"SmartTube — cliente OSS de YouTube para Android TV con SponsorBlock y 4K. Backup de YouTube Origin.\",\"refreshBeforeDownload\":false}",
       "lastUpdateCheck": null,
       "pinned": false,
-      "categories": ["YT Personal TV"],
+      "categories": [
+        "YT Personal TV"
+      ],
       "releaseDate": null,
       "changeLog": "",
       "overrideSource": null,

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 // AGP 9 trae soporte de Kotlin incorporado: aplicar tambien
 // `org.jetbrains.kotlin.android` es un error de configuracion desde 9.0.
 plugins {
@@ -9,14 +11,29 @@ plugins {
 // Si no estan (build local del dueno), el release se firma con la debug key
 // para que `assembleRelease` no explote — pero CI SIEMPRE las provee, y el
 // paso de verificacion del workflow aborta si la firma no es la del repo.
-val ksPath: String? = System.getenv("VALLETH_KEYSTORE_PATH")
-val ksPass: String? = System.getenv("VALLETH_KEYSTORE_PASSWORD")
-val ksAlias: String? = System.getenv("VALLETH_KEY_ALIAS")
-val ksKeyPass: String? = System.getenv("VALLETH_KEY_PASSWORD")
+val ksPath: String? = System.getenv("HAPER_KEYSTORE_PATH")
+val ksPass: String? = System.getenv("HAPER_KEYSTORE_PASSWORD")
+val ksAlias: String? = System.getenv("HAPER_KEY_ALIAS")
+val ksKeyPass: String? = System.getenv("HAPER_KEY_PASSWORD")
 val hasReleaseKeystore = !ksPath.isNullOrBlank() && file(ksPath).exists()
 
+// API key de YouTube para la ruta Lounge (opcional). Se lee de
+// local.properties o del entorno; NUNCA se escribe en el repo, que es publico.
+// Si falta, la app degrada sola: la busqueda por voz en la Samsung cae al
+// teclado Bluetooth y Diagnostico avisa que la key no esta configurada.
+val youtubeApiKey: String = run {
+    val local = rootProject.file("local.properties")
+    val fromFile = if (local.exists()) {
+        Properties().apply { local.inputStream().use { load(it) } }
+            .getProperty("youtube.api.key")
+    } else {
+        null
+    }
+    fromFile ?: System.getenv("YOUTUBE_API_KEY") ?: ""
+}
+
 android {
-    namespace = "io.github.alexyoj123.vallethremote"
+    namespace = "io.github.alexyoj123.hapercontroler"
     // compileSdk 37 no es un capricho: todo el AndroidX de 2026 (Compose 1.12,
     // core 1.19, lifecycle 2.11, OkHttp 5.5) exige compilar contra 37 o mas.
     // targetSdk sigue en 36, que es lo que pide el proyecto: compilar contra
@@ -24,12 +41,13 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "io.github.alexyoj123.vallethremote"
+        applicationId = "io.github.alexyoj123.hapercontroler"
         // minSdk 28 lo exige BluetoothHidDevice (API 28). No bajar.
         minSdk = 28
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 3
+        versionName = "1.2.0"
+        buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
     }
 
     androidResources {
@@ -73,6 +91,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     packaging {
@@ -102,6 +121,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.work.runtime)
     implementation(libs.okhttp)
     implementation(libs.okio)
     implementation(libs.kotlinx.coroutines.android)

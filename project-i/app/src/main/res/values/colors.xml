@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="vr_background">#FF0E1116</color>
-    <color name="vr_icon_bg">#FF12161D</color>
+    <!-- Alineado con el icono: superficie casi negra violacea, acento ambar. -->
+    <color name="haper_background">#FF12101A</color>
+    <color name="haper_primary">#FFF2841B</color>
+    <color name="haper_secondary">#FFC2185B</color>
 </resources>

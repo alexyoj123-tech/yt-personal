@@ -3,8 +3,8 @@
     <!-- Tema oscuro fijo a proposito: un control remoto se usa con la luz
          apagada. No se usa DayNight para no arrastrar la libreria Material
          de vistas — toda la UI real es Compose. -->
-    <style name="Theme.VallEthRemote" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">@color/vr_background</item>
+    <style name="Theme.HaperControler" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/haper_background</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">false</item>

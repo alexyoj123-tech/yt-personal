@@ -42,7 +42,7 @@
     </queries>
 
     <application
-        android:name=".VallEthRemoteApp"
+        android:name=".HaperControlerApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -51,7 +51,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
-        android:theme="@style/Theme.VallEthRemote">
+        android:theme="@style/Theme.HaperControler">
 
         <activity
             android:name=".MainActivity"
@@ -59,7 +59,7 @@
             android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
             android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.VallEthRemote">
+            android:theme="@style/Theme.HaperControler">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

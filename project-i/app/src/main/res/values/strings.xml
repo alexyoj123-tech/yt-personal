@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VallEthRemote</string>
+    <!-- El nombre va con una sola L a proposito: es marca del dueno, no un typo.
+         OJO: no agregar un resValue("string","app_name",...) en build.gradle.kts
+         porque sobrescribe a este archivo y el rename no se aplica. -->
+    <string name="app_name">HAPER CONTROLER</string>
 </resources>

@@ -1,8 +1,8 @@
-run_id=31299206878  fecha=2026-08-09T06:35:27Z
+run_id=32816812263  fecha=2026-08-25T06:25:07Z
 
 ===================== /tmp/fetch-apks.log =====================
 [INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
-[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (273606 bytes)
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (275081 bytes)
 [WARN]  Version YT detectada (20.47.62) < piso (21.04.223) — usando piso.
 [WARN]  Version YTM detectada (8.47.56) < piso (9.15.51) — usando piso.
 [INFO]  YouTube        → 21.04.223  (com.google.android.youtube)
@@ -23,38 +23,167 @@ run_id=31299206878  fecha=2026-08-09T06:35:27Z
 [apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/
 [apkmirror]   title: 'YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror'
 [apkmirror] chose variant: YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=b53042cbc7a3f3d287fd3fa37f67313749abe1fc&forcebaseapk=true
-[apkmirror] unexpected error: <HTTPError 403: 'Forbidden'>
-Traceback (most recent call last):
-  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 371, in main
-    download_version(app_org, app_slug, version, out_path)
-  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 337, in download_version
-    key_html = fetch_text(key_url, referer=variant_url)
-               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 87, in fetch_text
-    with urllib.request.urlopen(req, timeout=30) as resp:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
-    return opener.open(url, data, timeout)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 521, in open
-    response = meth(req, response)
-               ^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 630, in http_response
-    response = self.parent.error(
-               ^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 559, in error
-    return self._call_chain(*args)
-           ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
-    result = func(*args)
-             ^^^^^^^^^^^
-  File "/usr/lib/python3.12/urllib/request.py", line 639, in http_error_default
-    raise HTTPError(req.full_url, code, msg, hdrs, fp)
-urllib.error.HTTPError: HTTP Error 403: Forbidden
-[ERR]   APKMirror scraper falló para com.google.android.youtube@21.04.223.
-    Pasos de diagnóstico:
-      1. Revisá el exit code arriba (2=version 404, 3=sin variantes,
-         4=key missing, 5=download.php missing, 6=download inválido).
-      2. Si el HTML de APKMirror cambió, revisar docs/APKMIRROR-SCRAPER.md
-         §mantenimiento y actualizar los regex en apkmirror_download.py.
+[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=241025b199e78c722399e54a9bfc20ead0448319&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=12341062&key=bc2927821b2d24fe11418628e9de611ee3ba8e88&forcebaseapk=true
+[apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk
+[apkmirror] download progress: 17235968/171814203 bytes (10%)
+[apkmirror] download progress: 34471936/171814203 bytes (20%)
+[apkmirror] download progress: 51707904/171814203 bytes (30%)
+[apkmirror] download progress: 68943872/171814203 bytes (40%)
+[apkmirror] download progress: 86179840/171814203 bytes (50%)
+[apkmirror] download progress: 103415808/171814203 bytes (60%)
+[apkmirror] download progress: 120651776/171814203 bytes (70%)
+[apkmirror] download progress: 137887744/171814203 bytes (80%)
+[apkmirror] download progress: 155123712/171814203 bytes (90%)
+[apkmirror] downloaded 171814203 bytes
+[apkmirror] ✓ valid APK: 171814203 bytes
+[OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk (164M)
+
+═══ Descargando com.google.android.apps.youtube.music@9.15.51 desde APKMirror (google-inc/youtube-music) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-15-51-release/
+[apkmirror] variant hrefs found: 7
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-7-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (arm-v7a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → arm-v7a (arch equivocada para arm64-v8a target), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (arm64-v8a) (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-5-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (arm64-v8a) (480-640dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-6-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-4-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-3-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-2-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.15.51 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] chose variant: YouTube Music 9.15.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-4-android-apk-download/download/?key=a17b3994236a71fd529d836399617e7479066945&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=13501704&key=f74d68bb11f50ec8c4077e1f1659b16e836e2504&forcebaseapk=true
+[apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk
+[apkmirror] download progress: 7471104/74431248 bytes (10%)
+[apkmirror] download progress: 14942208/74431248 bytes (20%)
+[apkmirror] download progress: 22413312/74431248 bytes (30%)
+[apkmirror] download progress: 29884416/74431248 bytes (40%)
+[apkmirror] download progress: 37355520/74431248 bytes (50%)
+[apkmirror] download progress: 44826624/74431248 bytes (60%)
+[apkmirror] download progress: 52297728/74431248 bytes (70%)
+[apkmirror] download progress: 59768832/74431248 bytes (80%)
+[apkmirror] download progress: 67239936/74431248 bytes (90%)
+[apkmirror] downloaded 74431248 bytes
+[apkmirror] ✓ valid APK: 74431248 bytes
+[OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk (71M)
+[OK]    Fetch completo. Meta: /home/runner/work/yt-personal/yt-personal/project-a/build/meta/fetch.json
+
+===================== /tmp/apply-patches.log =====================
+
+═══ Descargando morphe-cli (MorpheApp/morphe-cli @ v1.12.0), patches (MorpheApp/morphe-patches), MicroG-RE (MorpheApp/MicroG-RE) ═══
+[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 12  113M   12 13.9M    0     0  66.2M      0  0:00:01 --:--:--  0:00:01 66.2M100  113M  100  113M    0     0   230M      0 --:--:-- --:--:-- --:--:--  354M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar (114M)
+[INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.40.0/patches-1.40.0.mpp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 8800k  100 8800k    0     0  47.9M      0 --:--:-- --:--:-- --:--:-- 47.9M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp (8.6M)
+[INFO]  GET https://github.com/MorpheApp/MicroG-RE/releases/download/6.1.4/microg-6.1.4.apk
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 99 12.7M   99 12.7M    0     0  72.1M      0 --:--:-- --:--:-- --:--:-- 72.1M100 12.7M  100 12.7M    0     0  72.2M      0 --:--:-- --:--:-- --:--:-- 22.8M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk (13M)
+[INFO]  CLI:       /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar
+[INFO]  Patches:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp
+[INFO]  GmsCore:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk
+[INFO]  === DIAGNÓSTICO CLI ===
+[INFO]  CLI_REPO=MorpheApp/morphe-cli CLI_TAG=v1.12.0
+[INFO]  REVANCED_CLI_TAG env=v1.12.0
+Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
+openjdk version "21.0.12" 2026-07-21 LTS
+OpenJDK Runtime Environment Temurin-21.0.12+8 (build 21.0.12+8-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.12+8 (build 21.0.12+8-LTS, mixed mode, sharing)
+du: cannot access '[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar'$'\n''  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current'$'\n''                                 Dload  Upload   Total   Spent    Left  Speed'$'\n\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\n\r''100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M'$'\n''[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)'$'\n''/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar': No such file or directory
+[INFO]  CLI descargado: [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)
+/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar ()
+Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)
+/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar
+Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M
+[INFO]  === FIN DIAGNÓSTICO ===
+[INFO]  Extrayendo metadata de patches (compatible_packages + versions)
+INFO: Running in Headless environment, falling back to CLI mode. 
+[WARN]  list-patches falló (no bloqueante).
+
+═══ Parcheando YouTube → youtube-patched.apk ═══
+Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
+INFO: Running in Headless environment, falling back to CLI mode. 
+INFO: Update available: v1.13.2 (current: v1.12.0)
+Download from https://github.com/MorpheApp/morphe-desktop/releases/latest 
+INFO: Morphe data root: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/morphe-data (JAR-adjacent) 
+INFO: Loading patches... 
+INFO: Purged this session's temp files: patching-1787639102421 
+Exception in thread "main" java.lang.NoClassDefFoundError: app/morphe/patcher/patch/AvailabilityResolver
+	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch$lambda$1(BaseCustomBrandingPatch.kt:116)
+	at app.morphe.patcher.patch.PatchKt.buildPatch(Patch.kt:527)
+	at app.morphe.patcher.patch.PatchKt.resourcePatch(Patch.kt:685)
+	at app.morphe.patcher.patch.PatchKt.resourcePatch$default(Patch.kt:680)
+	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch(BaseCustomBrandingPatch.kt:110)
+	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch$default(BaseCustomBrandingPatch.kt:97)
+	at app.morphe.patches.music.layout.branding.CustomBrandingPatchKt.<clinit>(CustomBrandingPatch.kt:59)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/jdk.internal.reflect.MethodHandleAccessorFactory.ensureClassInitialized(MethodHandleAccessorFactory.java:301)
+	at java.base/jdk.internal.reflect.MethodHandleAccessorFactory.newMethodAccessor(MethodHandleAccessorFactory.java:72)
+	at java.base/jdk.internal.reflect.ReflectionFactory.newMethodAccessor(ReflectionFactory.java:159)
+	at java.base/java.lang.reflect.Method.acquireMethodAccessor(Method.java:726)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:577)
+	at app.morphe.patcher.patch.PatchLoader$Companion.getPatchMethods(Patch.kt:795)
+	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches$lambda$0$1(Patch.kt:819)
+	at kotlin.sequences.FlatteningSequence$iterator$1.ensureItemIterator(Sequences.kt:363)
+	at kotlin.sequences.FlatteningSequence$iterator$1.hasNext(Sequences.kt:351)
+	at kotlin.sequences.FilteringSequence$iterator$1.calcNext(Sequences.kt:202)
+	at kotlin.sequences.FilteringSequence$iterator$1.hasNext(Sequences.kt:227)
+	at kotlin.sequences.SequencesKt___SequencesKt.toSet(_Sequences.kt:1027)
+	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches(Patch.kt:822)
+	at app.morphe.patcher.patch.PatchLoader$Companion.access$loadPatches(Patch.kt:775)
+	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt:726)
+	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt)
+	at app.morphe.patcher.patch.PatchLoader$Jar.<init>(Patch.kt:735)
+	at app.morphe.patcher.patch.PatchKt.loadPatchesFromJar(Patch.kt:843)
+	at app.morphe.engine.patches.PatchBundleLoader.loadEach(PatchBundleLoader.kt:45)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:510)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:52)
+	at picocli.CommandLine.executeUserObject(CommandLine.java:2031)
+	at picocli.CommandLine.access$1500(CommandLine.java:148)
+	at picocli.CommandLine$RunLast.executeUserObjectOfLastSubcommandWithSameParent(CommandLine.java:2469)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:2461)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:2423)
+	at picocli.CommandLine$AbstractParseResultHandler.execute(CommandLine.java:2277)
+	at picocli.CommandLine$RunLast.execute(CommandLine.java:2425)
+	at picocli.CommandLine.execute(CommandLine.java:2174)
+	at app.morphe.MorpheLauncherKt.main(MorpheLauncher.kt:23)
+Caused by: java.lang.ClassNotFoundException: app.morphe.patcher.patch.AvailabilityResolver
+	at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:445)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:593)
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
+	... 39 more

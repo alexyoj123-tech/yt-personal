@@ -32,10 +32,10 @@ on:
         default: apk-pure
         options: [apk-pure, google-play, f-droid, huawei-app-gallery]
       revanced_cli_tag:
-        description: 'Tag de morphe-cli. Default v1.12.0 (compat con patches Morphe v1.36+ que requieren PathOptionsKt introducida en CLI v1.11).'
+        description: 'Tag de morphe-cli. Default v1.14.0 (compat con patches Morphe v1.40+ que requieren AvailabilityResolver).'
         required: false
         type: string
-        default: v1.12.0
+        default: v1.14.0
       release_note_prefix:
         description: 'Nota opcional al inicio del body del Release (ej. para releases de corrección)'
         required: false

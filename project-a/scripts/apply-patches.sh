@@ -29,7 +29,7 @@ GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-MorpheApp/MicroG-RE}"
 
 # CLI pineada a v1.7.0 por estabilidad. Actualizar cuando Morphe publique
 # nueva stable + verificar compat con .mpp correspondiente.
-CLI_TAG="${REVANCED_CLI_TAG:-v1.12.0}"
+CLI_TAG="${REVANCED_CLI_TAG:-v1.14.0}"
 
 # Regex del asset MicroG-RE: 'microg-<ver>.apk'. Si el naming cambia,
 # override con env REVANCED_GMSCORE_REGEX.

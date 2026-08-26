@@ -1,4 +1,4 @@
-run_id=32816812263  fecha=2026-08-25T06:25:07Z
+run_id=32938134098  fecha=2026-08-26T06:27:02Z
 
 ===================== /tmp/fetch-apks.log =====================
 [INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
@@ -23,8 +23,8 @@ run_id=32816812263  fecha=2026-08-25T06:25:07Z
 [apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/
 [apkmirror]   title: 'YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror'
 [apkmirror] chose variant: YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=241025b199e78c722399e54a9bfc20ead0448319&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=12341062&key=bc2927821b2d24fe11418628e9de611ee3ba8e88&forcebaseapk=true
+[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=b87ce717c47f3920c139dae8e15df2ba744764e9&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=12341062&key=cd3b8bbe68a0004b73d627c2933e27fe8b6614ea&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk
 [apkmirror] download progress: 17235968/171814203 bytes (10%)
 [apkmirror] download progress: 34471936/171814203 bytes (20%)
@@ -61,8 +61,8 @@ run_id=32816812263  fecha=2026-08-25T06:25:07Z
 [apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-2-android-apk-download/
 [apkmirror]   title: 'YouTube Music 9.15.51 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror] chose variant: YouTube Music 9.15.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-4-android-apk-download/download/?key=a17b3994236a71fd529d836399617e7479066945&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=13501704&key=f74d68bb11f50ec8c4077e1f1659b16e836e2504&forcebaseapk=true
+[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-4-android-apk-download/download/?key=fed902f297975b9851e611188d3a3764d9217718&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=13501704&key=f9bc0cc0fe28869d8aed4b127c9718032d4dcd68&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk
 [apkmirror] download progress: 7471104/74431248 bytes (10%)
 [apkmirror] download progress: 14942208/74431248 bytes (20%)
@@ -84,20 +84,20 @@ run_id=32816812263  fecha=2026-08-25T06:25:07Z
 [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
- 12  113M   12 13.9M    0     0  66.2M      0  0:00:01 --:--:--  0:00:01 66.2M100  113M  100  113M    0     0   230M      0 --:--:-- --:--:-- --:--:--  354M
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+ 28  113M   28 32.7M    0     0  26.6M      0  0:00:04  0:00:01  0:00:03 26.6M 75  113M   75 85.5M    0     0  38.6M      0  0:00:02  0:00:02 --:--:-- 53.5M100  113M  100  113M    0     0  38.9M      0  0:00:02  0:00:02 --:--:-- 47.9M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar (114M)
 [INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.40.0/patches-1.40.0.mpp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 8800k  100 8800k    0     0  47.9M      0 --:--:-- --:--:-- --:--:-- 47.9M
+100 8800k  100 8800k    0     0  36.8M      0 --:--:-- --:--:-- --:--:-- 36.8M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp (8.6M)
 [INFO]  GET https://github.com/MorpheApp/MicroG-RE/releases/download/6.1.4/microg-6.1.4.apk
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
- 99 12.7M   99 12.7M    0     0  72.1M      0 --:--:-- --:--:-- --:--:-- 72.1M100 12.7M  100 12.7M    0     0  72.2M      0 --:--:-- --:--:-- --:--:-- 22.8M
+100 12.7M  100 12.7M    0     0  52.0M      0 --:--:-- --:--:-- --:--:-- 52.0M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk (13M)
 [INFO]  CLI:       /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar
 [INFO]  Patches:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp
@@ -109,26 +109,26 @@ Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
 openjdk version "21.0.12" 2026-07-21 LTS
 OpenJDK Runtime Environment Temurin-21.0.12+8 (build 21.0.12+8-LTS)
 OpenJDK 64-Bit Server VM Temurin-21.0.12+8 (build 21.0.12+8-LTS, mixed mode, sharing)
-du: cannot access '[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar'$'\n''  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current'$'\n''                                 Dload  Upload   Total   Spent    Left  Speed'$'\n\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\n\r''100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M'$'\n''[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)'$'\n''/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar': No such file or directory
+du: cannot access '[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar'$'\n''  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current'$'\n''                                 Dload  Upload   Total   Spent    Left  Speed'$'\n\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\n\r''100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M'$'\n''[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)'$'\n''/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar': No such file or directory
 [INFO]  CLI descargado: [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M
+100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)
 /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar ()
 Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M
+100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)
 /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar
 Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  113M  100  113M    0     0   277M      0 --:--:-- --:--:-- --:--:--  277M
+100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M
 [INFO]  === FIN DIAGNÓSTICO ===
 [INFO]  Extrayendo metadata de patches (compatible_packages + versions)
 INFO: Running in Headless environment, falling back to CLI mode. 
@@ -137,11 +137,11 @@ INFO: Running in Headless environment, falling back to CLI mode.
 ═══ Parcheando YouTube → youtube-patched.apk ═══
 Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
 INFO: Running in Headless environment, falling back to CLI mode. 
-INFO: Update available: v1.13.2 (current: v1.12.0)
+INFO: Update available: v1.14.0 (current: v1.12.0)
 Download from https://github.com/MorpheApp/morphe-desktop/releases/latest 
 INFO: Morphe data root: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/morphe-data (JAR-adjacent) 
 INFO: Loading patches... 
-INFO: Purged this session's temp files: patching-1787639102421 
+INFO: Purged this session's temp files: patching-1787725617179 
 Exception in thread "main" java.lang.NoClassDefFoundError: app/morphe/patcher/patch/AvailabilityResolver
 	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch$lambda$1(BaseCustomBrandingPatch.kt:116)
 	at app.morphe.patcher.patch.PatchKt.buildPatch(Patch.kt:527)

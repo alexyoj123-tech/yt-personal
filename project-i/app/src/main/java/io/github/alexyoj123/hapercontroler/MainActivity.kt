@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.alexyoj123.hapercontroler.ui.AppViewModel
@@ -29,8 +30,9 @@ class MainActivity : ComponentActivity() {
         requestRuntimePermissions()
 
         setContent {
-            HaperControlerTheme {
-                val vm: AppViewModel = viewModel()
+            val vm: AppViewModel = viewModel()
+            val modoTema by vm.themeMode.collectAsState()
+            HaperControlerTheme(mode = modoTema) {
                 pendingSharedApk?.let {
                     vm.offerApk(it)
                     pendingSharedApk = null

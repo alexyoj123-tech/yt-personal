@@ -1,9 +1,15 @@
 package io.github.alexyoj123.hapercontroler.ui
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -37,7 +44,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -213,6 +222,13 @@ fun BotonEncendido(
 /**
  * Balancín vertical de dos mitades — volumen o canal, a los costados del
  * D-pad, como en cualquier control universal.
+ *
+ * [nivelPorcentaje] es opcional: si viene (0..100), dibuja un relleno azul
+ * que sube y baja detrás de los botones — el balancín de volumen lo usa para
+ * mostrar el nivel. Es un indicador LOCAL, no una lectura real de la TV:
+ * ningún protocolo que hablamos hoy expone "dame el volumen actual" barato
+ * para todas las marcas, así que arranca en 50 % y sube/baja por pasos con
+ * cada toque.
  */
 @Composable
 fun BalancinVertical(
@@ -222,17 +238,45 @@ fun BalancinVertical(
     onAbajo: () -> Unit,
     modifier: Modifier = Modifier,
     habilitado: Boolean = true,
+    nivelPorcentaje: Int? = null,
 ) {
-    Column(
+    Box(
         modifier = modifier
             .width(52.dp)
             .clip(RoundedCornerShape(26.dp))
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .alpha(if (habilitado) 1f else 0.4f),
     ) {
-        MitadBalancin(arriba, onArriba, habilitado)
-        HorizontalDivider(color = MaterialTheme.colorScheme.background, thickness = 1.dp)
-        MitadBalancin(abajo, onAbajo, habilitado)
+        if (nivelPorcentaje != null) {
+            NivelAzul(nivelPorcentaje, modifier = Modifier.matchParentSize())
+        }
+        Column {
+            MitadBalancin(arriba, onArriba, habilitado)
+            HorizontalDivider(color = MaterialTheme.colorScheme.background, thickness = 1.dp)
+            MitadBalancin(abajo, onAbajo, habilitado)
+        }
+    }
+}
+
+/** El relleno azul que sube y baja detrás del balancín de volumen. */
+@Composable
+private fun NivelAzul(porcentaje: Int, modifier: Modifier = Modifier) {
+    val fraccion by animateFloatAsState(
+        targetValue = (porcentaje / 100f).coerceIn(0f, 1f),
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow,
+        ),
+        label = "nivelVolumen",
+    )
+    Box(modifier = modifier) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(fraccion.coerceAtLeast(0.001f))
+                .align(Alignment.BottomCenter)
+                .background(Color(0xFF2196F3).copy(alpha = 0.55f)),
+        )
     }
 }
 
@@ -262,6 +306,67 @@ private fun MitadBalancin(texto: String, onClick: () -> Unit, habilitado: Boolea
         contentAlignment = Alignment.Center,
     ) {
         Text(texto, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+    }
+}
+
+/**
+ * Boton de microfono estilo Google: circulo azul con el glifo del mic, y
+ * cuando esta escuchando, anillos que se expanden y se desvanecen hacia
+ * afuera — el mismo lenguaje visual que "Ok Google" / la busqueda por voz.
+ */
+@Composable
+fun MicButtonGoogle(
+    escuchando: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    tamano: androidx.compose.ui.unit.Dp = 64.dp,
+    habilitado: Boolean = true,
+) {
+    val azulGoogle = Color(0xFF4285F4)
+    val interaction = remember { MutableInteractionSource() }
+    val escala = pressScale(interaction)
+
+    Box(modifier = modifier.size(tamano * 1.8f), contentAlignment = Alignment.Center) {
+        if (escuchando) {
+            val transicion = rememberInfiniteTransition(label = "micPulse")
+            for (retraso in listOf(0, 500)) {
+                val progreso by transicion.animateFloat(
+                    initialValue = 0f,
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(1200, delayMillis = retraso, easing = EaseOut),
+                    ),
+                    label = "anillo$retraso",
+                )
+                Canvas(modifier = Modifier.size(tamano * 1.8f)) {
+                    val radio = (size.minDimension / 2f) * (0.5f + progreso * 0.5f)
+                    drawCircle(
+                        color = azulGoogle.copy(alpha = (1f - progreso) * 0.45f),
+                        radius = radio,
+                        center = Offset(size.width / 2f, size.height / 2f),
+                        style = Stroke(width = 3.dp.toPx()),
+                    )
+                }
+            }
+        }
+
+        Button(
+            onClick = onClick,
+            enabled = habilitado,
+            interactionSource = interaction,
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = azulGoogle,
+                contentColor = Color.White,
+            ),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp),
+            contentPadding = PaddingValues(0.dp),
+            modifier = Modifier
+                .size(tamano)
+                .scale(escala),
+        ) {
+            Text("🎙", fontSize = (tamano.value * 0.42f).sp)
+        }
     }
 }
 

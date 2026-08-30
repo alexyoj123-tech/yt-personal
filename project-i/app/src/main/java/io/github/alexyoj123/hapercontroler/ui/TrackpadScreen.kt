@@ -76,68 +76,7 @@ fun TrackpadScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
         }
 
         // ------------------------------------------------ superficie tactil
-        val superficie = Modifier
-            .fillMaxWidth()
-            .height(320.dp)
-            .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(18.dp))
-            .pointerInput(modo) {
-                awaitEachGesture {
-                    val primero = awaitFirstDown(requireUnconsumed = false)
-                    val inicio = System.currentTimeMillis()
-                    var recorrido = 0f
-                    var multiTouch = false
-                    var ultimoDx = 0f
-                    var ultimoDy = 0f
-
-                    while (true) {
-                        val evento = awaitPointerEvent()
-                        val activos = evento.changes.filter { it.pressed }
-                        if (activos.isEmpty()) break
-
-                        if (activos.size >= 2) {
-                            // Dos dedos en vertical = rueda del raton.
-                            multiTouch = true
-                            val dy = activos.map { it.positionChange().y }.average().toFloat()
-                            if (abs(dy) > 0.5f) vm.scroll(-dy / 14f)
-                            activos.forEach { it.consume() }
-                        } else {
-                            val cambio = activos.first()
-                            val delta = cambio.positionChange()
-                            if (delta.x != 0f || delta.y != 0f) {
-                                recorrido += abs(delta.x) + abs(delta.y)
-                                // Aceleracion suave: mover despacio da precision,
-                                // mover rapido cruza la pantalla de una.
-                                val velocidad = hypot(delta.x, delta.y)
-                                val factor = 1.1f + (velocidad / 9f).coerceAtMost(2.4f)
-                                ultimoDx = delta.x * factor
-                                ultimoDy = delta.y * factor
-                                vm.move(ultimoDx, ultimoDy)
-                                cambio.consume()
-                            }
-                        }
-                    }
-
-                    val duracion = System.currentTimeMillis() - inicio
-                    // Tap = clic izquierdo. Tap largo = clic derecho.
-                    if (!multiTouch && recorrido < 14f) {
-                        vm.click(right = duracion > 450)
-                    }
-                    primero.consume()
-                }
-            }
-
-        Column(
-            modifier = superficie,
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                "Deslizá para mover · tocá para clic\ndos dedos para desplazar · mantené para clic derecho",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-        }
+        TouchpadSurface(vm)
 
         // ------------------------------------------------------ bluetooth
         Text("Mouse y teclado Bluetooth", style = MaterialTheme.typography.titleMedium)

@@ -1,15 +1,23 @@
 package io.github.alexyoj123.hapercontroler.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -21,6 +29,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.alexyoj123.hapercontroler.core.Capability
@@ -79,13 +89,16 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
         BotonEncendido(onClick = { vm.key(RemoteKey.POWER) }, habilitado = vivo)
 
         // --------------------------------------------------------- voz
-        Button(
+        MicButtonGoogle(
+            escuchando = listening,
             onClick = { vm.startListening() },
-            enabled = vivo && !listening,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Text(if (listening) "Escuchando…" else "🎙  Hablar")
-        }
+            habilitado = vivo && !listening,
+        )
+        Text(
+            if (listening) "Escuchando…" else "Tocá para hablar",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         voiceStatus?.let {
             Text(
                 it,
@@ -110,9 +123,11 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
             }
         }
 
-        // ------------------------------------- volumen · D-pad · canal
-        // Ubicación universal: volumen a la izquierda, canal a la derecha,
-        // flanqueando el D-pad — como en cualquier control remoto físico.
+        // ------------------------------- volumen · D-pad/touchpad · canal
+        // Ubicación universal: volumen a la izquierda, canal a la derecha.
+        // En el medio, deslizá para elegir entre el D-pad y el touchpad —
+        // son las dos formas de mover el foco, no hace falta verlas juntas.
+        val volumen by vm.volumePercent.collectAsState()
         Row(
             horizontalArrangement = Arrangement.spacedBy(18.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -124,24 +139,54 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
                 BalancinVertical(
                     arriba = "VOL\n+",
                     abajo = "VOL\n−",
-                    onArriba = { vm.key(RemoteKey.VOLUME_UP) },
-                    onAbajo = { vm.key(RemoteKey.VOLUME_DOWN) },
+                    onArriba = { vm.volumeUp() },
+                    onAbajo = { vm.volumeDown() },
                     habilitado = vivo,
+                    nivelPorcentaje = volumen,
                 )
                 TeclaRedonda("🔇", { vm.key(RemoteKey.MUTE) }, habilitado = vivo)
             }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                TeclaCuadrada("▲", { vm.key(RemoteKey.UP) }, habilitado = vivo)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    TeclaCuadrada("◀", { vm.key(RemoteKey.LEFT) }, habilitado = vivo)
-                    TeclaCuadrada("OK", { vm.key(RemoteKey.OK) }, destacado = true, habilitado = vivo)
-                    TeclaCuadrada("▶", { vm.key(RemoteKey.RIGHT) }, habilitado = vivo)
+            val pagerState = rememberPagerState(pageCount = { 2 })
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .width(232.dp)
+                        .height(232.dp),
+                ) { pagina ->
+                    when (pagina) {
+                        0 -> DpadCircular(vm, habilitado = vivo)
+                        else -> TouchpadSurface(
+                            vm,
+                            height = 232.dp,
+                            pista = "Deslizá para mover · tocá para clic",
+                        )
+                    }
                 }
-                TeclaCuadrada("▼", { vm.key(RemoteKey.DOWN) }, habilitado = vivo)
+                Spacer(Modifier.height(6.dp))
+                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    repeat(2) { i ->
+                        val activo = pagerState.currentPage == i
+                        Box(
+                            Modifier
+                                .size(if (activo) 8.dp else 6.dp)
+                                .clip(CircleShape)
+                                .background(
+                                    if (activo) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.outline
+                                    },
+                                ),
+                        )
+                    }
+                }
+                Text(
+                    if (pagerState.currentPage == 0) "D-pad" else "Touchpad",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
 
             BalancinVertical(
@@ -195,5 +240,59 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
         }
 
         Spacer(Modifier.height(24.dp))
+    }
+}
+
+/**
+ * D-pad circular con anillo degradado — la otra mitad del carrusel de la
+ * pagina anterior, junto con el touchpad.
+ */
+@Composable
+private fun DpadCircular(vm: AppViewModel, habilitado: Boolean) {
+    val anillo = Brush.sweepGradient(
+        listOf(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.secondary,
+            MaterialTheme.colorScheme.primary,
+        ),
+    )
+    Box(
+        modifier = Modifier
+            .size(220.dp)
+            .border(3.dp, anillo, CircleShape)
+            .padding(8.dp)
+            .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        TeclaCuadrada(
+            "▲",
+            { vm.key(RemoteKey.UP) },
+            habilitado = habilitado,
+            modifier = Modifier.align(Alignment.TopCenter),
+        )
+        TeclaCuadrada(
+            "▼",
+            { vm.key(RemoteKey.DOWN) },
+            habilitado = habilitado,
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
+        TeclaCuadrada(
+            "◀",
+            { vm.key(RemoteKey.LEFT) },
+            habilitado = habilitado,
+            modifier = Modifier.align(Alignment.CenterStart),
+        )
+        TeclaCuadrada(
+            "▶",
+            { vm.key(RemoteKey.RIGHT) },
+            habilitado = habilitado,
+            modifier = Modifier.align(Alignment.CenterEnd),
+        )
+        TeclaCuadrada(
+            "OK",
+            { vm.key(RemoteKey.OK) },
+            destacado = true,
+            habilitado = habilitado,
+        )
     }
 }

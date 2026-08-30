@@ -30,8 +30,15 @@ object AtvIdentity {
 
     private const val ANDROID_KEYSTORE = "AndroidKeyStore"
 
+    // v2: la primera version de la llave solo declaraba SHA256/SHA1 + PKCS1.
+    // Si el CertificateRequest de la TV pide un SignatureAndHashAlgorithm
+    // fuera de esa lista (p. ej. RSA-PSS, que muchos stacks TLS ofrecen aun
+    // en TLSv1.2, no solo en 1.3), el handshake fallaba en seco con el mismo
+    // error opaco de BoringSSL que el fijar TLSv1.2 no alcanzaba a arreglar.
+    // El prefijo nuevo hace que se genere una llave fresca con mas algoritmos
+    // declarados; la vieja (v1) queda huerfana en el Keystore, sin usarse.
     private fun aliasFor(deviceId: String): String =
-        "haper_atv_" + deviceId.replace(Regex("[^A-Za-z0-9_]"), "_")
+        "haper_atv_v2_" + deviceId.replace(Regex("[^A-Za-z0-9_]"), "_")
 
     private fun keyStore(): KeyStore =
         KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
@@ -68,8 +75,21 @@ object AtvIdentity {
                 .setCertificateSerialNumber(BigInteger(64, SecureRandom()).abs().max(BigInteger.ONE))
                 .setCertificateNotBefore(notBefore.time)
                 .setCertificateNotAfter(notAfter.time)
-                .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA1)
-                .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+                // La lista mas amplia posible de digests y de paddings de firma:
+                // no sabemos de antemano que SignatureAndHashAlgorithm va a
+                // pedir el CertificateRequest de la TV, y una llave del
+                // Keystore de Android solo puede firmar con lo que declaro
+                // aca al crearla.
+                .setDigests(
+                    KeyProperties.DIGEST_SHA256,
+                    KeyProperties.DIGEST_SHA384,
+                    KeyProperties.DIGEST_SHA512,
+                    KeyProperties.DIGEST_SHA1,
+                )
+                .setSignaturePaddings(
+                    KeyProperties.SIGNATURE_PADDING_RSA_PKCS1,
+                    KeyProperties.SIGNATURE_PADDING_RSA_PSS,
+                )
                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
                 .setUserAuthenticationRequired(false)
                 .build(),

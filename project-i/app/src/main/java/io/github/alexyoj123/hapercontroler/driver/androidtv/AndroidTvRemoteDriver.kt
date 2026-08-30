@@ -13,6 +13,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -104,15 +105,27 @@ class AndroidTvRemoteDriver(
             return@withContext startPairing()
         }
 
-        val result = openControl()
-        if (result.isFailure) {
-            // Si la TV nos olvido (reset de fabrica, "olvidar dispositivos"),
-            // el 6466 rechaza el certificado. Se vuelve a emparejar.
-            DiagLog.w("atv", "el control rechazó la identidad guardada, se reintenta el emparejamiento")
-            store.clearSecret(device.id + "_" + pairedKey)
-            return@withContext startPairing()
+        // Reintento corto con backoff: el caso comun de "abro la app y no
+        // conecta sola" es la TV saliendo de standby, no un rechazo real. Un
+        // solo intento fallido no alcanza para distinguir eso de un rechazo
+        // de verdad, asi que se reintenta un par de veces antes de rendirse.
+        var ultimoError: Result<Unit>? = null
+        for ((intento, esperaMs) in listOf(0L, 500L, 1200L).withIndex()) {
+            if (esperaMs > 0) delay(esperaMs)
+            val result = openControl()
+            if (result.isSuccess) return@withContext result
+            ultimoError = result
+            DiagLog.w("atv", "intento ${intento + 1}/3 de reconectar falló: ${result.exceptionOrNull()?.message}")
         }
-        result
+
+        // Se agotaron los reintentos. El emparejamiento guardado NO se borra:
+        // un fallo de red, la TV apagada, o un bug nuestro de TLS no son lo
+        // mismo que la TV rechazando la identidad, y no hay forma barata de
+        // distinguirlos desde aca. Pedir el codigo de nuevo sin necesidad es
+        // justo la molestia que hace inutilizables a la mayoria de las apps
+        // de control remoto. Si la TV de verdad nos olvido (reset de fabrica),
+        // el escape es el boton «Olvidar» en Equipos.
+        ultimoError ?: Result.failure(IllegalStateException("No se pudo conectar"))
     }
 
     override fun disconnect() {
@@ -550,6 +563,9 @@ class AndroidTvRemoteDriver(
     }
 
     companion object {
+        /** Borra la identidad TLS del Keystore — el escape real de "Olvidar". */
+        fun olvidarIdentidad(deviceId: String) = AtvIdentity.forget(deviceId)
+
         private const val STATUS_UNKNOWN = 0
         private const val STATUS_OK = 200
 

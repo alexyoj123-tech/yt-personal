@@ -18,6 +18,7 @@ import io.github.alexyoj123.hapercontroler.deploy.DeployConfig
 import io.github.alexyoj123.hapercontroler.deploy.DeployWorker
 import io.github.alexyoj123.hapercontroler.hid.BluetoothHidController
 import io.github.alexyoj123.hapercontroler.hid.HidForegroundService
+import io.github.alexyoj123.hapercontroler.ui.theme.ThemeMode
 import io.github.alexyoj123.hapercontroler.voice.VoiceController
 import io.github.alexyoj123.hapercontroler.voice.VoiceIntent
 import io.github.alexyoj123.hapercontroler.voice.VoiceIntentParser
@@ -91,7 +92,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     fun select(device: TvDevice) = viewModelScope.launch { repo.select(device) }
 
     fun forget(device: TvDevice) = viewModelScope.launch {
-        store.forget(device.id)
+        repo.forgetDevice(device)
         repo.refreshDevices()
     }
 
@@ -131,6 +132,18 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         repo.launch(app).onFailure { repo.postNotice(it.message ?: "No se pudo abrir la app") }
     }
 
+    // -------------------------------------------------------------- tema
+
+    val themeMode: StateFlow<ThemeMode> = store.themeModeFlow
+        .map { runCatching { ThemeMode.valueOf(it ?: "") }.getOrDefault(ThemeMode.SISTEMA) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, ThemeMode.SISTEMA)
+
+    /** Alterna entre claro y oscuro. «Sistema» pasa a lo contrario de como se ve ahora. */
+    fun toggleTheme() = viewModelScope.launch {
+        val siguiente = if (themeMode.value == ThemeMode.OSCURO) ThemeMode.CLARO else ThemeMode.OSCURO
+        store.putThemeMode(siguiente.name)
+    }
+
     // --------------------------------------------------------- despliegue
 
     val deployConfig: StateFlow<DeployConfig> = store.deployConfigFlow
@@ -164,6 +177,23 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     fun key(key: RemoteKey) = viewModelScope.launch {
         repo.key(key).onFailure { repo.postNotice(it.message ?: "La tecla no llegó") }
+    }
+
+    // Nivel de volumen LOCAL para el relleno azul del balancín. Ningún
+    // protocolo que hablamos hoy expone "dame el volumen actual" barato para
+    // todas las marcas, así que es un indicador relativo: arranca en 50 % y
+    // se mueve por pasos con cada toque, no una lectura real de la TV.
+    private val _volumePercent = MutableStateFlow(50)
+    val volumePercent: StateFlow<Int> = _volumePercent.asStateFlow()
+
+    fun volumeUp() {
+        _volumePercent.value = (_volumePercent.value + 6).coerceAtMost(100)
+        key(RemoteKey.VOLUME_UP)
+    }
+
+    fun volumeDown() {
+        _volumePercent.value = (_volumePercent.value - 6).coerceAtLeast(0)
+        key(RemoteKey.VOLUME_DOWN)
     }
 
     fun launch(app: TvApp) = viewModelScope.launch {

@@ -217,14 +217,16 @@ class BluetoothHidController(
     // ------------------------------------------------------------ reportes
 
     /**
-     * Bomba de reportes a ~66 Hz. Nunca se manda un reporte por cada
-     * MotionEvent: eso inunda el canal HID y se siente peor que no tenerlo.
+     * Bomba de reportes a ~125 Hz — lo mas rapido que un enlace Bluetooth
+     * Classic HID entrega de forma confiable en la mayoria de los celulares.
+     * Nunca se manda un reporte por cada MotionEvent: eso inunda el canal HID
+     * y se siente peor que no tenerlo.
      */
     private fun startPump() {
         if (pump?.isActive == true) return
         pump = scope.launch(Dispatchers.Default) {
             while (isActive) {
-                delay(15)
+                delay(8)
                 val dx: Int
                 val dy: Int
                 val wheel: Int

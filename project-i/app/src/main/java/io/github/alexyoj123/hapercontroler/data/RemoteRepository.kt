@@ -114,6 +114,7 @@ class RemoteRepository(
     suspend fun select(device: TvDevice): Result<Unit> {
         _activeDriver.value?.disconnect()
         _apps.value = emptyList()
+        ConnectionKeepAliveService.stop(context)
 
         // Si el mismo aparato expone ADB y el control oficial, gana ADB: da
         // instalacion de APKs, texto y la lista real de paquetes instalados.
@@ -159,6 +160,9 @@ class RemoteRepository(
             persistSecrets(driver)
             store.rememberLast(device.id)
             runCatching { driver.listApps() }.getOrNull()?.getOrNull()?.let { _apps.value = it }
+            // Sin esto, Android corta la red del proceso poco despues de
+            // apagar la pantalla y el socket muere solo.
+            ConnectionKeepAliveService.start(context, device.displayName)
         }
         return result
     }
@@ -181,11 +185,28 @@ class RemoteRepository(
         return result
     }
 
+    /**
+     * Olvidar un dispositivo. Ademas de sacarlo de la lista, limpia lo que
+     * cada driver haya guardado aparte del secreto generico — el control
+     * oficial de Google TV usa una clave compuesta (`id_atv_paired`) y una
+     * identidad en el Keystore de Android que `DeviceStore.forget` no toca.
+     * Sin esto, "Olvidar" no era un escape real si el emparejamiento quedaba
+     * en mal estado: había que desinstalar la app para limpiarlo.
+     */
+    suspend fun forgetDevice(device: TvDevice) {
+        if (device.kind == DriverKind.ANDROID_TV_REMOTE) {
+            store.clearSecret(device.id + "_atv_paired")
+            AndroidTvRemoteDriver.olvidarIdentidad(device.id)
+        }
+        store.forget(device.id)
+    }
+
     fun disconnect() {
         _activeDriver.value?.disconnect()
         _activeDriver.value = null
         _connection.value = ConnectionState.Disconnected
         _apps.value = emptyList()
+        ConnectionKeepAliveService.stop(context)
     }
 
     // ------------------------------------------------------------- teclas

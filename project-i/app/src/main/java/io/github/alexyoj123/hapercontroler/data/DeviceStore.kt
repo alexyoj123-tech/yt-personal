@@ -34,6 +34,7 @@ class DeviceStore(private val context: Context) {
         val FAVORITE_APKS = stringPreferencesKey("favorite_apks")
         val DEPLOY_CONFIG = stringPreferencesKey("deploy_config")
         val DEPLOY_REPORT = stringPreferencesKey("deploy_report")
+        val THEME_MODE = stringPreferencesKey("theme_mode")
     }
 
     val devices = context.dataStore.data.map { prefs ->
@@ -142,6 +143,14 @@ class DeviceStore(private val context: Context) {
     }
 
     val deployReportFlow = context.dataStore.data.map { it[Keys.DEPLOY_REPORT] }
+
+    // ---------------------------------------------------------------- tema
+
+    val themeModeFlow = context.dataStore.data.map { it[Keys.THEME_MODE] }
+
+    suspend fun putThemeMode(nombre: String) {
+        context.dataStore.edit { it[Keys.THEME_MODE] = nombre }
+    }
 
     /** Se guarda como texto plano legible: es lo que se lee en la pantalla. */
     suspend fun putDeployReport(report: DeployReport) {

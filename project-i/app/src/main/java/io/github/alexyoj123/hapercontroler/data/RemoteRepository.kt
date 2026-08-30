@@ -278,7 +278,41 @@ class RemoteRepository(
         when (pointerMode()) {
             PointerMode.BLUETOOTH_HID -> hid.queueMove(dx, dy)
             PointerMode.DRIVER_NATIVE -> _activeDriver.value?.pointerMove(dx, dy)
-            PointerMode.DPAD_FALLBACK -> Unit // lo maneja la pantalla con gestos
+            PointerMode.DPAD_FALLBACK -> dpadFallbackMove(dx, dy)
+        }
+    }
+
+    // Acumulador del ultimo recurso: sin cursor ni puntero nativo, el
+    // deslizamiento se traduce a pulsaciones de flecha. Sin esto el trackpad
+    // se queda mudo apenas no hay Bluetooth HID ni driver con POINTER — que es
+    // justo el estado en el que cae cualquier conexion que todavia no tiene
+    // el celular emparejado como mouse.
+    private var dpadAccumX = 0f
+    private var dpadAccumY = 0f
+    private var dpadLastFireMs = 0L
+
+    private suspend fun dpadFallbackMove(dx: Float, dy: Float) {
+        dpadAccumX += dx
+        dpadAccumY += dy
+        val now = System.currentTimeMillis()
+        // Se limita a ~10 flechas por segundo: mas rapido que eso y el foco
+        // salta mas de lo que el ojo puede seguir en la TV.
+        if (now - dpadLastFireMs < 100) return
+
+        val umbral = 26f
+        val absX = kotlin.math.abs(dpadAccumX)
+        val absY = kotlin.math.abs(dpadAccumY)
+        if (absX < umbral && absY < umbral) return
+
+        dpadLastFireMs = now
+        if (absX > absY) {
+            key(if (dpadAccumX > 0) RemoteKey.RIGHT else RemoteKey.LEFT)
+            dpadAccumX = 0f
+            dpadAccumY *= 0.3f
+        } else {
+            key(if (dpadAccumY > 0) RemoteKey.DOWN else RemoteKey.UP)
+            dpadAccumY = 0f
+            dpadAccumX *= 0.3f
         }
     }
 

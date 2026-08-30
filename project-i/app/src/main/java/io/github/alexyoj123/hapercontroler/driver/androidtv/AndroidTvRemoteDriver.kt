@@ -172,7 +172,7 @@ class AndroidTvRemoteDriver(
             )
             Unit
         }.onFailure {
-            val msg = it.message ?: "No se pudo iniciar el emparejamiento"
+            val msg = mensajeAmigable(it)
             DiagLog.e("atv", "fallo iniciando el emparejamiento", it)
             _connectionState.value = ConnectionState.Failed(msg)
             closePairing()
@@ -346,7 +346,7 @@ class AndroidTvRemoteDriver(
             Unit
         }.onFailure {
             DiagLog.e("atv", "no se pudo abrir el canal de control", it)
-            _connectionState.value = ConnectionState.Failed(it.message ?: "sin control")
+            _connectionState.value = ConnectionState.Failed(mensajeAmigable(it))
         }
     }
 
@@ -503,6 +503,15 @@ class AndroidTvRemoteDriver(
      * TLS mutuo con el certificado del Keystore. La TV usa un certificado
      * autofirmado, asi que el TrustManager es permisivo — pero solo en ESTE
      * SSLContext, nunca global.
+     *
+     * Se fija el protocolo a TLSv1.2. Sin esto, Android negocia TLSv1.3 por
+     * default, y TLSv1.3 exige que el cliente firme el CertificateVerify con
+     * RSA-PSS. Las llaves generadas en el Keystore de Android en
+     * [AtvIdentity] solo declaran PKCS1, asi que el handshake fallaba en seco
+     * con el error opaco de BoringSSL "failure in ssl library, usually a
+     * protocol error" — es lo que se vio al conectar contra el Claro TV Box.
+     * El protocolo de Google TV viene de antes de que TLS 1.3 fuera comun, asi
+     * que fijar 1.2 no pierde nada.
      */
     private fun openTls(port: Int): SSLSocket {
         val trustAll = object : X509TrustManager {
@@ -518,8 +527,19 @@ class AndroidTvRemoteDriver(
         raw.soTimeout = 0
         val factory: SSLSocketFactory = ctx.socketFactory
         val ssl = factory.createSocket(raw, device.host, port, true) as SSLSocket
+        runCatching { ssl.enabledProtocols = arrayOf("TLSv1.2") }
         ssl.startHandshake()
         return ssl
+    }
+
+    /** Un mensaje de TLS crudo de BoringSSL no le dice nada al dueño. */
+    private fun mensajeAmigable(t: Throwable): String {
+        val bruto = t.message.orEmpty()
+        return if (t is javax.net.ssl.SSLException || bruto.contains("ssl", ignoreCase = true)) {
+            "Fallo la conexión segura con la TV. Volvé a intentar; si sigue, reiniciá la TV y probá de nuevo."
+        } else {
+            bruto.ifBlank { "Error desconocido" }
+        }
     }
 
     private fun hexToBytes(hex: String): ByteArray {

@@ -45,8 +45,8 @@ android {
         // minSdk 28 lo exige BluetoothHidDevice (API 28). No bajar.
         minSdk = 28
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "1.2.1"
         buildConfigField("String", "YOUTUBE_API_KEY", "\"$youtubeApiKey\"")
     }
 

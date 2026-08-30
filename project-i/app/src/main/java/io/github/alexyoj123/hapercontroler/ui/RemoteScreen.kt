@@ -73,6 +73,11 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
             )
         }
 
+        // ---------------------------------------------------- encendido
+        // Solo, arriba de todo: es donde está en cualquier control remoto de
+        // verdad, no mezclado con Atrás/Inicio/Menú.
+        BotonEncendido(onClick = { vm.key(RemoteKey.POWER) }, habilitado = vivo)
+
         // --------------------------------------------------------- voz
         Button(
             onClick = { vm.startListening() },
@@ -105,31 +110,50 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
             }
         }
 
-        // ------------------------------------------------------- D-pad
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        // ------------------------------------- volumen · D-pad · canal
+        // Ubicación universal: volumen a la izquierda, canal a la derecha,
+        // flanqueando el D-pad — como en cualquier control remoto físico.
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            TeclaCuadrada("▲", { vm.key(RemoteKey.UP) }, habilitado = vivo)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                TeclaCuadrada("◀", { vm.key(RemoteKey.LEFT) }, habilitado = vivo)
-                TeclaCuadrada("OK", { vm.key(RemoteKey.OK) }, destacado = true, habilitado = vivo)
-                TeclaCuadrada("▶", { vm.key(RemoteKey.RIGHT) }, habilitado = vivo)
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                BalancinVertical(
+                    arriba = "VOL\n+",
+                    abajo = "VOL\n−",
+                    onArriba = { vm.key(RemoteKey.VOLUME_UP) },
+                    onAbajo = { vm.key(RemoteKey.VOLUME_DOWN) },
+                    habilitado = vivo,
+                )
+                TeclaRedonda("🔇", { vm.key(RemoteKey.MUTE) }, habilitado = vivo)
             }
-            TeclaCuadrada("▼", { vm.key(RemoteKey.DOWN) }, habilitado = vivo)
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                TeclaCuadrada("▲", { vm.key(RemoteKey.UP) }, habilitado = vivo)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TeclaCuadrada("◀", { vm.key(RemoteKey.LEFT) }, habilitado = vivo)
+                    TeclaCuadrada("OK", { vm.key(RemoteKey.OK) }, destacado = true, habilitado = vivo)
+                    TeclaCuadrada("▶", { vm.key(RemoteKey.RIGHT) }, habilitado = vivo)
+                }
+                TeclaCuadrada("▼", { vm.key(RemoteKey.DOWN) }, habilitado = vivo)
+            }
+
+            BalancinVertical(
+                arriba = "CH\n+",
+                abajo = "CH\n−",
+                onArriba = { vm.key(RemoteKey.CHANNEL_UP) },
+                onAbajo = { vm.key(RemoteKey.CHANNEL_DOWN) },
+                habilitado = vivo,
+            )
         }
 
         Spacer(Modifier.height(4.dp))
-
-        // ------------------------------------------- volumen / navegacion
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TeclaRedonda("VOL +", { vm.key(RemoteKey.VOLUME_UP) }, habilitado = vivo)
-            TeclaRedonda("VOL −", { vm.key(RemoteKey.VOLUME_DOWN) }, habilitado = vivo)
-            TeclaRedonda("🔇", { vm.key(RemoteKey.MUTE) }, habilitado = vivo)
-        }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -140,6 +164,7 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
             TeclaRedonda("▶▶", { vm.key(RemoteKey.FAST_FORWARD) }, habilitado = vivo)
         }
 
+        // ------------------------------------------ atrás · inicio · menú
         Row(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -154,22 +179,11 @@ fun RemoteScreen(vm: AppViewModel, modifier: Modifier = Modifier) {
                 enabled = vivo,
                 modifier = Modifier.weight(1f),
             ) { Text("Inicio") }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
             OutlinedButton(
                 onClick = { vm.key(RemoteKey.MENU) },
                 enabled = vivo,
                 modifier = Modifier.weight(1f),
             ) { Text("Menú") }
-            OutlinedButton(
-                onClick = { vm.key(RemoteKey.POWER) },
-                enabled = vivo,
-                modifier = Modifier.weight(1f),
-            ) { Text("Apagar") }
         }
 
         // Wake-on-LAN solo si el dispositivo REALMENTE lo soporta y ya

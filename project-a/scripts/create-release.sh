@@ -35,6 +35,8 @@ PATCHES_VERSION="$(jq -r '.revanced_patches_version' "$META_DIR/patch.json")"
 # el body del release. Comparar esto es lo unico fiable — el texto markdown
 # cambia de formato y los greps sobre prosa se rompen en silencio.
 FINGERPRINT="yt=${YT_VERSION};ytm=${YTM_VERSION};gms=${GMS_VERSION};st=${SMARTTUBE_VERSION};cli=${CLI_VERSION};patches=${PATCHES_VERSION}"
+PSUF=""
+[ -n "$PATCHES_VERSION" ] && [ "$PATCHES_VERSION" != "null" ] && PSUF="-p${PATCHES_VERSION#v}"
 info "Huella de este build: $FINGERPRINT"
 
 # ── Skip si no hay cambios ──────────────────────────────────────────
@@ -119,8 +121,8 @@ cat >> "$body_file" <<EOF
 
 | Archivo | Propósito |
 |---------|-----------|
-| \`youtube-personal-${YT_VERSION}.apk\` | YouTube parcheado (ad-free, background, PiP, SponsorBlock, ícono + nombre oficiales). |
-| \`youtube-music-personal-${YTM_VERSION}.apk\` | YouTube Music parcheado (ad-free, background, ícono + nombre oficiales). |
+| \`youtube-personal-${YT_VERSION}${PSUF}.apk\` | YouTube parcheado (ad-free, background, PiP, SponsorBlock, ícono + nombre oficiales). |
+| \`youtube-music-personal-${YTM_VERSION}${PSUF}.apk\` | YouTube Music parcheado (ad-free, background, ícono + nombre oficiales). |
 | \`gmscore-${GMS_VERSION}.apk\` | MicroG-RE: microG fork (vendor Morphe) requerido para login Google. |
 | \`smarttube-${SMARTTUBE_VERSION}.apk\` | SmartTube (Android TV, cliente YouTube con SponsorBlock). |
 

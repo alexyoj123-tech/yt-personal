@@ -14,8 +14,8 @@
 #       ANDROID_KEY_PASSWORD
 #
 # Salida: APKs firmados en $SIGNED_DIR/, nombres finales:
-#   youtube-personal-<version>.apk
-#   youtube-music-personal-<version>.apk
+#   youtube-personal-<version>-p<patches>.apk
+#   youtube-music-personal-<version>-p<patches>.apk
 #   gmscore-<version>.apk
 
 set -euo pipefail
@@ -40,6 +40,15 @@ info "Keystore materializado: $KS_PATH ($(du -h "$KS_PATH" | cut -f1))"
 YT_VERSION="$(jq -r '.youtube.version' "$META_DIR/fetch.json")"
 YTM_VERSION="$(jq -r '.youtube_music.version' "$META_DIR/fetch.json")"
 GMS_VERSION="$(jq -r '.gmscore_version' "$META_DIR/patch.json" 2>/dev/null || echo 'unknown')"
+
+# Sufijo con la version de patches. Sin esto TODOS los builds se llaman igual
+# (youtube-personal-21.04.223.apk) porque la version de la app esta pineada, y
+# en la carpeta Descargas es imposible distinguir el nuevo del viejo: Chrome
+# los guarda como (1), (2), (3)... y se instala el equivocado.
+PATCHES_VERSION="$(jq -r '.revanced_patches_version // empty' "$META_DIR/patch.json" 2>/dev/null || true)"
+PSUF=""
+[ -n "$PATCHES_VERSION" ] && [ "$PATCHES_VERSION" != "null" ] && PSUF="-p${PATCHES_VERSION#v}"
+info "Sufijo de nombre de APK: '${PSUF:-<ninguno>}'"
 
 # Fecha para el tag si version=="latest"
 DATE_TAG="$(date -u +%Y.%m.%d)"
@@ -73,10 +82,10 @@ sign_apk() {
 }
 
 sign_apk "$PATCHED_DIR/youtube-patched.apk" \
-         "$SIGNED_DIR/youtube-personal-${YT_VERSION}.apk" "YouTube"
+         "$SIGNED_DIR/youtube-personal-${YT_VERSION}${PSUF}.apk" "YouTube"
 
 sign_apk "$PATCHED_DIR/youtube-music-patched.apk" \
-         "$SIGNED_DIR/youtube-music-personal-${YTM_VERSION}.apk" "YT Music"
+         "$SIGNED_DIR/youtube-music-personal-${YTM_VERSION}${PSUF}.apk" "YT Music"
 
 # GmsCore ya viene firmado por upstream, pero re-firmamos con la misma
 # clave para mantener consistencia de firma en el dispositivo del dueño.
@@ -103,8 +112,8 @@ cat > "$META_DIR/sign.json" <<EOF
   "signed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
   "keystore_alias": "$ANDROID_KEY_ALIAS",
   "signed_apks": [
-    "youtube-personal-${YT_VERSION}.apk",
-    "youtube-music-personal-${YTM_VERSION}.apk",
+    "youtube-personal-${YT_VERSION}${PSUF}.apk",
+    "youtube-music-personal-${YTM_VERSION}${PSUF}.apk",
     "gmscore-${GMS_VERSION}.apk",
     "smarttube-${SMARTTUBE_VERSION}.apk"
   ],

@@ -31,19 +31,54 @@ SMARTTUBE_VERSION="$(jq -r '.versions.smarttube // "n/a"' "$META_DIR/sign.json")
 CLI_VERSION="$(jq -r '.revanced_cli_version'      "$META_DIR/patch.json")"
 PATCHES_VERSION="$(jq -r '.revanced_patches_version' "$META_DIR/patch.json")"
 
+# Huella de versiones: string plano y estable, embebido como comentario HTML en
+# el body del release. Comparar esto es lo unico fiable — el texto markdown
+# cambia de formato y los greps sobre prosa se rompen en silencio.
+FINGERPRINT="yt=${YT_VERSION};ytm=${YTM_VERSION};gms=${GMS_VERSION};st=${SMARTTUBE_VERSION};cli=${CLI_VERSION};patches=${PATCHES_VERSION}"
+info "Huella de este build: $FINGERPRINT"
+
 # ── Skip si no hay cambios ──────────────────────────────────────────
+# BUG HISTORICO (arreglado 2026-09-08): este bloque nunca llegaba a saltar.
+#   1. `--limit 1` devolvia el release mas nuevo de CUALQUIER proyecto
+#      (ytp-f-family, ytp-g-VallEthTube...), no el de project-a, asi que el
+#      `[[ == ytp-a-* ]]` fallaba y la comparacion se saltaba entera.
+#   2. Los greps buscaban "YouTube: X" pero el body escribe "**YouTube:** X",
+#      y "ReVanced patches:" ya no existe en el body (ahora es "patches:").
+# Resultado: publicaba release TODOS los dias aunque nada hubiera cambiado.
 if [ "${FORCE_RELEASE:-0}" != "1" ]; then
-  last_tag="$(gh release list --repo "$REPO" --limit 1 --json tagName --jq '.[0].tagName // empty' 2>/dev/null || true)"
-  if [ -n "$last_tag" ] && [[ "$last_tag" == ytp-a-* ]]; then
-    info "Último release: $last_tag — comparando versiones..."
+  last_tag="$(gh release list --repo "$REPO" --limit 60 --json tagName \
+      --jq '[.[] | select(.tagName | startswith("ytp-a-"))][0].tagName // empty' \
+      2>/dev/null || true)"
+
+  if [ -n "$last_tag" ]; then
+    info "Ultimo release de project-a: $last_tag — comparando..."
     last_body="$(gh release view "$last_tag" --repo "$REPO" --json body --jq '.body' 2>/dev/null || echo '')"
-    if echo "$last_body" | grep -q "YouTube: $YT_VERSION" && \
-       echo "$last_body" | grep -q "YT Music: $YTM_VERSION" && \
-       echo "$last_body" | grep -q "GmsCore: $GMS_VERSION" && \
-       echo "$last_body" | grep -q "ReVanced patches: $PATCHES_VERSION"; then
-      ok "Sin cambios desde $last_tag — skip release (FORCE_RELEASE=1 para forzar)."
-      exit 0
+    last_fp="$(printf '%s' "$last_body" \
+      | sed -n 's/.*ytp-fingerprint:[[:space:]]*\([^[:space:]]*\).*/\1/p' | head -1)"
+
+    if [ -n "$last_fp" ]; then
+      if [ "$last_fp" = "$FINGERPRINT" ]; then
+        ok "Sin cambios desde $last_tag — skip release (FORCE_RELEASE=1 para forzar)."
+        exit 0
+      fi
+      info "Hay cambios:"
+      info "  anterior: $last_fp"
+      info "  actual:   $FINGERPRINT"
+    else
+      # Release anterior sin huella (formato viejo). Comparar sobre el body con
+      # los ** de markdown quitados, para no depender del formato del texto.
+      plain="$(printf '%s' "$last_body" | sed 's/\*\*//g')"
+      if echo "$plain" | grep -qF "YouTube: $YT_VERSION"    && \
+         echo "$plain" | grep -qF "YT Music: $YTM_VERSION"  && \
+         echo "$plain" | grep -qF "MicroG-RE: $GMS_VERSION" && \
+         echo "$plain" | grep -qF "patches: $PATCHES_VERSION"; then
+        ok "Sin cambios desde $last_tag (formato viejo) — skip release."
+        exit 0
+      fi
+      info "Hay cambios vs $last_tag (comparacion sobre body sin huella)."
     fi
+  else
+    info "No hay releases previos de project-a — publicando el primero."
   fi
 fi
 
@@ -105,6 +140,8 @@ en los próximos minutos.
 ---
 
 *Automático. Uso personal. Ver [docs/CONTINUIDAD.md](../blob/main/docs/CONTINUIDAD.md) para retomo futuro.*
+
+<!-- ytp-fingerprint: $FINGERPRINT -->
 EOF
 
 # ── Crear release ────────────────────────────────────────────────────

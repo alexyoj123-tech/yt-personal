@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-09-13",
-  "build_date": "2026-09-13",
-  "expires_date": "2026-12-12",
+  "tag": "ytp-f-family-2026-09-14",
+  "build_date": "2026-09-14",
+  "expires_date": "2026-12-13",
   "expires_days": 90,
   "source_release": "ytp-a-2026.09.10",
   "apps": {
     "yt": {
-      "filename": "ciQL-KzJc-H7Xw-wCDE-QSnB-JMbH-QdC6-ZnmKR.apk",
+      "filename": "JfPE-h3Ld-uwWA-UTkV-ce3m-a5UP-gHbt-5kdet.apk",
       "size_bytes": 173051331,
       "sha256": "94c49cae957bde6c7d4f3bc27c4ebe0e3fe4b992ad137ce7ef9f6e8ba3a25e0c",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-09-13/ciQL-KzJc-H7Xw-wCDE-QSnB-JMbH-QdC6-ZnmKR.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-09-14/JfPE-h3Ld-uwWA-UTkV-ce3m-a5UP-gHbt-5kdet.apk"
     },
     "ytm": {
-      "filename": "uHxj-JMRm-EgKA-4RDL-V9ik-sekr-6hbj-8jnVH.apk",
+      "filename": "SFSy-NrVQ-QFHv-Adyb-P85Q-XDdV-cf2F-pdZrh.apk",
       "size_bytes": 81024538,
       "sha256": "d0dca32a87ebdd7107bd02eaa11c93cffac7afdf7b00d6222a65dd908fe3062a",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-09-13/uHxj-JMRm-EgKA-4RDL-V9ik-sekr-6hbj-8jnVH.apk"
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-09-14/SFSy-NrVQ-QFHv-Adyb-P85Q-XDdV-cf2F-pdZrh.apk"
     }
   }
 }

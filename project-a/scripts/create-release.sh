@@ -113,7 +113,7 @@ cat >> "$body_file" <<EOF
 
 - **YouTube:** $YT_VERSION · package \`app.morphe.android.youtube\`
 - **YT Music:** $YTM_VERSION · package \`app.morphe.android.apps.youtube.music\`
-- **MicroG-RE:** $GMS_VERSION · package \`app.revanced.android.gms\` (fork microG por Morphe, mantiene vendor ReVanced — instala como update sobre ReVanced/GmsCore previo sin desinstalar)
+- **MicroG-RE:** $GMS_VERSION · package \`app.revanced.android.gms\` (fork microG por Morphe, mantiene vendor ReVanced. OJO: el salto de 6.x a 7.x cambio la firma — hay que DESINSTALAR el MicroG viejo antes de instalar este, no entra como update. Bajar el nuevo ANTES de desinstalar: sin MicroG, YouTube y YT Music no arrancan.)
 - **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`org.smarttube.stable\`
 - **Morphe CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION
 
@@ -124,6 +124,7 @@ cat >> "$body_file" <<EOF
 | \`youtube-personal-${YT_VERSION}${PSUF}.apk\` | YouTube parcheado (ad-free, background, PiP, SponsorBlock, ícono + nombre oficiales). |
 | \`youtube-music-personal-${YTM_VERSION}${PSUF}.apk\` | YouTube Music parcheado (ad-free, background, ícono + nombre oficiales). |
 | \`gmscore-${GMS_VERSION}.apk\` | MicroG-RE: microG fork (vendor Morphe) requerido para login Google. |
+| \`microg-arm64-${GMS_VERSION}.apk\` | Mismo MicroG-RE, solo arm64: ~42 MB en vez de ~107 MB. Para conexiones que no aguantan el grande. Puede no estar si upstream cambio el naming. |
 | \`smarttube-${SMARTTUBE_VERSION}.apk\` | SmartTube (Android TV, cliente YouTube con SponsorBlock). |
 
 ## Calidad de streaming

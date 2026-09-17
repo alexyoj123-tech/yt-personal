@@ -19,6 +19,15 @@ DRY_RUN="${DRY_RUN:-0}"
 
 NOW_TS=$(date -u +%s)
 
+# El release ytp-f-family-* MAS RECIENTE nunca se borra, aunque pase MAX_DAYS.
+# Desde que project-f solo publica cuando cambia algo, el mismo release puede
+# quedarse vigente mas de 90 dias; borrarlo dejaria a la familia con
+# docs/family-manifest.json apuntando a un release que ya no existe.
+NEWEST_F=$(gh release list --repo "$REPO" --limit 200 --json tagName,publishedAt \
+  --jq '[.[] | select(.tagName | startswith("ytp-f-family-"))]
+        | sort_by(.publishedAt) | reverse | .[0].tagName // empty')
+[ -n "$NEWEST_F" ] && echo "[cleanup] Protegido (mas reciente): $NEWEST_F"
+
 # Listar TODOS los releases del repo
 all_releases=$(gh release list --repo "$REPO" --limit 200 \
   --json tagName,publishedAt --jq '.[] | "\(.tagName)|\(.publishedAt)"')
@@ -36,6 +45,13 @@ while IFS='|' read -r tag published_at; do
       continue
       ;;
   esac
+
+  # ── GUARD: nunca borrar el mas reciente ──
+  if [ -n "$NEWEST_F" ] && [ "$tag" = "$NEWEST_F" ]; then
+    echo "[cleanup] $tag es el mas reciente — protegido"
+    skipped=$((skipped+1))
+    continue
+  fi
 
   # Calcular antigüedad
   pub_ts=$(date -u -d "$published_at" +%s 2>/dev/null || echo 0)

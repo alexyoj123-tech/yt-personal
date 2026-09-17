@@ -44,6 +44,21 @@ CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe
 PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
+# Variante arm64-v8a del MicroG-RE: mismo build, ~42 MB en vez de ~107 MB
+# (el universal trae todas las arquitecturas). Se publica como asset EXTRA,
+# para descargar a mano cuando la conexion no aguanta los 107 MB. El universal
+# se sigue publicando igual, porque la TV Box y los telefonos de la familia
+# pueden no ser arm64 y ese es el que usa Obtainium.
+# Opcional a proposito: si upstream cambia el naming, el build NO debe fallar.
+GMSCORE_ARM64_REGEX="${REVANCED_GMSCORE_ARM64_REGEX:-microg-[0-9.]+-arm64-v8a\\.apk$}"
+GMSCORE_ARM64_APK="$(ensure_tool "gmscore-arm64.apk" "$GMSCORE_REPO" "$GMSCORE_ARM64_REGEX" 2>/dev/null || true)"
+if [ -n "${GMSCORE_ARM64_APK:-}" ] && [ -s "${GMSCORE_ARM64_APK:-/nonexistent}" ]; then
+  info "GmsCore arm64: $GMSCORE_ARM64_APK ($(du -h "$GMSCORE_ARM64_APK" | cut -f1))"
+  cp "$GMSCORE_ARM64_APK" "$PATCHED_DIR/gmscore-arm64.apk"
+else
+  info "GmsCore arm64: no disponible upstream — se omite (no es fatal)."
+fi
+
 info "CLI:       $CLI_JAR"
 info "Patches:   $PATCHES_RVP"
 info "GmsCore:   $GMSCORE_APK"

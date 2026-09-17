@@ -32,15 +32,48 @@ jobs:
         id: tag
         run: echo "TAG=ytp-f-family-$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
 
-      - name: Skip if today's tag already exists (cron idempotente)
+      - name: Skip si el tag ya existe o si no hay nada nuevo
         id: check
         run: |
-          if gh release view "${{ steps.tag.outputs.TAG }}" --repo "$REPO" >/dev/null 2>&1; then
+          TAG="${{ steps.tag.outputs.TAG }}"
+
+          # (a) cron idempotente: el tag de hoy ya existe
+          if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
             echo "SKIP=1" >> "$GITHUB_OUTPUT"
-            echo "Tag ${{ steps.tag.outputs.TAG }} ya existe — skipping build."
-          else
-            echo "SKIP=0" >> "$GITHUB_OUTPUT"
+            echo "Tag $TAG ya existe — skipping build."
+            exit 0
           fi
+
+          # (b) huella: el release ytp-a-* del que se copiarian los APKs.
+          #     project-a solo publica cuando cambia la version de la app o de
+          #     los patches, asi que si el tag fuente es el mismo que la vez
+          #     pasada el contenido seria identico y no vale republicar ~175 MB.
+          #     Se guarda HASHEADA para no describir el contenido en un release
+          #     que a proposito usa solo lenguaje neutro.
+          SRC=$(gh release list --repo "$REPO" --limit 30 --json tagName \
+                --jq '[.[] | select(.tagName | startswith("ytp-a-"))][0].tagName // empty')
+          if [ -z "$SRC" ]; then
+            echo "::error::No hay ningun release ytp-a-* del que copiar."
+            exit 1
+          fi
+          FP=$(printf '%s' "$SRC" | sha256sum | cut -c1-16)
+          echo "FP=$FP" >> "$GITHUB_OUTPUT"
+          echo "Fuente: $SRC  ->  huella $FP"
+
+          LAST_F=$(gh release list --repo "$REPO" --limit 120 --json tagName \
+                   --jq '[.[] | select(.tagName | startswith("ytp-f-family-"))][0].tagName // empty')
+          if [ -n "$LAST_F" ]; then
+            LAST_FP=$(gh release view "$LAST_F" --repo "$REPO" --json body --jq '.body' 2>/dev/null \
+                      | sed -n 's/.*ytp-f-fingerprint:[[:space:]]*\([^[:space:]]*\).*/\1/p' | head -1)
+            echo "Huella anterior ($LAST_F): ${LAST_FP:-<ninguna>}"
+            if [ -n "$LAST_FP" ] && [ "$LAST_FP" = "$FP" ]; then
+              echo "SKIP=1" >> "$GITHUB_OUTPUT"
+              echo "Sin cambios desde $LAST_F — no se publica."
+              exit 0
+            fi
+          fi
+
+          echo "SKIP=0" >> "$GITHUB_OUTPUT"
 
       - name: Copy APKs from latest ytp-a-*
         if: steps.check.outputs.SKIP != '1'
@@ -72,6 +105,8 @@ jobs:
           Build: $BUILD_DATE
           Expires: $EXPIRES (auto-cleanup por workflow daily)
           Manifest: see manifest.json adjunto
+
+          <!-- ytp-f-fingerprint: ${{ steps.check.outputs.FP }} -->
           EOF
           gh release create "$TAG" --repo "$REPO" \
             --title "Build $BUILD_DATE" \
@@ -95,8 +130,10 @@ jobs:
             git push origin main
           fi
 
+      # Corre siempre, tambien en los dias que se salta la publicacion: si no,
+      # la expiracion a 90 dias solo se aplicaria cuando toca publicar.
       - name: Cleanup releases ytp-f-family-* > 90 días
-        if: steps.check.outputs.SKIP != '1'
+        if: always()
         env:
           MAX_DAYS: 90
         run: bash project-f-family/scripts/cleanup-old-releases.sh

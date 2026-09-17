@@ -17,6 +17,7 @@
 #   youtube-personal-<version>-p<patches>.apk
 #   youtube-music-personal-<version>-p<patches>.apk
 #   gmscore-<version>.apk
+#   microg-arm64-<version>.apk  (opcional, variante liviana)
 
 set -euo pipefail
 source "$(dirname "$0")/common.sh"
@@ -92,6 +93,17 @@ sign_apk "$PATCHED_DIR/youtube-music-patched.apk" \
 sign_apk "$PATCHED_DIR/gmscore.apk" \
          "$SIGNED_DIR/gmscore-${GMS_VERSION}.apk" "GmsCore"
 
+# Variante arm64 (asset extra, ~42 MB). Se llama microg-* y NO gmscore-* a
+# proposito: el filtro de Obtainium es ^gmscore-.*\.apk$ y con dos archivos
+# que matchearan no sabria cual bajar.
+ARM64_JSON=""
+if [ -f "$PATCHED_DIR/gmscore-arm64.apk" ]; then
+  sign_apk "$PATCHED_DIR/gmscore-arm64.apk" \
+           "$SIGNED_DIR/microg-arm64-${GMS_VERSION}.apk" "GmsCore arm64"
+  ARM64_JSON="
+    \"microg-arm64-${GMS_VERSION}.apk\","
+fi
+
 # SmartTube: si apply-patches.sh lo descargó, re-firmamos con nuestro
 # keystore (consistencia). El tag de SmartTube lo recogemos de meta/patch.json.
 if [ -f "$PATCHED_DIR/smarttube.apk" ]; then
@@ -114,7 +126,7 @@ cat > "$META_DIR/sign.json" <<EOF
   "signed_apks": [
     "youtube-personal-${YT_VERSION}${PSUF}.apk",
     "youtube-music-personal-${YTM_VERSION}${PSUF}.apk",
-    "gmscore-${GMS_VERSION}.apk",
+    "gmscore-${GMS_VERSION}.apk",${ARM64_JSON}
     "smarttube-${SMARTTUBE_VERSION}.apk"
   ],
   "versions": {

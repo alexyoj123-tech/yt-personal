@@ -1,8 +1,8 @@
-run_id=32938134098  fecha=2026-08-26T06:27:02Z
+run_id=35716147221  fecha=2026-09-22T10:29:03Z
 
 ===================== /tmp/fetch-apks.log =====================
 [INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
-[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (275081 bytes)
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (308663 bytes)
 [WARN]  Version YT detectada (20.47.62) < piso (21.04.223) — usando piso.
 [WARN]  Version YTM detectada (8.47.56) < piso (9.15.51) — usando piso.
 [INFO]  YouTube        → 21.04.223  (com.google.android.youtube)
@@ -23,8 +23,8 @@ run_id=32938134098  fecha=2026-08-26T06:27:02Z
 [apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/
 [apkmirror]   title: 'YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror'
 [apkmirror] chose variant: YouTube 21.04.223 (nodpi) (Android 9.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=b87ce717c47f3920c139dae8e15df2ba744764e9&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=12341062&key=cd3b8bbe68a0004b73d627c2933e27fe8b6614ea&forcebaseapk=true
+[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-04-223-release/youtube-21-04-223-android-apk-download/download/?key=32483e74897a666cc451508b14050fb825a316b9&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=12341062&key=1cef97026fa17c8b636026d700c1bc1106a0b684&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk
 [apkmirror] download progress: 17235968/171814203 bytes (10%)
 [apkmirror] download progress: 34471936/171814203 bytes (20%)
@@ -61,8 +61,8 @@ run_id=32938134098  fecha=2026-08-26T06:27:02Z
 [apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-2-android-apk-download/
 [apkmirror]   title: 'YouTube Music 9.15.51 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror] chose variant: YouTube Music 9.15.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-4-android-apk-download/download/?key=fed902f297975b9851e611188d3a3764d9217718&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=13501704&key=f9bc0cc0fe28869d8aed4b127c9718032d4dcd68&forcebaseapk=true
+[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-15-51-release/youtube-music-9-15-51-4-android-apk-download/download/?key=d769cf7fe7b209e7a87d2284f4e84f6e1b047226&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=13501704&key=8ab569be01a089776c4bd82d5dd9ef019e0fc06d&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk
 [apkmirror] download progress: 7471104/74431248 bytes (10%)
 [apkmirror] download progress: 14942208/74431248 bytes (20%)
@@ -80,99 +80,88 @@ run_id=32938134098  fecha=2026-08-26T06:27:02Z
 
 ===================== /tmp/apply-patches.log =====================
 
-═══ Descargando morphe-cli (MorpheApp/morphe-cli @ v1.12.0), patches (MorpheApp/morphe-patches), MicroG-RE (MorpheApp/MicroG-RE) ═══
-[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+═══ Descargando morphe-cli (MorpheApp/morphe-cli @ v1.14.0), patches (MorpheApp/morphe-patches), MicroG-RE (MorpheApp/MicroG-RE) ═══
+[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.14.0/morphe-desktop-1.14.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
- 28  113M   28 32.7M    0     0  26.6M      0  0:00:04  0:00:01  0:00:03 26.6M 75  113M   75 85.5M    0     0  38.6M      0  0:00:02  0:00:02 --:--:-- 53.5M100  113M  100  113M    0     0  38.9M      0  0:00:02  0:00:02 --:--:-- 47.9M
-[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar (114M)
-[INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.40.0/patches-1.40.0.mpp
+100 38.5M  100 38.5M    0     0  37.0M      0  0:00:01  0:00:01 --:--:-- 37.0M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar (39M)
+[INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.44.0/patches-1.44.0.mpp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 8800k  100 8800k    0     0  36.8M      0 --:--:-- --:--:-- --:--:-- 36.8M
-[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp (8.6M)
-[INFO]  GET https://github.com/MorpheApp/MicroG-RE/releases/download/6.1.4/microg-6.1.4.apk
+100 9614k  100 9614k    0     0  32.1M      0 --:--:-- --:--:-- --:--:-- 32.1M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp (9.4M)
+[INFO]  GET https://github.com/MorpheApp/MicroG-RE/releases/download/7.1.1/microg-7.1.1.apk
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 12.7M  100 12.7M    0     0  52.0M      0 --:--:-- --:--:-- --:--:-- 52.0M
-[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk (13M)
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  107M  100  107M    0     0   200M      0 --:--:-- --:--:-- --:--:--  200M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk (108M)
+[INFO]  GmsCore arm64: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore-arm64.apk (43M)
 [INFO]  CLI:       /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar
 [INFO]  Patches:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp
 [INFO]  GmsCore:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk
 [INFO]  === DIAGNÓSTICO CLI ===
-[INFO]  CLI_REPO=MorpheApp/morphe-cli CLI_TAG=v1.12.0
-[INFO]  REVANCED_CLI_TAG env=v1.12.0
+[INFO]  CLI_REPO=MorpheApp/morphe-cli CLI_TAG=v1.14.0
+[INFO]  REVANCED_CLI_TAG env=v1.14.0
 Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
-openjdk version "21.0.12" 2026-07-21 LTS
-OpenJDK Runtime Environment Temurin-21.0.12+8 (build 21.0.12+8-LTS)
-OpenJDK 64-Bit Server VM Temurin-21.0.12+8 (build 21.0.12+8-LTS, mixed mode, sharing)
-du: cannot access '[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar'$'\n''  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current'$'\n''                                 Dload  Upload   Total   Spent    Left  Speed'$'\n\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\n\r''100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M'$'\n''[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)'$'\n''/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar': No such file or directory
-[INFO]  CLI descargado: [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+openjdk version "21.0.12.1" 2026-08-18 LTS
+OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)
+du: cannot access '[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.14.0/morphe-desktop-1.14.0-all.jar'$'\n''  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current'$'\n''                                 Dload  Upload   Total   Spent    Left  Speed'$'\n\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\n\r''100 38.5M  100 38.5M    0     0   118M      0 --:--:-- --:--:-- --:--:--  118M'$'\n''[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (39M)'$'\n''/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar': No such file or directory
+[INFO]  CLI descargado: [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.14.0/morphe-desktop-1.14.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M
-[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)
+100 38.5M  100 38.5M    0     0   118M      0 --:--:-- --:--:-- --:--:--  118M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (39M)
 /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar ()
-Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.14.0/morphe-desktop-1.14.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M
-[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (114M)
+100 38.5M  100 38.5M    0     0   118M      0 --:--:-- --:--:-- --:--:--  118M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (39M)
 /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar
-Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.12.0/morphe-desktop-1.12.0-all.jar
+Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.14.0/morphe-desktop-1.14.0-all.jar
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  113M  100  113M    0     0   226M      0 --:--:-- --:--:-- --:--:--  226M
+100 38.5M  100 38.5M    0     0   118M      0 --:--:-- --:--:-- --:--:--  118M
 [INFO]  === FIN DIAGNÓSTICO ===
 [INFO]  Extrayendo metadata de patches (compatible_packages + versions)
-INFO: Running in Headless environment, falling back to CLI mode. 
 [WARN]  list-patches falló (no bloqueante).
 
 ═══ Parcheando YouTube → youtube-patched.apk ═══
 Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
-INFO: Running in Headless environment, falling back to CLI mode. 
-INFO: Update available: v1.14.0 (current: v1.12.0)
+INFO: Update available: v1.16.0 (current: v1.14.0)
 Download from https://github.com/MorpheApp/morphe-desktop/releases/latest 
 INFO: Morphe data root: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/morphe-data (JAR-adjacent) 
 INFO: Loading patches... 
-INFO: Purged this session's temp files: patching-1787725617179 
-Exception in thread "main" java.lang.NoClassDefFoundError: app/morphe/patcher/patch/AvailabilityResolver
-	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch$lambda$1(BaseCustomBrandingPatch.kt:116)
-	at app.morphe.patcher.patch.PatchKt.buildPatch(Patch.kt:527)
-	at app.morphe.patcher.patch.PatchKt.resourcePatch(Patch.kt:685)
-	at app.morphe.patcher.patch.PatchKt.resourcePatch$default(Patch.kt:680)
-	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch(BaseCustomBrandingPatch.kt:110)
-	at app.morphe.patches.shared.layout.branding.BaseCustomBrandingPatchKt.baseCustomBrandingPatch$default(BaseCustomBrandingPatch.kt:97)
-	at app.morphe.patches.music.layout.branding.CustomBrandingPatchKt.<clinit>(CustomBrandingPatch.kt:59)
-	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
-	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
-	at java.base/jdk.internal.reflect.MethodHandleAccessorFactory.ensureClassInitialized(MethodHandleAccessorFactory.java:301)
-	at java.base/jdk.internal.reflect.MethodHandleAccessorFactory.newMethodAccessor(MethodHandleAccessorFactory.java:72)
-	at java.base/jdk.internal.reflect.ReflectionFactory.newMethodAccessor(ReflectionFactory.java:159)
-	at java.base/java.lang.reflect.Method.acquireMethodAccessor(Method.java:726)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:577)
-	at app.morphe.patcher.patch.PatchLoader$Companion.getPatchMethods(Patch.kt:795)
-	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches$lambda$0$1(Patch.kt:819)
+INFO: Purged this session's temp files: patching-1790072938610 
+Exception in thread "main" java.lang.NoClassDefFoundError: app/morphe/patcher/resource/ResourceType
+	at java.base/java.lang.Class.getDeclaredMethods0(Native Method)
+	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3580)
+	at java.base/java.lang.Class.privateGetPublicMethods(Class.java:3605)
+	at java.base/java.lang.Class.getMethods(Class.java:2187)
+	at app.morphe.patcher.patch.PatchLoader$Companion.getPatchMethods(Patch.kt:898)
+	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches$lambda$0$1(Patch.kt:925)
 	at kotlin.sequences.FlatteningSequence$iterator$1.ensureItemIterator(Sequences.kt:363)
 	at kotlin.sequences.FlatteningSequence$iterator$1.hasNext(Sequences.kt:351)
 	at kotlin.sequences.FilteringSequence$iterator$1.calcNext(Sequences.kt:202)
 	at kotlin.sequences.FilteringSequence$iterator$1.hasNext(Sequences.kt:227)
 	at kotlin.sequences.SequencesKt___SequencesKt.toSet(_Sequences.kt:1027)
-	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches(Patch.kt:822)
-	at app.morphe.patcher.patch.PatchLoader$Companion.access$loadPatches(Patch.kt:775)
-	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt:726)
+	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches(Patch.kt:928)
+	at app.morphe.patcher.patch.PatchLoader$Companion.access$loadPatches(Patch.kt:881)
+	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt:832)
 	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt)
-	at app.morphe.patcher.patch.PatchLoader$Jar.<init>(Patch.kt:735)
-	at app.morphe.patcher.patch.PatchKt.loadPatchesFromJar(Patch.kt:843)
+	at app.morphe.patcher.patch.PatchLoader$Jar.<init>(Patch.kt:841)
+	at app.morphe.patcher.patch.PatchKt.loadPatchesFromJar(Patch.kt:949)
 	at app.morphe.engine.patches.PatchBundleLoader.loadEach(PatchBundleLoader.kt:45)
-	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:510)
-	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:52)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:512)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:54)
 	at picocli.CommandLine.executeUserObject(CommandLine.java:2031)
 	at picocli.CommandLine.access$1500(CommandLine.java:148)
 	at picocli.CommandLine$RunLast.executeUserObjectOfLastSubcommandWithSameParent(CommandLine.java:2469)
@@ -181,9 +170,9 @@ Exception in thread "main" java.lang.NoClassDefFoundError: app/morphe/patcher/pa
 	at picocli.CommandLine$AbstractParseResultHandler.execute(CommandLine.java:2277)
 	at picocli.CommandLine$RunLast.execute(CommandLine.java:2425)
 	at picocli.CommandLine.execute(CommandLine.java:2174)
-	at app.morphe.MorpheLauncherKt.main(MorpheLauncher.kt:23)
-Caused by: java.lang.ClassNotFoundException: app.morphe.patcher.patch.AvailabilityResolver
+	at app.morphe.MorpheLauncherKt.main(MorpheLauncher.kt:81)
+Caused by: java.lang.ClassNotFoundException: app.morphe.patcher.resource.ResourceType
 	at java.base/java.net.URLClassLoader.findClass(URLClassLoader.java:445)
 	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:593)
 	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:526)
-	... 39 more
+	... 29 more

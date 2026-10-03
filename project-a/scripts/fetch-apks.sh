@@ -91,13 +91,22 @@ resolve_patches_meta_if_needed
 # experimentales entre TODOS los patches que mencionan ese package (así
 # garantizamos que la versión elegida sea compatible con cualquier patch
 # que se termine usando, no solo con uno) y devolvemos la más alta.
+# morphe marca como isExperimental=true TODAS las versiones recientes de
+# YouTube y YT Music. Filtrarlas dejaba al pipeline clavado en targets de
+# hace meses, y Google bloquea la cuenta en clientes viejos ("No se puede
+# acceder a tu cuenta - Actualiza la app"). Por eso ahora se aceptan por
+# defecto. REVANCED_ALLOW_EXPERIMENTAL=0 vuelve al comportamiento viejo.
+ALLOW_EXPERIMENTAL="${REVANCED_ALLOW_EXPERIMENTAL:-1}"
+[ "$ALLOW_EXPERIMENTAL" = "1" ] && info "Resolución de versión: se aceptan targets experimentales."
+
 resolve_version_from_meta() {
   local pkg="$1"
-  jq -r --arg pkg "$pkg" '
+  jq -r --arg pkg "$pkg" --arg exp "$ALLOW_EXPERIMENTAL" '
     [.patches[]?
      | .compatiblePackages[]?
      | select(.packageName == $pkg)
-     | (.targets // []) | map(select(.isExperimental == false) | .version)
+     | (.targets // [])
+     | map(select($exp == "1" or .isExperimental == false) | .version)
      | select(length > 0)
     ] as $lists
     | if ($lists | length) == 0 then empty
@@ -119,8 +128,8 @@ YTM_VERSION="${YTM_VERSION:-}"
 # ── Piso de versión mínima ────────────────────────────────────────────
 # Evita que patches-list.json inestable haga retroceder a versiones viejas.
 # Actualizar manualmente cada vez que se publique una versión más nueva.
-YT_VERSION_FLOOR="21.04.223"  # morphe-patches v1.33.0 soporta hasta 20.51.39
-YTM_VERSION_FLOOR="9.15.51"
+YT_VERSION_FLOOR="21.39.522"  # morphe 1.45.0; 21.04.223 quedó bloqueada por Google (oct 2026)
+YTM_VERSION_FLOOR="9.38.51"
 
 version_gte() {
   # Retorna 0 (true) si $1 >= $2 comparando semver
@@ -154,6 +163,26 @@ if [ -z "$YT_VERSION" ] || [ -z "$YTM_VERSION" ]; then
     Si APKMirror no tiene una, prueba la anterior de la lista.
     Ver docs/APKMIRROR-SCRAPER.md §versiones-soportadas."
 fi
+
+# ── Aviso de atraso ───────────────────────────────────────────────────
+# Si lo que vamos a construir es mas viejo que el target mas nuevo que
+# publica morphe, dejarlo anotado: es la señal temprana de que Google va a
+# terminar bloqueando la cuenta en esta version.
+: > "$META_DIR/version-lag.txt"
+newest_target() {
+  jq -r --arg pkg "$1" '[.patches[]? | .compatiblePackages[]?
+    | select(.packageName == $pkg) | (.targets // [])[] | .version]
+    | sort_by(split(".") | map(tonumber? // 0)) | last // empty' \
+    "$META_DIR/patches-meta.json" 2>/dev/null || true
+}
+for pair in "YouTube|$YT_PKG|$YT_VERSION" "YT Music|$YTM_PKG|$YTM_VERSION"; do
+  IFS='|' read -r lbl pkg cur <<< "$pair"
+  top="$(newest_target "$pkg")"
+  if [ -n "$top" ] && [ -n "$cur" ] && [ "$top" != "$cur" ] && ! version_gte "$cur" "$top"; then
+    warn "$lbl: se va a construir $cur pero morphe ya soporta $top — subí el piso."
+    echo "$lbl: construido en $cur, morphe ya soporta $top" >> "$META_DIR/version-lag.txt"
+  fi
+done
 
 info "YouTube        → $YT_VERSION  ($YT_PKG)"
 info "YouTube Music  → $YTM_VERSION ($YTM_PKG)"

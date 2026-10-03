@@ -29,7 +29,7 @@ GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-MorpheApp/MicroG-RE}"
 
 # CLI pineada a v1.7.0 por estabilidad. Actualizar cuando Morphe publique
 # nueva stable + verificar compat con .mpp correspondiente.
-CLI_TAG="${REVANCED_CLI_TAG:-v1.14.0}"
+CLI_TAG="${REVANCED_CLI_TAG:-v1.18.0}"
 
 # Regex del asset MicroG-RE: 'microg-<ver>.apk'. Si el naming cambia,
 # override con env REVANCED_GMSCORE_REGEX.
@@ -163,7 +163,7 @@ YT_OPTS=(
   -e "SponsorBlock"
   -e "Return YouTube Dislike"
   -e "Play all"
-  -e "Save to watch later"
+  -e "Save to Watch later"
   -e "Loop video"
   -e "Reload video"
   -e "Copy video link"

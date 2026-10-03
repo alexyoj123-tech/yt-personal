@@ -96,6 +96,11 @@ runs:
         packages: 'build-tools;34.0.0 platform-tools'
         accept-android-sdk-licenses: true
         log-accepted-android-sdk-licenses: false
+        # El default del action (12266719) ya no existe en dl.google.com y
+        # devuelve 404, tumbando el build entero. El runner trae preinstalado
+        # cmdline-tools 12.0; pidiendo esa version el action lo reutiliza y
+        # no descarga nada.
+        cmdline-tools-version: '12.0'
 
     - name: Añadir build-tools al PATH
       shell: bash

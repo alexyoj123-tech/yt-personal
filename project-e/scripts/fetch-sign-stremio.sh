@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# NOTA: upstream se renombro de perpetus/stremio-android a
+# stremio-native/stremio-android (sept 2026). La web redirige sola pero la
+# API devolvia error y, con set -euo pipefail, el job moria en 15s.
 # project-e: Descarga Stremio, firma con keystore, publica HAPERYC-X.X.X
 set -euo pipefail
 info() { echo "[INFO]  $*"; }
@@ -34,7 +37,7 @@ printf "%s" "$ANDROID_KEYSTORE_BASE64" | base64 -d > "$KS_PATH"
 
 step "Version"
 REL=$(curl -fsSL -H "Authorization: token ${GH_TOKEN:-}" \
-  "https://api.github.com/repos/perpetus/stremio-android/releases/latest")
+  "https://api.github.com/repos/stremio-native/stremio-android/releases/latest")
 VERSION=$(echo "$REL" | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
 TAG="ytp-e-${APP_SLUG}-${VERSION}"
 info "Version: $VERSION | Tag: $TAG"

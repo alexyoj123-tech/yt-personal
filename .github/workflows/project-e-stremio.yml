@@ -31,6 +31,10 @@ jobs:
 
       - name: Setup Android SDK (para zipalign + apksigner + aapt)
         uses: android-actions/setup-android@v3
+        with:
+          # El default del action (12266719) ya no existe en dl.google.com y
+          # devuelve 404. El runner trae cmdline-tools 12.0 preinstalado.
+          cmdline-tools-version: '12.0'
 
       - name: Instalar build-tools 34 + aapt
         run: |

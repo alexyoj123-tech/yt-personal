@@ -35,6 +35,11 @@ PATCHES_VERSION="$(jq -r '.revanced_patches_version' "$META_DIR/patch.json")"
 # el body del release. Comparar esto es lo unico fiable — el texto markdown
 # cambia de formato y los greps sobre prosa se rompen en silencio.
 FINGERPRINT="yt=${YT_VERSION};ytm=${YTM_VERSION};gms=${GMS_VERSION};st=${SMARTTUBE_VERSION};cli=${CLI_VERSION};patches=${PATCHES_VERSION}"
+LAG_NOTE=""
+if [ -s "$META_DIR/version-lag.txt" ]; then
+  LAG_NOTE="$(sed 's/^/> ATRASO: /' "$META_DIR/version-lag.txt")"
+  info "Hay atraso de version respecto a lo que soporta morphe."
+fi
 PSUF=""
 [ -n "$PATCHES_VERSION" ] && [ "$PATCHES_VERSION" != "null" ] && PSUF="-p${PATCHES_VERSION#v}"
 info "Huella de este build: $FINGERPRINT"
@@ -116,6 +121,7 @@ cat >> "$body_file" <<EOF
 - **MicroG-RE:** $GMS_VERSION · package \`app.revanced.android.gms\` (fork microG por Morphe, mantiene vendor ReVanced. OJO: el salto de 6.x a 7.x cambio la firma — hay que DESINSTALAR el MicroG viejo antes de instalar este, no entra como update. Bajar el nuevo ANTES de desinstalar: sin MicroG, YouTube y YT Music no arrancan.)
 - **SmartTube:** $SMARTTUBE_VERSION (Android TV) · package \`org.smarttube.stable\`
 - **Morphe CLI:** $CLI_VERSION · **patches:** $PATCHES_VERSION
+$LAG_NOTE
 
 ## Assets (arm64-v8a, firmados con \`yt-personal\`)
 

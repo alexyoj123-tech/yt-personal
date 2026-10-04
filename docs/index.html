@@ -234,30 +234,62 @@
   <div class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // Click handler: try to deeplink Obtainium first, fallback to copying URL.
+    // El boton genera un deep link real de Obtainium (obtainium://apps/<json>),
+    // que importa las apps de un toque. Antes solo copiaba la URL al
+    // portapapeles: si writeText fallaba, no pasaba NADA en pantalla.
     const toast = document.querySelector('.toast');
-    function showToast(msg) {
+    function showToast(msg, ms) {
+      if (!toast) { alert(msg); return; }
       toast.textContent = msg;
       toast.classList.add('show');
       clearTimeout(toast._t);
-      toast._t = setTimeout(() => toast.classList.remove('show'), 2500);
+      toast._t = setTimeout(() => toast.classList.remove('show'), ms || 3500);
+    }
+
+    function copiarFallback(url, label) {
+      const msg = 'No se abrió Obtainium. URL copiada — pegala en Obtainium → ⋮ → Importar/Exportar → Importar desde URL';
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => showToast(msg, 6000))
+          .catch(() => window.prompt('Copiá esta URL y pegala en Obtainium → ⋮ → Importar desde URL\n(' + label + ')', url));
+      } else {
+        window.prompt('Copiá esta URL y pegala en Obtainium → ⋮ → Importar desde URL\n(' + label + ')', url);
+      }
     }
 
     document.querySelectorAll('button[data-import]').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const url = btn.dataset.import;
         const label = btn.dataset.label || 'Configuración';
+        const textoOriginal = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = 'Abriendo Obtainium…';
 
-        // Obtainium aún no soporta deeplink universal de import-from-url.
-        // El patrón funcional: copiar URL → usuario pega en Obtainium "Import → URL".
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(url).then(() => {
-            showToast('URL copiada — pegá en Obtainium → ⋮ → Import → URL');
-          }).catch(() => {
-            window.prompt(`Copiá esta URL y pegala en Obtainium → ⋮ → Import → URL\n(${label})`, url);
-          });
-        } else {
-          window.prompt(`Copiá esta URL y pegala en Obtainium → ⋮ → Import → URL\n(${label})`, url);
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          const cfg = await res.json();
+          const apps = cfg.apps || [];
+          if (!apps.length) throw new Error('sin apps');
+
+          const deep = 'obtainium://apps/' + encodeURIComponent(JSON.stringify(apps));
+
+          // Si Obtainium abre, la pestaña se oculta y cancelamos el fallback.
+          let abrio = false;
+          const alOcultar = () => { if (document.hidden) abrio = true; };
+          document.addEventListener('visibilitychange', alOcultar);
+
+          window.location.href = deep;
+
+          setTimeout(() => {
+            document.removeEventListener('visibilitychange', alOcultar);
+            btn.disabled = false;
+            btn.textContent = textoOriginal;
+            if (!abrio) copiarFallback(url, label);
+          }, 2000);
+        } catch (e) {
+          btn.disabled = false;
+          btn.textContent = textoOriginal;
+          copiarFallback(url, label);
         }
       });
     });

@@ -50,8 +50,20 @@ GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REG
 # se sigue publicando igual, porque la TV Box y los telefonos de la familia
 # pueden no ser arm64 y ese es el que usa Obtainium.
 # Opcional a proposito: si upstream cambia el naming, el build NO debe fallar.
-GMSCORE_ARM64_REGEX="${REVANCED_GMSCORE_ARM64_REGEX:-microg-[0-9.]+-arm64-v8a\\.apk$}"
-GMSCORE_ARM64_APK="$(ensure_tool "gmscore-arm64.apk" "$GMSCORE_REPO" "$GMSCORE_ARM64_REGEX" 2>/dev/null || true)"
+# OJO con dos cosas que ya rompieron el build (2026-10-04):
+#   1. El default va en comillas SIMPLES. Dentro de ${VAR:-...} con comillas
+#      dobles, el \. se convertia en \\. y la regex no matcheaba nada.
+#   2. La llamada va dentro de un `if`, no con `|| true`. ensure_tool llama a
+#      die, que hace `exit`: eso termina la subshell de $( ) antes de que el
+#      `|| true` llegue a evaluarse, y set -e mata el script entero. Dentro de
+#      un `if`, set -e no aplica y la rama else funciona como corresponde.
+GMSCORE_ARM64_REGEX_DEFAULT='microg-[0-9.]+(-icon)?-arm64-v8a\.apk$'
+GMSCORE_ARM64_REGEX="${REVANCED_GMSCORE_ARM64_REGEX:-$GMSCORE_ARM64_REGEX_DEFAULT}"
+if GMSCORE_ARM64_APK="$(ensure_tool "gmscore-arm64.apk" "$GMSCORE_REPO" "$GMSCORE_ARM64_REGEX" 2>/dev/null)"; then
+  :
+else
+  GMSCORE_ARM64_APK=""
+fi
 if [ -n "${GMSCORE_ARM64_APK:-}" ] && [ -s "${GMSCORE_ARM64_APK:-/nonexistent}" ]; then
   info "GmsCore arm64: $GMSCORE_ARM64_APK ($(du -h "$GMSCORE_ARM64_APK" | cut -f1))"
   cp "$GMSCORE_ARM64_APK" "$PATCHED_DIR/gmscore-arm64.apk"

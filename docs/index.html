@@ -234,61 +234,110 @@
   <div class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // El boton genera un deep link real de Obtainium (obtainium://apps/<json>),
-    // que importa las apps de un toque. Antes solo copiaba la URL al
-    // portapapeles: si writeText fallaba, no pasaba NADA en pantalla.
+    // Deep link real de Obtainium. Dos detalles que importan:
+    //  1) El link se corta si es muy largo y Obtainium tira
+    //     "Illegal percent encoding in URI". Por eso mandamos solo las claves
+    //     que NO son el default (de 5604 a ~1570 caracteres).
+    //  2) App.fromJson usa (preferredApkIndex ?? -1): si falta, no preselecciona
+    //     ningun APK. Siempre lo mandamos.
+    const LIMITE_LINK   = 1900;
+    const DEFAULT_TRUE  = ['fallbackToOlderReleases', 'autoApkFilterByArch'];
+    const FALSE_UTIL    = ['versionDetection'];
+    const DESCARTAR     = ['about', 'appName', 'appAuthor'];
+
     const toast = document.querySelector('.toast');
     function showToast(msg, ms) {
       if (!toast) { alert(msg); return; }
       toast.textContent = msg;
       toast.classList.add('show');
       clearTimeout(toast._t);
-      toast._t = setTimeout(() => toast.classList.remove('show'), ms || 3500);
+      toast._t = setTimeout(() => toast.classList.remove('show'), ms || 4000);
+    }
+
+    function adelgazar(app) {
+      // App.fromJson hace un cast duro de estos cuatro: si falta uno, revienta.
+      if (!app.id || !app.url || !app.author || !app.name) return app;
+      const o = {
+        id: app.id, url: app.url, author: app.author, name: app.name,
+        preferredApkIndex: (app.preferredApkIndex == null ? 0 : app.preferredApkIndex)
+      };
+      let s = {};
+      try { s = JSON.parse(app.additionalSettings || '{}'); } catch (e) { return app; }
+      const keep = {};
+      for (const k in s) {
+        const v = s[k];
+        if (DESCARTAR.indexOf(k) !== -1) continue;
+        if (v === '' || v === null || v === undefined) continue;
+        if (v === true && DEFAULT_TRUE.indexOf(k) !== -1) continue;
+        if (v === false && FALSE_UTIL.indexOf(k) === -1) continue;
+        keep[k] = v;
+      }
+      o.additionalSettings = JSON.stringify(keep);
+      return o;
     }
 
     function copiarFallback(url, label) {
-      const msg = 'No se abrió Obtainium. URL copiada — pegala en Obtainium → ⋮ → Importar/Exportar → Importar desde URL';
+      const msg = 'No se abrió Obtainium. URL copiada — pegala en Obtainium → ⋮ → Importar desde URL';
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => showToast(msg, 6000))
+        navigator.clipboard.writeText(url).then(() => showToast(msg, 7000))
           .catch(() => window.prompt('Copiá esta URL y pegala en Obtainium → ⋮ → Importar desde URL\n(' + label + ')', url));
       } else {
         window.prompt('Copiá esta URL y pegala en Obtainium → ⋮ → Importar desde URL\n(' + label + ')', url);
       }
     }
 
+    function abrir(deep) {
+      let abrio = false;
+      const alOcultar = () => { if (document.hidden) abrio = true; };
+      document.addEventListener('visibilitychange', alOcultar);
+      window.location.href = deep;
+      return new Promise(res => setTimeout(() => {
+        document.removeEventListener('visibilitychange', alOcultar);
+        res(abrio);
+      }, 2000));
+    }
+
     document.querySelectorAll('button[data-import]').forEach(btn => {
+      const original = btn.textContent;
       btn.addEventListener('click', async () => {
         const url = btn.dataset.import;
         const label = btn.dataset.label || 'Configuración';
-        const textoOriginal = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Abriendo Obtainium…';
 
         try {
-          const res = await fetch(url, { cache: 'no-store' });
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          const cfg = await res.json();
-          const apps = cfg.apps || [];
-          if (!apps.length) throw new Error('sin apps');
+          // Si quedo una cola a medias (link largo), seguimos con la siguiente app.
+          if (!btn._cola || !btn._cola.length) {
+            btn.textContent = 'Abriendo Obtainium…';
+            const res = await fetch(url, { cache: 'no-store' });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            const apps = (await res.json()).apps || [];
+            if (!apps.length) throw new Error('sin apps');
 
-          const deep = 'obtainium://apps/' + encodeURIComponent(JSON.stringify(apps));
+            const slim = apps.map(adelgazar);
+            const bulk = 'obtainium://apps/' + encodeURIComponent(JSON.stringify(slim));
+            btn._cola = bulk.length <= LIMITE_LINK
+              ? [bulk]
+              : slim.map(a => 'obtainium://app/' + encodeURIComponent(JSON.stringify(a)));
+            btn._total = btn._cola.length;
+          }
 
-          // Si Obtainium abre, la pestaña se oculta y cancelamos el fallback.
-          let abrio = false;
-          const alOcultar = () => { if (document.hidden) abrio = true; };
-          document.addEventListener('visibilitychange', alOcultar);
+          const deep = btn._cola.shift();
+          btn.textContent = 'Abriendo Obtainium…';
+          const abrio = await abrir(deep);
 
-          window.location.href = deep;
-
-          setTimeout(() => {
-            document.removeEventListener('visibilitychange', alOcultar);
-            btn.disabled = false;
-            btn.textContent = textoOriginal;
-            if (!abrio) copiarFallback(url, label);
-          }, 2000);
-        } catch (e) {
           btn.disabled = false;
-          btn.textContent = textoOriginal;
+          if (!abrio) { btn._cola = null; btn.textContent = original; copiarFallback(url, label); return; }
+
+          if (btn._cola.length) {
+            const hecho = btn._total - btn._cola.length;
+            btn.textContent = 'Seguir (' + hecho + ' de ' + btn._total + ')';
+            showToast('Falta' + (btn._cola.length > 1 ? 'n ' + btn._cola.length + ' apps' : ' 1 app') + ' — tocá "Seguir"', 6000);
+          } else {
+            btn._cola = null;
+            btn.textContent = original;
+          }
+        } catch (e) {
+          btn._cola = null; btn.disabled = false; btn.textContent = original;
           copiarFallback(url, label);
         }
       });

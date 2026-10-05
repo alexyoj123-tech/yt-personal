@@ -53,8 +53,18 @@ jobs:
 
           echo "VERSION: $VER | TAG: $TAG | APK: $APK"
 
+          # Ojo: gh release view TAMBIEN encuentra borradores. Si el release
+          # quedo en draft (sin tag, URL untagged-*), Obtainium no lo ve y el
+          # APK no se puede descargar — y este skip lo dejaba asi para siempre.
+          # Paso real: 1.4.6 estuvo en draft desde abr-2026 hasta oct-2026.
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "Release $TAG ya existe — skip (idempotente)."
+            IS_DRAFT=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft -q .isDraft 2>/dev/null || echo "false")
+            if [ "$IS_DRAFT" = "true" ]; then
+              echo "Release $TAG existe pero esta en DRAFT — publicandolo."
+              gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --draft=false
+            else
+              echo "Release $TAG ya existe y esta publicado — skip (idempotente)."
+            fi
             exit 0
           fi
 

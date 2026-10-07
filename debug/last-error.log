@@ -1,98 +1,89 @@
-run_id=37198762559  fecha=2026-10-04T11:27:40Z
+run_id=37619353548  fecha=2026-10-07T12:13:15Z
 
 ===================== /tmp/fetch-apks.log =====================
 [INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
-[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (356058 bytes)
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (392729 bytes)
 [INFO]  Resolución de versión: se aceptan targets experimentales.
-[INFO]  YouTube        → 21.39.522  (com.google.android.youtube)
-[INFO]  YouTube Music  → 9.38.51 (com.google.android.apps.youtube.music)
+[INFO]  YouTube        → 21.40.161  (com.google.android.youtube)
+[INFO]  YouTube Music  → 9.40.51 (com.google.android.apps.youtube.music)
 
-═══ Descargando com.google.android.youtube@21.39.522 desde APKMirror (google-inc/youtube) ═══
-[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-39-522-release/
-[apkmirror] variant hrefs found: 6
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-4-android-apk-download/
-[apkmirror]   title: 'YouTube 21.39.522 (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+═══ Descargando com.google.android.youtube@21.40.161 desde APKMirror (google-inc/youtube) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-40-161-release/
+[apkmirror] variant hrefs found: 4
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-4-android-apk-download/
+[apkmirror]   title: 'YouTube 21.40.161 (arm64-v8a) (480dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-android-apk-download/
+[apkmirror]   title: 'YouTube 21.40.161 (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-6-android-apk-download/
-[apkmirror]   title: 'YouTube 21.39.522 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-2-android-apk-download/
+[apkmirror]   title: 'YouTube 21.40.161 (arm64-v8a + arm-v7a) (320-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-5-android-apk-download/
-[apkmirror]   title: 'YouTube 21.39.522 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-3-android-apk-download/
-[apkmirror]   title: 'YouTube 21.39.522 (120-640dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
-[apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-android-apk-download/
-[apkmirror]   title: 'YouTube 21.39.522 (arm64-v8a + arm-v7a) (320-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
-[apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-2-android-apk-download/
-[apkmirror]   title: 'YouTube 21.39.522 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror'
-[apkmirror] chose variant: YouTube 21.39.522 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-39-522-release/youtube-21-39-522-5-android-apk-download/download/?key=ceaf33682ec7f5d5dc12f5b81460e406949f9760&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16327793&key=1198854f300071e826c92dc7a73e60e326008950&forcebaseapk=true
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-3-android-apk-download/
+[apkmirror]   title: 'YouTube 21.40.161 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror] chose variant: YouTube 21.40.161 (arm64-v8a) (480dpi) (Android 10+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-4-android-apk-download/download/?key=4294d407b86cd688811614724058f886f42cfff7
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16427519&key=7d28d95ee87f9fa69b5800ebb8917f482e31abf5
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk
-[apkmirror] download progress: 20512768/204622029 bytes (10%)
-[apkmirror] download progress: 41025536/204622029 bytes (20%)
-[apkmirror] download progress: 61538304/204622029 bytes (30%)
-[apkmirror] download progress: 82051072/204622029 bytes (40%)
-[apkmirror] download progress: 102563840/204622029 bytes (50%)
-[apkmirror] download progress: 123076608/204622029 bytes (60%)
-[apkmirror] download progress: 143589376/204622029 bytes (70%)
-[apkmirror] download progress: 164102144/204622029 bytes (80%)
-[apkmirror] download progress: 184614912/204622029 bytes (90%)
-[apkmirror] downloaded 204622029 bytes
-[apkmirror] ✓ valid APK: 204622029 bytes
-[OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk (196M)
+[apkmirror] download progress: 7208960/71999093 bytes (10%)
+[apkmirror] download progress: 14417920/71999093 bytes (20%)
+[apkmirror] download progress: 21626880/71999093 bytes (30%)
+[apkmirror] download progress: 28835840/71999093 bytes (40%)
+[apkmirror] download progress: 36044800/71999093 bytes (50%)
+[apkmirror] download progress: 43253760/71999093 bytes (60%)
+[apkmirror] download progress: 50462720/71999093 bytes (70%)
+[apkmirror] download progress: 57671680/71999093 bytes (80%)
+[apkmirror] download progress: 64880640/71999093 bytes (90%)
+[apkmirror] downloaded 71999093 bytes
+[apkmirror] ✓ valid APK: 71999093 bytes
+[OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk (69M)
 
-═══ Descargando com.google.android.apps.youtube.music@9.38.51 desde APKMirror (google-inc/youtube-music) ═══
-[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-38-51-release/
-[apkmirror] variant hrefs found: 13
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-12-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm-v7a) (320dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+═══ Descargando com.google.android.apps.youtube.music@9.40.51 desde APKMirror (google-inc/youtube-music) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-40-51-release/
+[apkmirror] variant hrefs found: 12
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-12-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (arm-v7a) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → arm-v7a (arch equivocada para arm64-v8a target), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-8-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm-v7a) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-11-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (arm-v7a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → arm-v7a (arch equivocada para arm64-v8a target), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-11-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm-v7a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror]   → arm-v7a (arch equivocada para arm64-v8a target), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-9-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm64-v8a) (240-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-2-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-13-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-4-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm64-v8a) (480-640dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-3-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (480-640dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-10-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-2-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (x86) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-3-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (x86) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-6-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (x86_64) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-7-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (x86_64) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-5-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.38.51 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] chose variant: YouTube Music 9.38.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-38-51-release/youtube-music-9-38-51-10-android-apk-download/download/?key=78cc9336f1948a58eef93a543a23153dd6a1fee3&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16115922&key=5577a97f5ab683ffa394de3faa70a5ab7ef9336b&forcebaseapk=true
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-4-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-6-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (x86) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-7-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (x86) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-5-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-10-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (x86_64) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-9-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (x86_64) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-8-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.40.51 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] chose variant: YouTube Music 9.40.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-4-android-apk-download/download/?key=6e3df2cb7f056a88c2af47a3a295fc6b2e3d4064&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16381175&key=44d4659985d8f88f033c54b97b4e7edecb395867&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk
-[apkmirror] download progress: 7208960/71937319 bytes (10%)
-[apkmirror] download progress: 14417920/71937319 bytes (20%)
-[apkmirror] download progress: 21626880/71937319 bytes (30%)
-[apkmirror] download progress: 28835840/71937319 bytes (40%)
-[apkmirror] download progress: 36044800/71937319 bytes (50%)
-[apkmirror] download progress: 43253760/71937319 bytes (60%)
-[apkmirror] download progress: 50462720/71937319 bytes (70%)
-[apkmirror] download progress: 57671680/71937319 bytes (80%)
-[apkmirror] download progress: 64880640/71937319 bytes (90%)
-[apkmirror] downloaded 71937319 bytes
-[apkmirror] ✓ valid APK: 71937319 bytes
+[apkmirror] download progress: 7208960/71458416 bytes (10%)
+[apkmirror] download progress: 14417920/71458416 bytes (20%)
+[apkmirror] download progress: 21626880/71458416 bytes (30%)
+[apkmirror] download progress: 28835840/71458416 bytes (40%)
+[apkmirror] download progress: 36044800/71458416 bytes (50%)
+[apkmirror] download progress: 43253760/71458416 bytes (60%)
+[apkmirror] download progress: 50462720/71458416 bytes (70%)
+[apkmirror] download progress: 57671680/71458416 bytes (80%)
+[apkmirror] download progress: 64880640/71458416 bytes (90%)
+[apkmirror] downloaded 71458416 bytes
+[apkmirror] ✓ valid APK: 71458416 bytes
 [OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk (69M)
 [OK]    Fetch completo. Meta: /home/runner/work/yt-personal/yt-personal/project-a/build/meta/fetch.json
 
@@ -103,17 +94,79 @@ run_id=37198762559  fecha=2026-10-04T11:27:40Z
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 47.8M  100 47.8M    0     0  88.0M      0 --:--:-- --:--:-- --:--:-- 88.0M
+100 47.8M  100 47.8M    0     0  76.1M      0 --:--:-- --:--:-- --:--:-- 76.1M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar (48M)
-[INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.45.0/patches-1.45.0.mpp
+[INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.46.0/patches-1.46.0.mpp
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100 10.5M  100 10.5M    0     0  20.7M      0 --:--:-- --:--:-- --:--:-- 20.7M
+100 10.7M  100 10.7M    0     0  30.1M      0 --:--:-- --:--:-- --:--:-- 30.1M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp (11M)
 [INFO]  GET https://github.com/MorpheApp/MicroG-RE/releases/download/7.2.1/microg-7.2.1.apk
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
-100  107M  100  107M    0     0   130M      0 --:--:-- --:--:-- --:--:--  130M
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  107M  100  107M    0     0   223M      0 --:--:-- --:--:-- --:--:--  378M
 [OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk (108M)
+[INFO]  GmsCore arm64: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore-arm64.apk (43M)
+[INFO]  CLI:       /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar
+[INFO]  Patches:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp
+[INFO]  GmsCore:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk
+[INFO]  === DIAGNÓSTICO CLI ===
+[INFO]  CLI_REPO=MorpheApp/morphe-cli CLI_TAG=v1.18.0
+[INFO]  REVANCED_CLI_TAG env=v1.18.0
+Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
+openjdk version "21.0.12.1" 2026-08-18 LTS
+OpenJDK Runtime Environment Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS)
+OpenJDK 64-Bit Server VM Temurin-21.0.12.1+1 (build 21.0.12.1+1-LTS, mixed mode, sharing)
+du: cannot access '[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.18.0/morphe-desktop-1.18.0-all.jar'$'\n''  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current'$'\n''                                 Dload  Upload   Total   Spent    Left  Speed'$'\n\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\r''  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0'$'\n\r''  7 47.8M    7 3838k    0     0  12.1M      0  0:00:03 --:--:--  0:00:03 12.1M'$'\r''100 47.8M  100 47.8M    0     0  86.2M      0 --:--:-- --:--:-- --:--:--  178M'$'\n''[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (48M)'$'\n''/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar': No such file or directory
+[INFO]  CLI descargado: [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.18.0/morphe-desktop-1.18.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  7 47.8M    7 3838k    0     0  12.1M      0  0:00:03 --:--:--  0:00:03 12.1M100 47.8M  100 47.8M    0     0  86.2M      0 --:--:-- --:--:-- --:--:--  178M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (48M)
+/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar ()
+Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.18.0/morphe-desktop-1.18.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  7 47.8M    7 3838k    0     0  12.1M      0  0:00:03 --:--:--  0:00:03 12.1M100 47.8M  100 47.8M    0     0  86.2M      0 --:--:-- --:--:-- --:--:--  178M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar (48M)
+/home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli-test.jar
+Error: Unable to access jarfile [INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.18.0/morphe-desktop-1.18.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  7 47.8M    7 3838k    0     0  12.1M      0  0:00:03 --:--:--  0:00:03 12.1M100 47.8M  100 47.8M    0     0  86.2M      0 --:--:-- --:--:-- --:--:--  178M
+[INFO]  === FIN DIAGNÓSTICO ===
+[INFO]  Extrayendo metadata de patches (compatible_packages + versions)
+INFO: Created new output file at /home/runner/work/yt-personal/yt-personal/project-a/build/meta/patches-meta.txt 
+
+═══ Parcheando YouTube → youtube-patched.apk ═══
+Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
+INFO: Update available: v1.18.1 (current: v1.18.0)
+Download from https://github.com/MorpheApp/morphe-desktop/releases/latest 
+INFO: Morphe data root: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/morphe-data (JAR-adjacent) 
+INFO: Loading patches... 
+INFO: Initializing patcher... 
+SEVERE: An unexpected error occurred: Cannot invoke "com.reandroid.arsc.chunk.xml.AndroidManifestBlock.isExtractNativeLibs()" because "manifest" is null 
+java.lang.NullPointerException: Cannot invoke "com.reandroid.arsc.chunk.xml.AndroidManifestBlock.isExtractNativeLibs()" because "manifest" is null
+	at app.morphe.patcher.resource.coder.ArsclibResourceCoder.lazyPackageInfo$lambda$0(ArsclibResourceCoder.kt:303)
+	at kotlin.SynchronizedLazyImpl.getValue(LazyJVM.kt:86)
+	at app.morphe.patcher.resource.coder.ArsclibResourceCoder.getPackageMetadata(ArsclibResourceCoder.kt:358)
+	at app.morphe.patcher.patch.ResourcePatchContext.<init>(ResourcePatchContext.kt:44)
+	at app.morphe.patcher.PatcherContext.<init>(PatcherContext.kt:36)
+	at app.morphe.patcher.Patcher.<init>(Patcher.kt:29)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:619)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:54)
+	at picocli.CommandLine.executeUserObject(CommandLine.java:2031)
+	at picocli.CommandLine.access$1500(CommandLine.java:148)
+	at picocli.CommandLine$RunLast.executeUserObjectOfLastSubcommandWithSameParent(CommandLine.java:2469)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:2461)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:2423)
+	at picocli.CommandLine$AbstractParseResultHandler.execute(CommandLine.java:2277)
+	at picocli.CommandLine$RunLast.execute(CommandLine.java:2425)
+	at picocli.CommandLine.execute(CommandLine.java:2174)
+	at app.morphe.MorpheLauncherKt.main(MorpheLauncher.kt:85)
+INFO: Purged this session's temp files: patching-1791375190121 

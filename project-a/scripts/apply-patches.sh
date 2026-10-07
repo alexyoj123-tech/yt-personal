@@ -71,21 +71,18 @@ else
   info "GmsCore arm64: no disponible upstream — se omite (no es fatal)."
 fi
 
-info "CLI:       $CLI_JAR"
+info "CLI:       $CLI_JAR  (repo=$CLI_REPO tag=$CLI_TAG env=${REVANCED_CLI_TAG:-NO_SET})"
 info "Patches:   $PATCHES_RVP"
 info "GmsCore:   $GMSCORE_APK"
 
-# ── DIAGNÓSTICO (temporal, remover después) ────────────────────────
-info "=== DIAGNÓSTICO CLI ==="
-info "CLI_REPO=$CLI_REPO CLI_TAG=$CLI_TAG"
-info "REVANCED_CLI_TAG env=${REVANCED_CLI_TAG:-NO_SET}"
-java -version 2>&1 || true
-# Intentar descargar CLI y mostrar resultado
-CLI_TEST_PATH="$(ensure_tool "revanced-cli-test.jar" "$CLI_REPO" "(revanced-cli|morphe-cli|morphe-desktop)-.*-all\.jar$" "$CLI_TAG" 2>&1)" && {
-  info "CLI descargado: $CLI_TEST_PATH ($(du -h "$CLI_TEST_PATH" | cut -f1))"
-  java -jar "$CLI_TEST_PATH" --version 2>&1 || java -jar "$CLI_TEST_PATH" --help 2>&1 | head -5 || true
-} || info "CLI download falló"
-info "=== FIN DIAGNÓSTICO ==="
+# Aqui vivia un bloque "DIAGNÓSTICO CLI (temporal)" que se removio el
+# 2026-10-07. Bajaba un segundo jar de 48 MB en cada build solo para probarlo,
+# y lo capturaba con $( ... 2>&1 ): eso metia el log de ensure_tool ([INFO] GET
+# ... mas el progreso de curl) dentro de CLI_TEST_PATH en vez de la ruta. De
+# ahi salian "du: cannot access '[INFO] GET ...'" y, peor, un
+# "Error: Unable to access jarfile [INFO] GET ..." que parecia la causa de los
+# builds rotos sin serlo. El CLI de verdad ya se valida solo: si $CLI_JAR no
+# sirviera, el list-patches de abajo falla.
 
 # ── Meta de patches (usado también por fetch-apks.sh en próximos runs) ──
 info "Extrayendo metadata de patches (compatible_packages + versions)"

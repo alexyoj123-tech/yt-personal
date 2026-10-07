@@ -44,6 +44,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 
 # FIX 2026-08-10: APKMirror empezó a devolver 403 en /download/?key= porque
 # valida una cookie de sesión que se setea al cargar la página de versión.
@@ -247,6 +248,21 @@ def is_valid_apk(path: str) -> tuple[bool, str]:
         magic = f.read(4)
     if magic[:2] != b"PK":
         return False, f"not a ZIP/APK (magic={magic!r})"
+
+    # Un ZIP valido no basta. APKMirror tambien publica splits de configuracion
+    # sacados del App Bundle (p.ej. "(arm64-v8a) (480dpi)"): son APKs reales
+    # pero sin classes.dex y con un manifest stub. morphe los acepta y luego
+    # revienta con "AndroidManifestBlock.isExtractNativeLibs() because manifest
+    # is null". Pasa el 2026-10-07 con YouTube 21.40.161.
+    try:
+        with zipfile.ZipFile(path) as z:
+            names = z.namelist()
+    except Exception as e:  # noqa: BLE001
+        return False, f"no abre como ZIP ({e!r})"
+    if "AndroidManifest.xml" not in names:
+        return False, "sin AndroidManifest.xml"
+    if not any(n.startswith("classes") and n.endswith(".dex") for n in names):
+        return False, "sin classes.dex — es un split de config del bundle, no el APK base"
     return True, f"{size} bytes"
 
 
@@ -278,18 +294,22 @@ def download_version(app_org: str, app_slug: str, version: str, out_path: str) -
             code=3,
         )
 
-    # Selección de variant con prioridad explícita (Bug #12 fix, 2026-04-23):
-    #   1. arm64-v8a + nodpi       ← ideal (target arch del A04e, universal DPI)
-    #   2. arm64-v8a + any DPI     ← arm64 aunque DPI específico
-    #   3. universal nodpi         ← sin arch en title (APK universal)
-    #   4. fallback non-bundle     ← lo que quede
+    # Selección de variant con prioridad explícita.
+    #   1. arm64-v8a + nodpi   ← ideal: una sola arch, DPI universal
+    #   2. universal nodpi     ← sin arch en el title, todas las arch dentro
+    #   3. arm64-v8a + un DPI  ← ULTIMO RECURSO: casi siempre es un split de
+    #                            config del bundle y morphe no lo puede parchear
+    #   4. fallback non-bundle
+    # El 2026-10-07 APKMirror publico "(arm64-v8a) (480dpi)" para YouTube
+    # 21.40.161. Estaba en el puesto 2, gano al nodpi de 197 MB, y el build
+    # murio con "manifest is null". Por eso el DPI especifico va al final.
     # Rechazo explícito:
     #   - "BUNDLE" en title (split APKs empaquetados)
     #   - density ranges tipo "(120-640dpi)" (también son bundles multi-density)
-    #   - "(arm-v7a)" / "(armeabi-v7a)" (arch equivocada para A04e arm64)
+    #   - "(arm-v7a)" / "(armeabi-v7a)" (arch equivocada para target arm64)
     preferred: tuple[str, str, str] | None = None      # arm64 + nodpi
-    arm64_any: tuple[str, str, str] | None = None      # arm64 cualquier dpi
     universal_nodpi: tuple[str, str, str] | None = None # nodpi sin arch
+    arm64_any: tuple[str, str, str] | None = None      # arm64 con DPI especifico
     fallback: tuple[str, str, str] | None = None        # lo que sea
 
     density_range_re = re.compile(r"\(\d+-\d+DPI\)")
@@ -321,61 +341,93 @@ def download_version(app_org: str, app_slug: str, version: str, out_path: str) -
         is_nodpi = "(NODPI)" in up
         pack = (href, title, v_html)
 
-        if is_arm64 and is_nodpi and preferred is None:
-            preferred = pack
-        elif is_arm64 and arm64_any is None:
-            arm64_any = pack
-        elif is_nodpi and universal_nodpi is None:
-            # nodpi sin arch = APK universal
-            universal_nodpi = pack
+        if is_arm64 and is_nodpi:
+            if preferred is None:
+                preferred = pack
+        elif is_nodpi:
+            if universal_nodpi is None:
+                universal_nodpi = pack
+        elif is_arm64:
+            if arm64_any is None:
+                arm64_any = pack
         if fallback is None:
             fallback = pack
 
-    pick = preferred or arm64_any or universal_nodpi or fallback
-    if not pick:
+    candidatos: list[tuple[str, str, str]] = []
+    for pack in (preferred, universal_nodpi, arm64_any, fallback):
+        if pack is not None and all(pack[0] != c[0] for c in candidatos):
+            candidatos.append(pack)
+    if not candidatos:
         die(
             f"no variant elegible para {app_slug} {version} "
             "(todos los matches eran BUNDLE / density-range / arm-v7a / inaccesibles)",
             code=3,
         )
-    chosen_href, chosen_title, v_html = pick
-    log(f"chose variant: {chosen_title}")
-    variant_url = BASE + chosen_href
 
-    dl_key = find_download_key_url(v_html)
-    if not dl_key:
-        die(
-            "no /download/?key= link in variant page — posible cambio de HTML. "
-            "Revisa find_download_key_url() regex.",
-            code=4,
-        )
-    log(f"download-key page → {dl_key}")
+    # Se intenta en orden: si un candidato resulta ser un split de config
+    # (sin classes.dex), se pasa al siguiente en vez de matar el build.
+    ultimo_error = ""
+    for n_cand, (chosen_href, chosen_title, v_html) in enumerate(candidatos, 1):
+        log(f"intento {n_cand}/{len(candidatos)} — variant: {chosen_title}")
+        variant_url = BASE + chosen_href
 
-    # CRÍTICO: el Referer DEBE ser la variant page; si no, APKMirror redirige
-    # a ?redirected=thank_you_invalid_referer y sirve un HTML sin el enlace
-    # download.php. Descubierto durante pruebas locales.
-    key_url = BASE + dl_key
-    key_html = fetch_text(key_url, referer=variant_url)
-    dl_php = find_download_php_url(key_html)
-    if not dl_php:
-        die(
-            "no /wp-content/.../download.php link in key page — posible cambio de HTML "
-            "o Referer validation falló. Revisa find_download_php_url() regex y "
-            "que el Referer de la key-page sea la variant-page.",
-            code=5,
-        )
-    log(f"download.php → {dl_php}")
+        dl_key = find_download_key_url(v_html)
+        if not dl_key:
+            ultimo_error = "no /download/?key= link in variant page"
+            log(f"  → {ultimo_error}, siguiente candidato")
+            continue
+        log(f"download-key page → {dl_key}")
 
-    final_url = BASE + dl_php
-    log(f"starting final download → {out_path}")
-    # El download.php también valida Referer — usamos la key-page.
-    n = fetch_file(final_url, out_path, referer=key_url)
-    log(f"downloaded {n} bytes")
+        # CRÍTICO: el Referer DEBE ser la variant page; si no, APKMirror redirige
+        # a ?redirected=thank_you_invalid_referer y sirve un HTML sin el enlace
+        # download.php. Descubierto durante pruebas locales.
+        key_url = BASE + dl_key
+        try:
+            key_html = fetch_text(key_url, referer=variant_url)
+        except Exception as e:  # noqa: BLE001
+            ultimo_error = f"key page fetch failed: {e!r}"
+            log(f"  → {ultimo_error}, siguiente candidato")
+            continue
+        dl_php = find_download_php_url(key_html)
+        if not dl_php:
+            ultimo_error = (
+                "no /wp-content/.../download.php link in key page — posible cambio "
+                "de HTML o Referer validation falló"
+            )
+            log(f"  → {ultimo_error}, siguiente candidato")
+            continue
+        log(f"download.php → {dl_php}")
 
-    ok, info = is_valid_apk(out_path)
-    if not ok:
-        die(f"final validation failed: {info} — file path: {out_path}", code=6)
-    log(f"✓ valid APK: {info}")
+        final_url = BASE + dl_php
+        log(f"starting final download → {out_path}")
+        # El download.php también valida Referer — usamos la key-page.
+        try:
+            n = fetch_file(final_url, out_path, referer=key_url)
+        except Exception as e:  # noqa: BLE001
+            ultimo_error = f"download failed: {e!r}"
+            log(f"  → {ultimo_error}, siguiente candidato")
+            continue
+        log(f"downloaded {n} bytes")
+
+        ok, info = is_valid_apk(out_path)
+        if not ok:
+            ultimo_error = f"validation failed: {info}"
+            log(f"  → {ultimo_error}, siguiente candidato")
+            try:
+                os.remove(out_path)
+            except OSError:
+                pass
+            continue
+
+        log(f"chose variant: {chosen_title}")
+        log(f"✓ valid APK: {info}")
+        return
+
+    die(
+        f"ningun candidato sirvio para {app_slug} {version} "
+        f"({len(candidatos)} probados). Ultimo error: {ultimo_error}",
+        code=6,
+    )
 
 
 def main(argv: list[str]) -> int:

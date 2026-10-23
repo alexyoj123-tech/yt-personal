@@ -1,89 +1,185 @@
-run_id=37928526061  fecha=2026-10-09T12:13:46Z
+run_id=39940444073  fecha=2026-10-23T10:39:11Z
 
 ===================== /tmp/fetch-apks.log =====================
 [INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
-[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (392729 bytes)
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (406362 bytes)
 [INFO]  Resolución de versión: se aceptan targets experimentales.
-[INFO]  YouTube        → 21.40.161  (com.google.android.youtube)
-[INFO]  YouTube Music  → 9.40.51 (com.google.android.apps.youtube.music)
+[INFO]  YouTube        → 21.42.241  (com.google.android.youtube)
+[INFO]  YouTube Music  → 9.42.52 (com.google.android.apps.youtube.music)
 
-═══ Descargando com.google.android.youtube@21.40.161 desde APKMirror (google-inc/youtube) ═══
-[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-40-161-release/
-[apkmirror] variant hrefs found: 4
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-4-android-apk-download/
-[apkmirror]   title: 'YouTube 21.40.161 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+═══ Descargando com.google.android.youtube@21.42.241 desde APKMirror (google-inc/youtube) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-42-241-release/
+[apkmirror] variant hrefs found: 3
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-42-241-release/youtube-21-42-241-2-android-apk-download/
+[apkmirror]   title: 'YouTube 21.42.241 beta (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-android-apk-download/
-[apkmirror]   title: 'YouTube 21.40.161 (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-42-241-release/youtube-21-42-241-3-android-apk-download/
+[apkmirror]   title: 'YouTube 21.42.241 beta (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-2-android-apk-download/
-[apkmirror]   title: 'YouTube 21.40.161 (arm64-v8a + arm-v7a) (320-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
-[apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-3-android-apk-download/
-[apkmirror]   title: 'YouTube 21.40.161 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror'
-[apkmirror] intento 1/1 — variant: YouTube 21.40.161 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-40-161-release/youtube-21-40-161-3-android-apk-download/download/?key=facfb4c709d65bf87e56b429d0c1e67a657ff1c8&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16369675&key=72c1262c70fa3a4b5589bc6a4a9626822b285187&forcebaseapk=true
+[apkmirror] inspecting variant: /apk/google-inc/youtube/youtube-21-42-241-release/youtube-21-42-241-android-apk-download/
+[apkmirror]   title: 'YouTube 21.42.241 beta (nodpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror] intento 1/1 — variant: YouTube 21.42.241 beta (nodpi) (Android 10+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube/youtube-21-42-241-release/youtube-21-42-241-android-apk-download/download/?key=06753a1eb7774f567aadb7958b346104aed60a5d&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16629936&key=ba78dcf92c35b0df0f7682347c5644c347764599&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk
-[apkmirror] download progress: 20709376/206810938 bytes (10%)
-[apkmirror] download progress: 41418752/206810938 bytes (20%)
-[apkmirror] download progress: 62128128/206810938 bytes (30%)
-[apkmirror] download progress: 82837504/206810938 bytes (40%)
-[apkmirror] download progress: 103546880/206810938 bytes (50%)
-[apkmirror] download progress: 124256256/206810938 bytes (60%)
-[apkmirror] download progress: 144965632/206810938 bytes (70%)
-[apkmirror] download progress: 165675008/206810938 bytes (80%)
-[apkmirror] download progress: 186384384/206810938 bytes (90%)
-[apkmirror] downloaded 206810938 bytes
-[apkmirror] chose variant: YouTube 21.40.161 (nodpi) (Android 10+) APK Download by Google LLC - APKMirror
-[apkmirror] ✓ valid APK: 206810938 bytes
+[apkmirror] download progress: 20709376/206931997 bytes (10%)
+[apkmirror] download progress: 41418752/206931997 bytes (20%)
+[apkmirror] download progress: 62128128/206931997 bytes (30%)
+[apkmirror] download progress: 82837504/206931997 bytes (40%)
+[apkmirror] download progress: 103546880/206931997 bytes (50%)
+[apkmirror] download progress: 124256256/206931997 bytes (60%)
+[apkmirror] download progress: 144965632/206931997 bytes (70%)
+[apkmirror] download progress: 165675008/206931997 bytes (80%)
+[apkmirror] download progress: 186384384/206931997 bytes (90%)
+[apkmirror] downloaded 206931997 bytes
+[apkmirror] chose variant: YouTube 21.42.241 beta (nodpi) (Android 10+) APK Download by Google LLC - APKMirror
+[apkmirror] ✓ valid APK: 206931997 bytes
 [OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube.apk (198M)
 
-═══ Descargando com.google.android.apps.youtube.music@9.40.51 desde APKMirror (google-inc/youtube-music) ═══
-[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-40-51-release/
-[apkmirror] variant hrefs found: 12
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-12-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (arm-v7a) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+═══ Descargando com.google.android.apps.youtube.music@9.42.52 desde APKMirror (google-inc/youtube-music) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/
+[apkmirror] variant hrefs found: 14
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-14-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm-v7a) (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-13-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm-v7a) (320-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-12-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm-v7a) (480-640dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror]   → density range (multi-DPI bundle), skipping
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-11-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm-v7a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → arm-v7a (arch equivocada para arm64-v8a target), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-11-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (arm-v7a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror]   → arm-v7a (arch equivocada para arm64-v8a target), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-2-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-2-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm64-v8a) (120-480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm64-v8a) (480-640dpi) (Android 10+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-3-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (480-640dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-3-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm64-v8a) (480-640dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
 [apkmirror]   → density range (multi-DPI bundle), skipping
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-4-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-6-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (x86) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-7-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (x86) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-5-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-10-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (x86_64) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-9-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (x86_64) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-8-android-apk-download/
-[apkmirror]   title: 'YouTube Music 9.40.51 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
-[apkmirror] intento 1/2 — variant: YouTube Music 9.40.51 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
-[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-40-51-release/youtube-music-9-40-51-4-android-apk-download/download/?key=ec67561780c31982c4c9258c9cc3e1ea14c3964d&forcebaseapk=true
-[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16381175&key=0b6f3d72526cbc0361e23f3c619fa5e47b025072&forcebaseapk=true
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-6-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (x86) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-7-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (x86) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-5-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-8-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (x86_64) (480dpi) (Android 12L+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-10-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (x86_64) (480dpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] inspecting variant: /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-9-android-apk-download/
+[apkmirror]   title: 'YouTube Music 9.42.52 (x86_64) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror'
+[apkmirror] intento 1/2 — variant: YouTube Music 9.42.52 (arm64-v8a) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true
+[apkmirror] 403 en intento 1/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true failed (<HTTPError 403: 'Forbidden'>) — retry in 1s (attempt 1/5)
+[apkmirror] 403 en intento 2/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true failed (<HTTPError 403: 'Forbidden'>) — retry in 2s (attempt 2/5)
+[apkmirror] 403 en intento 3/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true failed (<HTTPError 403: 'Forbidden'>) — retry in 4s (attempt 3/5)
+[apkmirror] 403 en intento 4/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true failed (<HTTPError 403: 'Forbidden'>) — retry in 8s (attempt 4/5)
+[apkmirror] 403 en intento 5/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true failed (<HTTPError 403: 'Forbidden'>) — retry in 16s (attempt 5/5)
+[apkmirror]   → key page fetch failed: RuntimeError("all retries exhausted for https://www.apkmirror.com/apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-4-android-apk-download/download/?key=dd6dd4d0c276c5b7152d1af68c0cbc0521cd7512&forcebaseapk=true: <HTTPError 403: 'Forbidden'>"), siguiente candidato
+[apkmirror] intento 2/2 — variant: YouTube Music 9.42.52 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
+[apkmirror] download-key page → /apk/google-inc/youtube-music/youtube-music-9-42-52-release/youtube-music-9-42-52-5-android-apk-download/download/?key=facd1cd84ba75fc170a4f0bd1cbdf4980f8c1933&forcebaseapk=true
+[apkmirror] download.php → /wp-content/themes/APKMirror/download.php?id=16778228&key=fb4efdd34e28c2f086e30abedd6f50827612521f&forcebaseapk=true
 [apkmirror] starting final download → /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk
-[apkmirror] download failed (<HTTPError 403: 'Forbidden'>) — retry in 1s (attempt 1/5)
-[apkmirror] download failed (<HTTPError 403: 'Forbidden'>) — retry in 2s (attempt 2/5)
-[apkmirror] download failed (<HTTPError 403: 'Forbidden'>) — retry in 4s (attempt 3/5)
-[apkmirror] download failed (<HTTPError 403: 'Forbidden'>) — retry in 8s (attempt 4/5)
-[apkmirror] download failed (<HTTPError 403: 'Forbidden'>) — retry in 16s (attempt 5/5)
-[apkmirror] ERROR (exit 6): fetch_file: all retries exhausted: <HTTPError 403: 'Forbidden'>
-[ERR]   APKMirror scraper falló para com.google.android.apps.youtube.music@9.40.51.
-    Pasos de diagnóstico:
-      1. Revisá el exit code arriba (2=version 404, 3=sin variantes,
-         4=key missing, 5=download.php missing, 6=download inválido).
-      2. Si el HTML de APKMirror cambió, revisar docs/APKMIRROR-SCRAPER.md
-         §mantenimiento y actualizar los regex en apkmirror_download.py.
+[apkmirror] download progress: 7995392/79421639 bytes (10%)
+[apkmirror] download progress: 15990784/79421639 bytes (20%)
+[apkmirror] download progress: 23986176/79421639 bytes (30%)
+[apkmirror] download progress: 31981568/79421639 bytes (40%)
+[apkmirror] download progress: 39976960/79421639 bytes (50%)
+[apkmirror] download progress: 47972352/79421639 bytes (60%)
+[apkmirror] download progress: 55967744/79421639 bytes (70%)
+[apkmirror] download progress: 63963136/79421639 bytes (80%)
+[apkmirror] download progress: 71958528/79421639 bytes (90%)
+[apkmirror] downloaded 79421639 bytes
+[apkmirror] chose variant: YouTube Music 9.42.52 (x86) (nodpi) (Android 8.0+) APK Download by Google LLC - APKMirror
+[apkmirror] ✓ valid APK: 79421639 bytes
+[OK]    Descargado: /home/runner/work/yt-personal/yt-personal/project-a/build/apks/youtube-music.apk (76M)
+[OK]    Fetch completo. Meta: /home/runner/work/yt-personal/yt-personal/project-a/build/meta/fetch.json
+
+===================== /tmp/apply-patches.log =====================
+
+═══ Descargando morphe-cli (MorpheApp/morphe-cli @ v1.18.0), patches (MorpheApp/morphe-patches), MicroG-RE (MorpheApp/MicroG-RE) ═══
+[INFO]  GET https://github.com/MorpheApp/morphe-desktop/releases/download/v1.18.0/morphe-desktop-1.18.0-all.jar
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 47.8M  100 47.8M    0     0   131M      0 --:--:-- --:--:-- --:--:--  228M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar (48M)
+[INFO]  GET https://github.com/MorpheApp/morphe-patches/releases/download/v1.48.0/patches-1.48.0.mpp
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 12.4M  100 12.4M    0     0  52.4M      0 --:--:-- --:--:-- --:--:-- 52.4M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp (13M)
+[INFO]  GET https://github.com/MorpheApp/MicroG-RE/releases/download/7.2.2/microg-7.2.2.apk
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  107M  100  107M    0     0   218M      0 --:--:-- --:--:-- --:--:--  218M
+[OK]    Guardado en /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk (108M)
+[INFO]  GmsCore arm64: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore-arm64.apk (43M)
+[INFO]  CLI:       /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-cli.jar  (repo=MorpheApp/morphe-cli tag=v1.18.0 env=v1.18.0)
+[INFO]  Patches:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/revanced-patches.mpp
+[INFO]  GmsCore:   /home/runner/work/yt-personal/yt-personal/project-a/build/tools/gmscore.apk
+[INFO]  Extrayendo metadata de patches (compatible_packages + versions)
+[WARN]  list-patches falló (no bloqueante).
+
+═══ Parcheando YouTube → youtube-patched.apk ═══
+Picked up JAVA_TOOL_OPTIONS: -Djava.awt.headless=true
+INFO: Update available: v1.19.0 (current: v1.18.0)
+Download from https://github.com/MorpheApp/morphe-desktop/releases/latest 
+INFO: Morphe data root: /home/runner/work/yt-personal/yt-personal/project-a/build/tools/morphe-data (JAR-adjacent) 
+INFO: Loading patches... 
+INFO: Purged this session's temp files: patching-1792751946306 
+Exception in thread "main" java.lang.NoSuchMethodError: 'void app.morphe.patcher.Fingerprint.<init>(app.morphe.patcher.Fingerprint, java.lang.String, java.lang.String, java.util.List, java.lang.String, java.util.List, java.lang.Boolean, java.lang.String, java.util.List, java.util.List, java.util.List, kotlin.jvm.functions.Function2, int, kotlin.jvm.internal.DefaultConstructorMarker)'
+	at app.morphe.patches.music.misc.extension.hooks.YouTubeMusicApplicationInitFingerprint.<init>(ApplicationInitHook.kt:8)
+	at app.morphe.patches.music.misc.extension.hooks.YouTubeMusicApplicationInitFingerprint.<clinit>(ApplicationInitHook.kt)
+	at app.morphe.patches.music.misc.extension.hooks.ApplicationInitHookKt.<clinit>(ApplicationInitHook.kt:17)
+	at app.morphe.patches.music.misc.extension.SharedExtensionPatchKt.<clinit>(SharedExtensionPatch.kt:9)
+	at app.morphe.patches.music.ad.HideAdsPatchKt.hideAdsPatch$lambda$0(HideAdsPatch.kt:41)
+	at app.morphe.patcher.patch.PatchKt.buildPatch(Patch.kt:606)
+	at app.morphe.patcher.patch.PatchKt.bytecodePatch(Patch.kt:722)
+	at app.morphe.patcher.patch.PatchKt.bytecodePatch$default(Patch.kt:717)
+	at app.morphe.patches.music.ad.HideAdsPatchKt.<clinit>(HideAdsPatch.kt:36)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized0(Native Method)
+	at java.base/jdk.internal.misc.Unsafe.ensureClassInitialized(Unsafe.java:1160)
+	at java.base/jdk.internal.reflect.MethodHandleAccessorFactory.ensureClassInitialized(MethodHandleAccessorFactory.java:301)
+	at java.base/jdk.internal.reflect.MethodHandleAccessorFactory.newMethodAccessor(MethodHandleAccessorFactory.java:72)
+	at java.base/jdk.internal.reflect.ReflectionFactory.newMethodAccessor(ReflectionFactory.java:159)
+	at java.base/java.lang.reflect.Method.acquireMethodAccessor(Method.java:726)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:577)
+	at app.morphe.patcher.patch.PatchLoader$Companion.getPatchMethods(Patch.kt:933)
+	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches$lambda$0$1(Patch.kt:957)
+	at kotlin.sequences.FlatteningSequence$iterator$1.ensureItemIterator(Sequences.kt:363)
+	at kotlin.sequences.FlatteningSequence$iterator$1.hasNext(Sequences.kt:351)
+	at kotlin.sequences.FilteringSequence$iterator$1.calcNext(Sequences.kt:202)
+	at kotlin.sequences.FilteringSequence$iterator$1.hasNext(Sequences.kt:227)
+	at kotlin.sequences.SequencesKt___SequencesKt.toSet(_Sequences.kt:1033)
+	at app.morphe.patcher.patch.PatchLoader$Companion.loadPatches(Patch.kt:960)
+	at app.morphe.patcher.patch.PatchLoader$Companion.access$loadPatches(Patch.kt:913)
+	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt:858)
+	at app.morphe.patcher.patch.PatchLoader.<init>(Patch.kt)
+	at app.morphe.patcher.patch.PatchLoader$Jar.<init>(Patch.kt:867)
+	at app.morphe.patcher.patch.PatchKt.loadPatchesFromJar(Patch.kt:981)
+	at app.morphe.engine.patches.PatchBundleLoader.loadEach(PatchBundleLoader.kt:47)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:512)
+	at app.morphe.desktop.command.PatchCommand.call(PatchCommand.kt:54)
+	at picocli.CommandLine.executeUserObject(CommandLine.java:2031)
+	at picocli.CommandLine.access$1500(CommandLine.java:148)
+	at picocli.CommandLine$RunLast.executeUserObjectOfLastSubcommandWithSameParent(CommandLine.java:2469)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:2461)
+	at picocli.CommandLine$RunLast.handle(CommandLine.java:2423)
+	at picocli.CommandLine$AbstractParseResultHandler.execute(CommandLine.java:2277)
+	at picocli.CommandLine$RunLast.execute(CommandLine.java:2425)
+	at picocli.CommandLine.execute(CommandLine.java:2174)
+	at app.morphe.MorpheLauncherKt.main(MorpheLauncher.kt:85)

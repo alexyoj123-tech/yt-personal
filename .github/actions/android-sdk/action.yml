@@ -57,10 +57,14 @@ runs:
         echo "$(dirname "$SDKM")" >> "$GITHUB_PATH"
         echo "$SDK/platform-tools"  >> "$GITHUB_PATH"
 
-        yes | "$SDKM" --licenses > /dev/null 2>&1 || true
+        # OJO: GitHub corre 'shell: bash' con -o pipefail. En 'yes | sdkmanager',
+        # 'yes' muere con SIGPIPE (141) cuando sdkmanager termina, y pipefail
+        # convierte eso en fallo aunque sdkmanager haya salido bien. Por eso
+        # 'yes' va envuelto en { yes || true; }.
+        { yes || true; } | "$SDKM" --licenses > /dev/null 2>&1 || true
 
         if [ -n "$SDK_PACKAGES" ]; then
           read -r -a pkgs <<< "$SDK_PACKAGES"
           echo "Instalando: ${pkgs[*]}"
-          yes | "$SDKM" "${pkgs[@]}" > /dev/null
+          { yes || true; } | "$SDKM" "${pkgs[@]}" > /dev/null
         fi

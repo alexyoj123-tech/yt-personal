@@ -27,9 +27,16 @@ CLI_REPO="${REVANCED_CLI_REPO:-MorpheApp/morphe-cli}"
 PATCHES_REPO="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
 GMSCORE_REPO="${REVANCED_GMSCORE_REPO:-MorpheApp/MicroG-RE}"
 
-# CLI pineada a v1.7.0 por estabilidad. Actualizar cuando Morphe publique
-# nueva stable + verificar compat con .mpp correspondiente.
-CLI_TAG="${REVANCED_CLI_TAG:-v1.18.0}"
+# CLI = última release estable, igual que los patches (que siempre van a
+# "latest"). FIX 2026-10-31: estaba fijo en v1.18.0 y cada vez que Morphe
+# sacaba patches nuevos (v1.48.0, v2.0.0 con morphe-patcher 2.x) el CLI viejo
+# reventaba con NoSuchMethodError. Morphe publica CLI y patches juntos, así
+# que "latest" + "latest" siempre coinciden. REVANCED_CLI_TAG fuerza un tag.
+CLI_TAG="${REVANCED_CLI_TAG:-}"
+if [ -z "$CLI_TAG" ]; then
+  CLI_TAG="$(gh_latest_tag "$CLI_REPO")"
+  info "CLI sin tag fijo → última release estable: $CLI_TAG"
+fi
 
 # Regex del asset MicroG-RE: 'microg-<ver>.apk'. Si el naming cambia,
 # override con env REVANCED_GMSCORE_REGEX.

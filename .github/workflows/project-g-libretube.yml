@@ -31,7 +31,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: ./.github/actions/android-sdk   # sdkmanager preinstalado (setup-android@v3 da 404)
 
       - name: Instalar build-tools 34
         run: |

@@ -40,7 +40,7 @@ jobs:
           # despues, dentro de project-g/build/src, asi que no hay nada que cachear.
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: ./.github/actions/android-sdk   # sdkmanager preinstalado (setup-android@v3 da 404)
 
       - name: Instalar build-tools + aapt
         run: |

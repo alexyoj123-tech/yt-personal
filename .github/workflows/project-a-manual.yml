@@ -32,10 +32,10 @@ on:
         default: apk-pure
         options: [apk-pure, google-play, f-droid, huawei-app-gallery]
       revanced_cli_tag:
-        description: 'Tag de morphe-cli. Default v1.18.0 (patches v1.44+ requieren ResourceType).'
+        description: 'Tag de morphe-cli. Vacío = última release estable (recomendado: coincide con los patches).'
         required: false
         type: string
-        default: v1.18.0
+        default: ''
       release_note_prefix:
         description: 'Nota opcional al inicio del body del Release (ej. para releases de corrección)'
         required: false

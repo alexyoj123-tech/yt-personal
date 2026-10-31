@@ -1,0 +1,66 @@
+name: Android SDK (preinstalado en el runner)
+description: >
+  Reemplazo de android-actions/setup-android. Usa el sdkmanager que ya trae
+  el runner (cmdline-tools/latest, sea 12.0 en ubuntu-24.04 o 20.0 en
+  ubuntu-26.04) en vez de exigir una version fija. setup-android@v3 con
+  cmdline-tools-version '12.0' intenta bajar commandlinetools-linux-12.0_latest.zip
+  (404) en cuanto el runner trae otra version, y tumba el build en ~7 s.
+  Deja sdkmanager y platform-tools en el PATH, igual que setup-android.
+
+inputs:
+  packages:
+    description: 'Paquetes de sdkmanager separados por espacio (ej. "build-tools;34.0.0 platform-tools"). Vacio = no instalar nada.'
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Preparar Android SDK
+      shell: bash
+      env:
+        SDK_PACKAGES: ${{ inputs.packages }}
+      run: |
+        set -eu
+        SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+        mkdir -p "$SDK/cmdline-tools"
+
+        # 1) sdkmanager preinstalado: 'latest' primero, luego cualquier version.
+        SDKM=""
+        for d in "$SDK/cmdline-tools/latest" $(ls -d "$SDK"/cmdline-tools/*/ 2>/dev/null | sort -V -r); do
+          if [ -x "${d%/}/bin/sdkmanager" ]; then SDKM="${d%/}/bin/sdkmanager"; break; fi
+        done
+
+        # 2) Si el runner no trae ninguno, bajar uno (varios builds por si alguno da 404).
+        if [ -z "$SDKM" ]; then
+          for build in 14742923 13114758 12266719 11076708; do
+            url="https://dl.google.com/android/repository/commandlinetools-linux-${build}_latest.zip"
+            echo "Intentando $url"
+            if curl -fsSL -o "$RUNNER_TEMP/cmdline-tools.zip" "$url"; then
+              rm -rf "$RUNNER_TEMP/cmdline-tools-x" "$SDK/cmdline-tools/latest"
+              unzip -q "$RUNNER_TEMP/cmdline-tools.zip" -d "$RUNNER_TEMP/cmdline-tools-x"
+              mv "$RUNNER_TEMP/cmdline-tools-x/cmdline-tools" "$SDK/cmdline-tools/latest"
+              SDKM="$SDK/cmdline-tools/latest/bin/sdkmanager"
+              break
+            fi
+          done
+        fi
+        [ -n "$SDKM" ] || { echo "::error::No hay sdkmanager en el runner y no se pudo descargar cmdline-tools"; exit 1; }
+
+        echo "sdkmanager: $SDKM"
+        "$SDKM" --version || true
+
+        {
+          echo "ANDROID_HOME=$SDK"
+          echo "ANDROID_SDK_ROOT=$SDK"
+        } >> "$GITHUB_ENV"
+        echo "$(dirname "$SDKM")" >> "$GITHUB_PATH"
+        echo "$SDK/platform-tools"  >> "$GITHUB_PATH"
+
+        yes | "$SDKM" --licenses > /dev/null 2>&1 || true
+
+        if [ -n "$SDK_PACKAGES" ]; then
+          read -r -a pkgs <<< "$SDK_PACKAGES"
+          echo "Instalando: ${pkgs[*]}"
+          yes | "$SDKM" "${pkgs[@]}" > /dev/null
+        fi

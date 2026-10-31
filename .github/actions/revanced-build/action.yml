@@ -30,9 +30,12 @@ inputs:
     required: false
     default: 'MorpheApp/morphe-cli'
   revanced_cli_tag:
-    description: 'Tag del CLI a usar. Default v1.14.0 — obligatorio para patches >= v1.40.0 (necesitan la clase AvailabilityResolver). OJO: el asset del release se llama morphe-desktop-<ver>-all.jar desde v1.11.'
+    description: 'Tag del CLI a usar. Vacío (default) = última release estable, igual que los patches, para que CLI y patches siempre coincidan. Fijar un tag solo para depurar. OJO: el asset del release se llama morphe-desktop-<ver>-all.jar desde v1.11.'
     required: false
-    default: 'v1.18.0'
+    # Antes estaba fijo en v1.18.0 mientras los patches iban siempre a "latest".
+    # Cuando salieron patches v1.48.0 (y luego v2.0.0, morphe-patcher 2.x) el CLI
+    # viejo reventaba con NoSuchMethodError al cargar los patches.
+    default: ''
   revanced_patches_repo:
     description: 'Owner/repo de los patches. Default MorpheApp/morphe-patches (formato .mpp, sucesor oficial tras archivado de inotia00 en marzo 2026).'
     required: false
@@ -91,22 +94,24 @@ runs:
         java-version: '21'
 
     - name: Setup Android SDK (build-tools para apksigner + zipalign)
-      uses: android-actions/setup-android@v3
+      # Antes: android-actions/setup-android@v3 con cmdline-tools-version '12.0'.
+      # Desde el 2026-10-25 el runner trae otra version de cmdline-tools y el
+      # action intentaba bajar un zip inexistente (404): build muerto en 7 s.
+      # Ahora se usa el sdkmanager que ya trae el runner, sin version fija.
+      uses: ./.github/actions/android-sdk
       with:
         packages: 'build-tools;34.0.0 platform-tools'
-        accept-android-sdk-licenses: true
-        log-accepted-android-sdk-licenses: false
-        # El default del action (12266719) ya no existe en dl.google.com y
-        # devuelve 404, tumbando el build entero. El runner trae preinstalado
-        # cmdline-tools 12.0; pidiendo esa version el action lo reutiliza y
-        # no descarga nada.
-        cmdline-tools-version: '12.0'
 
     - name: Añadir build-tools al PATH
       shell: bash
       run: |
+        # 34.0.0 si esta; si no, la build-tools mas nueva que tenga apksigner.
         BT_DIR="$ANDROID_SDK_ROOT/build-tools/34.0.0"
-        [ -d "$BT_DIR" ] || { echo "::error::No existe $BT_DIR"; exit 1; }
+        if [ ! -x "$BT_DIR/apksigner" ]; then
+          BT_DIR="$(ls -d "$ANDROID_SDK_ROOT"/build-tools/*/ 2>/dev/null | sort -V | tail -1)"
+          BT_DIR="${BT_DIR%/}"
+        fi
+        [ -n "$BT_DIR" ] && [ -x "$BT_DIR/apksigner" ] || { echo "::error::No hay build-tools con apksigner en $ANDROID_SDK_ROOT"; exit 1; }
         echo "$BT_DIR" >> "$GITHUB_PATH"
         echo "Añadido: $BT_DIR"
 

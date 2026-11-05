@@ -1,1 +1,37 @@
-run_id=41213306066  fecha=2026-10-31T15:07:34Z
+run_id=42037588908  fecha=2026-11-05T13:39:38Z
+
+===================== /tmp/fetch-apks.log =====================
+[INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/main/patches-list.json (410139 bytes)
+[INFO]  Resolución de versión: se aceptan targets experimentales.
+[INFO]  YouTube        → 21.43.523  (com.google.android.youtube)
+[INFO]  YouTube Music  → 9.43.51 (com.google.android.apps.youtube.music)
+
+═══ Descargando com.google.android.youtube@21.43.523 desde APKMirror (google-inc/youtube) ═══
+[apkmirror] version page → https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/
+[apkmirror] 403 en intento 1/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/ failed (<HTTPError 403: 'Forbidden'>) — retry in 1s (attempt 1/5)
+[apkmirror] 403 en intento 2/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/ failed (<HTTPError 403: 'Forbidden'>) — retry in 2s (attempt 2/5)
+[apkmirror] 403 en intento 3/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/ failed (<HTTPError 403: 'Forbidden'>) — retry in 4s (attempt 3/5)
+[apkmirror] 403 en intento 4/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/ failed (<HTTPError 403: 'Forbidden'>) — retry in 8s (attempt 4/5)
+[apkmirror] 403 en intento 5/5 — reintentando
+[apkmirror] GET https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/ failed (<HTTPError 403: 'Forbidden'>) — retry in 16s (attempt 5/5)
+[apkmirror] unexpected error: RuntimeError("all retries exhausted for https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/: <HTTPError 403: 'Forbidden'>")
+Traceback (most recent call last):
+  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 444, in main
+    download_version(app_org, app_slug, version, out_path)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 275, in download_version
+    ver_html = fetch_text(ver_page_url)
+  File "/home/runner/work/yt-personal/yt-personal/project-a/scripts/apkmirror_download.py", line 125, in fetch_text
+    raise RuntimeError(f"all retries exhausted for {url}: {last_err!r}")
+RuntimeError: all retries exhausted for https://www.apkmirror.com/apk/google-inc/youtube/youtube-21-43-523-release/: <HTTPError 403: 'Forbidden'>
+[ERR]   APKMirror scraper falló para com.google.android.youtube@21.43.523.
+    Pasos de diagnóstico:
+      1. Revisá el exit code arriba (2=version 404, 3=sin variantes,
+         4=key missing, 5=download.php missing, 6=download inválido).
+      2. Si el HTML de APKMirror cambió, revisar docs/APKMIRROR-SCRAPER.md
+         §mantenimiento y actualizar los regex en apkmirror_download.py.

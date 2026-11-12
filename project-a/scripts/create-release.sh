@@ -162,6 +162,7 @@ gh release create "$tag" \
   --repo "$REPO" \
   --title "Daily ReVanced Build — $(date -u +%Y-%m-%d)" \
   --notes-file "$body_file" \
+  --latest \
   "${assets[@]}"
 
 ok "Release $tag publicado:"

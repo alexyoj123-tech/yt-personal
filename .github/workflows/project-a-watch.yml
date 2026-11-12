@@ -1,0 +1,125 @@
+name: project-a · vigilante (versiones nuevas)
+# Cada ~10 min compara los tags estables de upstream (patches, CLI, MicroG,
+# SmartTube) con la huella del ultimo release ytp-a-*. Si algo cambio, lanza
+# project-a-build.yml de inmediato en vez de esperar al cron diario (que
+# GitHub ademas arranca con 6-8 h de retraso). Asi una version nueva de Morphe
+# aparece en Releases/Obtainium en minutos.
+#
+# Las versiones de YouTube / YT Music salen de patches-list.json, que solo
+# cambia cuando sale un release nuevo de patches, asi que basta con vigilar
+# el tag de patches.
+#
+# Anti-bucle: no relanza si ya hay un build corriendo, si un build exitoso ya
+# corrio DESPUES de que salio la version nueva (decidio no publicar; el cron
+# diario reintenta), o si uno fallo hace menos de 2 h (evita una lluvia de
+# correos "Run failed" cuando upstream publica algo roto).
+#
+# Cuesta ~15 s por chequeo; el repo es publico, asi que los minutos de
+# Actions son gratis.
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write   # para 'gh workflow run project-a-build.yml'
+
+concurrency:
+  group: project-a-watch
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    name: ¿Hay versiones nuevas?
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      BUILD_WORKFLOW: project-a-build.yml
+    steps:
+      - name: Comparar upstream con el ultimo release ytp-a
+        shell: bash
+        run: |
+          set -eu
+
+          # tag|publishedAt del ultimo release estable de un repo upstream
+          latest() {
+            gh release view --repo "$1" --json tagName,publishedAt \
+              --jq '"\(.tagName)|\(.publishedAt)"' 2>/dev/null || true
+          }
+          norm() { printf '%s' "${1#v}"; }
+
+          # ── Huella del ultimo release de project-a ──
+          LAST_TAG="$(gh api "repos/$REPO/releases?per_page=50" \
+            --jq '[.[] | select(.draft | not) | select(.tag_name | startswith("ytp-a-"))][0].tag_name // empty')"
+          [ -n "$LAST_TAG" ] || { echo "::error::No hay ningun release ytp-a-*"; exit 1; }
+          FP="$(gh api "repos/$REPO/releases/tags/$LAST_TAG" --jq '.body' \
+            | sed -n 's/.*ytp-fingerprint:[[:space:]]*\([^[:space:]]*\).*/\1/p' | head -n1 || true)"
+          echo "Ultimo release: $LAST_TAG"
+          echo "Huella:         ${FP:-<sin huella>}"
+          field() { printf '%s' "$FP" | tr ';' '\n' | sed -n "s/^$1=//p"; }
+
+          # ── Comparar cada componente ──
+          CHANGED=""
+          NEWEST_PUB=""
+          check() {
+            local key="$1" repo="$2" info tag pub have
+            info="$(latest "$repo")"
+            tag="${info%%|*}"; pub="${info#*|}"
+            if [ -z "$info" ] || [ -z "$tag" ]; then
+              echo "::warning::No se pudo leer el ultimo release de $repo (se ignora este chequeo)"
+              return 0
+            fi
+            have="$(field "$key")"
+            if [ "$(norm "$tag")" != "$(norm "$have")" ]; then
+              echo "NUEVO  $key: ${have:-?} -> $tag  (publicado $pub)"
+              CHANGED="$CHANGED $key=$tag"
+              if [ -z "$NEWEST_PUB" ] || [[ "$pub" > "$NEWEST_PUB" ]]; then NEWEST_PUB="$pub"; fi
+            else
+              echo "igual  $key: $tag"
+            fi
+          }
+          check patches MorpheApp/morphe-patches
+          check cli     MorpheApp/morphe-cli
+          check gms     MorpheApp/MicroG-RE
+          check st      yuliskov/SmartTube
+
+          if [ -z "$CHANGED" ]; then
+            echo "Todo al dia. Nada que hacer."
+            exit 0
+          fi
+
+          # ── Anti-bucle: mirar los ultimos builds ──
+          RUNS="$(gh api "repos/$REPO/actions/workflows/$BUILD_WORKFLOW/runs?per_page=10")"
+          ACTIVE="$(jq '[.workflow_runs[] | select(.status != "completed")] | length' <<< "$RUNS")"
+          if [ "$ACTIVE" -gt 0 ]; then
+            echo "Ya hay un build en curso; espero a que termine."
+            exit 0
+          fi
+
+          NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          TWO_H_AGO="$(date -u -d '-2 hours' +%Y-%m-%dT%H:%M:%SZ)"
+
+          # Build exitoso que arranco despues de la version nueva: ya la vio y
+          # decidio no publicar (p.ej. el APK aun no estaba). No insistir cada
+          # 10 min; el cron diario lo reintenta.
+          OK_AFTER="$(jq -r --arg t "$NEWEST_PUB" \
+            '[.workflow_runs[] | select(.conclusion == "success" and .created_at > $t)] | length' <<< "$RUNS")"
+          if [ "$OK_AFTER" -gt 0 ]; then
+            echo "::notice::Un build exitoso ya corrio despues de$CHANGED y no publico; no relanzo."
+            exit 0
+          fi
+
+          # Build fallido hace menos de 2 h, despues de la version nueva: esperar.
+          FAIL_RECENT="$(jq -r --arg t "$NEWEST_PUB" --arg l "$TWO_H_AGO" \
+            '[.workflow_runs[] | select(.conclusion == "failure" and .created_at > $t and .created_at > $l)] | length' <<< "$RUNS")"
+          if [ "$FAIL_RECENT" -gt 0 ]; then
+            echo "::notice::El ultimo build con$CHANGED fallo hace menos de 2 h; reintento mas tarde."
+            exit 0
+          fi
+
+          echo "::notice::Cambios:$CHANGED -> lanzando $BUILD_WORKFLOW ($NOW)"
+          gh workflow run "$BUILD_WORKFLOW" --repo "$REPO" --ref "${GITHUB_REF_NAME:-main}"

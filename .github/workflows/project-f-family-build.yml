@@ -111,6 +111,7 @@ jobs:
           gh release create "$TAG" --repo "$REPO" \
             --title "Build $BUILD_DATE" \
             --notes-file "$NOTES_FILE" \
+            --latest=false \
             "$ASSETS_DIR"/*.apk "$ASSETS_DIR"/manifest.json
 
       - name: Update docs/family-manifest.json (same-origin para familia.html)

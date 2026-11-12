@@ -48,7 +48,10 @@ step "Descargando morphe-cli ($CLI_REPO @ $CLI_TAG), patches ($PATCHES_REPO), Mi
 # - revanced-cli-<ver>-all.jar (histórico, inotia00/ReVanced)
 # - morphe-cli-<ver>-all.jar   (actual, Morphe)
 CLI_JAR="$(ensure_tool "revanced-cli.jar"  "$CLI_REPO"     "(revanced-cli|morphe-cli|morphe-desktop)-.*-all\\.jar$" "$CLI_TAG")"
-PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$")"
+# Mismo tag que resolvio fetch-apks.sh (stable o dev, ver resolve_patches_tag).
+PATCHES_TAG="$(resolve_patches_tag)"
+info "Patches: $PATCHES_TAG (canal ${MORPHE_CHANNEL:-stable})"
+PATCHES_RVP="$(ensure_tool "revanced-patches.mpp" "$PATCHES_REPO" "patches-.*\.mpp$" "$PATCHES_TAG")"
 GMSCORE_APK="$(ensure_tool "gmscore.apk"  "$GMSCORE_REPO"          "$GMSCORE_REGEX")"
 
 # Variante arm64-v8a del MicroG-RE: mismo build, ~42 MB en vez de ~107 MB
@@ -327,7 +330,7 @@ verify_package "$PATCHED_DIR/youtube-music-patched.apk" "$EXPECTED_YTM_PACKAGE" 
 # ── Meta del patch run ───────────────────────────────────────────────
 # Para CLI usamos el tag pineado (no "latest" del repo).
 CLI_VER="${CLI_TAG}"
-PATCHES_VER="$(gh_latest_tag "$PATCHES_REPO")"
+PATCHES_VER="$PATCHES_TAG"
 GMS_VER="$(gh_latest_tag "$GMSCORE_REPO")"
 SMARTTUBE_VER="$(gh_latest_tag "$SMARTTUBE_REPO")"
 

@@ -40,6 +40,10 @@ inputs:
     description: 'Owner/repo de los patches. Default MorpheApp/morphe-patches (formato .mpp, sucesor oficial tras archivado de inotia00 en marzo 2026).'
     required: false
     default: 'MorpheApp/morphe-patches'
+  morphe_channel:
+    description: 'Canal de patches Morphe: "stable" (ultimo release estable) o "dev" (ultimo release aunque sea pre-release vX.Y.Z-dev.N, sale antes que el estable).'
+    required: false
+    default: 'stable'
   revanced_gmscore_repo:
     description: 'Owner/repo de GmsCore/MicroG. Default MorpheApp/MicroG-RE (12.8 MB, fork microG mantenido por Morphe, vendor app.revanced).'
     required: false
@@ -135,6 +139,7 @@ runs:
         REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
         REVANCED_CLI_TAG: ${{ inputs.revanced_cli_tag }}
         REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
+        MORPHE_CHANNEL: ${{ inputs.morphe_channel }}
       run: |
         set -o pipefail
         bash project-a/scripts/fetch-apks.sh 2>&1 | tee /tmp/fetch-apks.log
@@ -146,6 +151,7 @@ runs:
         REVANCED_CLI_REPO: ${{ inputs.revanced_cli_repo }}
         REVANCED_CLI_TAG: ${{ inputs.revanced_cli_tag }}
         REVANCED_PATCHES_REPO: ${{ inputs.revanced_patches_repo }}
+        MORPHE_CHANNEL: ${{ inputs.morphe_channel }}
         REVANCED_GMSCORE_REPO: ${{ inputs.revanced_gmscore_repo }}
         REVANCED_GMSCORE_REGEX: ${{ inputs.revanced_gmscore_regex }}
         JAVA_TOOL_OPTIONS: "-Djava.awt.headless=true"

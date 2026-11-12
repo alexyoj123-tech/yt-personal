@@ -59,16 +59,25 @@ resolve_patches_meta_if_needed() {
 
   # Parametrizable via REVANCED_PATCHES_REPO por si cambiamos de fork.
   local patches_repo="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
-  local branch="${REVANCED_PATCHES_META_BRANCH:-main}"
-  local list_url="https://raw.githubusercontent.com/${patches_repo}/${branch}/patches-list.json"
+  # La lista se lee del MISMO tag de patches que se va a aplicar (canal
+  # stable o dev), para que las versiones de YouTube/YT Music coincidan.
+  # 'main' queda de respaldo (es lo que se usaba antes).
+  local patches_tag
+  patches_tag="$(resolve_patches_tag)"
+  info "Patches a usar: $patches_tag (canal ${MORPHE_CHANNEL:-stable})"
+  local refs=("${REVANCED_PATCHES_META_BRANCH:-$patches_tag}" main)
 
-  local tmp
+  local tmp ref list_url
   tmp="$(mktemp)"
-  if curl -sfL "$list_url" -o "$tmp" && [ -s "$tmp" ] && jq empty "$tmp" 2>/dev/null; then
-    mv "$tmp" "$META_DIR/patches-meta.json"
-    ok "patches-meta.json descargado de $list_url ($(wc -c < "$META_DIR/patches-meta.json") bytes)"
-    return 0
-  fi
+  for ref in "${refs[@]}"; do
+    list_url="https://raw.githubusercontent.com/${patches_repo}/${ref}/patches-list.json"
+    if curl -sfL "$list_url" -o "$tmp" && [ -s "$tmp" ] && jq empty "$tmp" 2>/dev/null; then
+      mv "$tmp" "$META_DIR/patches-meta.json"
+      ok "patches-meta.json descargado de $list_url ($(wc -c < "$META_DIR/patches-meta.json") bytes)"
+      return 0
+    fi
+    warn "No se pudo leer $list_url"
+  done
   rm -f "$tmp"
 
   warn "No se pudo obtener '$list_url' — versiones se resolverán como vacío."

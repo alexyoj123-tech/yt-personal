@@ -149,5 +149,37 @@ ensure_tool() {
   printf "%s" "$dest"
 }
 
+# Tag del release MAS NUEVO de un repo, contando pre-releases (canal dev).
+# La API devuelve los releases ordenados del mas nuevo al mas viejo.
+gh_newest_tag() {
+  local repo="$1" tag
+  require_cmd gh
+  tag="$(gh api "repos/${repo}/releases?per_page=1" --jq '.[0].tag_name // empty' 2>/dev/null || true)"
+  [ -n "$tag" ] || die "No pude leer el release mas nuevo de $repo (canal dev)."
+  printf "%s" "$tag"
+}
+
+# Tag de patches a usar en este build. Lo resuelve fetch-apks.sh (que necesita
+# el patches-list.json de ESE tag) y lo guarda en META_DIR para que
+# apply-patches.sh use exactamente el mismo aunque salga otro release en medio.
+#   REVANCED_PATCHES_TAG  fuerza un tag concreto.
+#   MORPHE_CHANNEL=dev    ultimo release aunque sea pre-release (vX.Y.Z-dev.N).
+#   MORPHE_CHANNEL=stable ultimo release estable (default).
+resolve_patches_tag() {
+  local repo="${REVANCED_PATCHES_REPO:-MorpheApp/morphe-patches}"
+  local file="$META_DIR/patches-tag.txt" tag="${REVANCED_PATCHES_TAG:-}"
+  if [ -z "$tag" ] && [ -s "$file" ]; then tag="$(cat "$file")"; fi
+  if [ -z "$tag" ]; then
+    if [ "${MORPHE_CHANNEL:-stable}" = "dev" ]; then
+      tag="$(gh_newest_tag "$repo")"
+    else
+      tag="$(gh_latest_tag "$repo")"
+    fi
+  fi
+  mkdir -p "$META_DIR"
+  printf "%s" "$tag" > "$file"
+  printf "%s" "$tag"
+}
+
 # Export selected variables for child scripts (if they re-source this, harmless).
 export SCRIPT_DIR PROJECT_A_DIR REPO_ROOT APKS_DIR PATCHED_DIR SIGNED_DIR TOOLS_DIR META_DIR

@@ -33,3 +33,7 @@ jobs:
           android_key_alias:         ${{ secrets.ANDROID_KEY_ALIAS }}
           android_key_password:      ${{ secrets.ANDROID_KEY_PASSWORD }}
           gh_token:                  ${{ secrets.GITHUB_TOKEN }}
+          # Canal de patches: 'dev' (default) toma las pre-releases de Morphe
+          # (vX.Y.Z-dev.N) apenas salen. Para volver a solo estables, crear la
+          # variable de repo MORPHE_CHANNEL=stable (Settings > Variables).
+          morphe_channel:            ${{ vars.MORPHE_CHANNEL || 'dev' }}

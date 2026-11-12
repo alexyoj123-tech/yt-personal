@@ -1,6 +1,6 @@
 name: project-a · vigilante (versiones nuevas)
-# Cada ~10 min compara los tags estables de upstream (patches, CLI, MicroG,
-# SmartTube) con la huella del ultimo release ytp-a-*. Si algo cambio, lanza
+# Cada ~10 min compara los tags de upstream (patches -estable o dev segun
+# vars.MORPHE_CHANNEL, default dev-, CLI, MicroG, SmartTube) con la huella del ultimo release ytp-a-*. Si algo cambio, lanza
 # project-a-build.yml de inmediato en vez de esperar al cron diario (que
 # GitHub ademas arranca con 6-8 h de retraso). Asi una version nueva de Morphe
 # aparece en Releases/Obtainium en minutos.
@@ -39,6 +39,8 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       REPO: ${{ github.repository }}
       BUILD_WORKFLOW: project-a-build.yml
+      # Mismo canal que project-a-build.yml: 'dev' incluye pre-releases de patches.
+      CHANNEL: ${{ vars.MORPHE_CHANNEL || 'dev' }}
     steps:
       - name: Comparar upstream con el ultimo release ytp-a
         shell: bash
@@ -50,7 +52,13 @@ jobs:
             gh release view --repo "$1" --json tagName,publishedAt \
               --jq '"\(.tagName)|\(.publishedAt)"' 2>/dev/null || true
           }
+          # tag|publishedAt del release MAS NUEVO, aunque sea pre-release (canal dev)
+          newest() {
+            gh api "repos/$1/releases?per_page=1" \
+              --jq '.[0] | "\(.tag_name)|\(.published_at)"' 2>/dev/null || true
+          }
           norm() { printf '%s' "${1#v}"; }
+          echo "Canal de patches: $CHANNEL"
 
           # ── Huella del ultimo release de project-a ──
           LAST_TAG="$(gh api "repos/$REPO/releases?per_page=50" \
@@ -66,8 +74,8 @@ jobs:
           CHANGED=""
           NEWEST_PUB=""
           check() {
-            local key="$1" repo="$2" info tag pub have
-            info="$(latest "$repo")"
+            local key="$1" repo="$2" how="${3:-latest}" info tag pub have
+            info="$("$how" "$repo")"
             tag="${info%%|*}"; pub="${info#*|}"
             if [ -z "$info" ] || [ -z "$tag" ]; then
               echo "::warning::No se pudo leer el ultimo release de $repo (se ignora este chequeo)"
@@ -82,7 +90,11 @@ jobs:
               echo "igual  $key: $tag"
             fi
           }
-          check patches MorpheApp/morphe-patches
+          if [ "$CHANNEL" = "dev" ]; then
+            check patches MorpheApp/morphe-patches newest
+          else
+            check patches MorpheApp/morphe-patches
+          fi
           check cli     MorpheApp/morphe-cli
           check gms     MorpheApp/MicroG-RE
           check st      yuliskov/SmartTube

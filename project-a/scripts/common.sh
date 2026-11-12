@@ -149,14 +149,19 @@ ensure_tool() {
   printf "%s" "$dest"
 }
 
-# Tag del release MAS NUEVO de un repo, contando pre-releases (canal dev).
-# La API devuelve los releases ordenados del mas nuevo al mas viejo.
+# Tag de la version MAS ALTA de un repo contando pre-releases (canal dev),
+# entre sus 30 releases mas recientes. Por version y no por fecha: asi una
+# estable 2.3.0 gana a 2.3.0-dev.N aunque alguna dev salga despues.
 gh_newest_tag() {
-  local repo="$1" tag
+  local repo="$1" tags t best=""
   require_cmd gh
-  tag="$(gh api "repos/${repo}/releases?per_page=1" --jq '.[0].tag_name // empty' 2>/dev/null || true)"
-  [ -n "$tag" ] || die "No pude leer el release mas nuevo de $repo (canal dev)."
-  printf "%s" "$tag"
+  tags="$(gh api "repos/${repo}/releases?per_page=30" \
+            --jq '.[] | select(.draft | not) | .tag_name' 2>/dev/null || true)"
+  for t in $tags; do
+    if [ -z "$best" ] || semver_gt "$t" "$best"; then best="$t"; fi
+  done
+  [ -n "$best" ] || die "No pude leer los releases de $repo (canal dev)."
+  printf "%s" "$best"
 }
 
 # Tag de patches a usar en este build. Lo resuelve fetch-apks.sh (que necesita
@@ -179,6 +184,25 @@ resolve_patches_tag() {
   mkdir -p "$META_DIR"
   printf "%s" "$tag" > "$file"
   printf "%s" "$tag"
+}
+
+# semver_gt A B → 0 (true) si A es una version MAS NUEVA que B.
+# Entiende pre-releases: 2.3.0 > 2.3.0-dev.9 > 2.3.0-dev.2 > 2.2.0.
+# (sort -V solo no sirve: pone 2.3.0-dev.2 DESPUES de 2.3.0.)
+semver_gt() {
+  local a="${1#v}" b="${2#v}"
+  [ -n "$a" ] || return 1
+  [ -n "$b" ] || return 0
+  [ "$a" = "$b" ] && return 1
+  local ab="${a%%-*}" bb="${b%%-*}" ap="" bp=""
+  [ "$a" != "$ab" ] && ap="${a#*-}"
+  [ "$b" != "$bb" ] && bp="${b#*-}"
+  if [ "$ab" != "$bb" ]; then
+    [ "$(printf '%s\n%s\n' "$ab" "$bb" | sort -V | tail -1)" = "$ab" ]; return
+  fi
+  [ -z "$ap" ] && return 0      # misma base: estable > pre-release
+  [ -z "$bp" ] && return 1
+  [ "$(printf '%s\n%s\n' "$ap" "$bp" | sort -V | tail -1)" = "$ap" ]
 }
 
 # Export selected variables for child scripts (if they re-source this, harmless).

@@ -1,0 +1,23 @@
+name: Probar aviso por WhatsApp
+# Manda un mensaje de prueba con los secrets NOTIFY_WHATSAPP_PHONE y
+# NOTIFY_WHATSAPP_APIKEY (CallMeBot). Correr a mano desde Actions despues de
+# crear o cambiar esos secrets.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enviar mensaje de prueba
+        env:
+          NOTIFY_WHATSAPP_PHONE:  ${{ secrets.NOTIFY_WHATSAPP_PHONE }}
+          NOTIFY_WHATSAPP_APIKEY: ${{ secrets.NOTIFY_WHATSAPP_APIKEY }}
+        run: |
+          bash project-a/scripts/notify.sh "🔔 Prueba de yt-personal: los avisos de versiones nuevas de YouTube/YT Music llegaran a este WhatsApp."

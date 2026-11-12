@@ -33,7 +33,11 @@ jobs:
           android_key_alias:         ${{ secrets.ANDROID_KEY_ALIAS }}
           android_key_password:      ${{ secrets.ANDROID_KEY_PASSWORD }}
           gh_token:                  ${{ secrets.GITHUB_TOKEN }}
-          # Canal de patches: 'dev' (default) toma las pre-releases de Morphe
-          # (vX.Y.Z-dev.N) apenas salen. Para volver a solo estables, crear la
-          # variable de repo MORPHE_CHANNEL=stable (Settings > Variables).
+          # Canal de patches: 'dev' (default) toma la version MAS ALTA de Morphe
+          # contando pre-releases (vX.Y.Z-dev.N): la dev sale primero y la
+          # estable despues encima, todo en la misma linea ytp-a-* que Obtainium
+          # instala solo. Solo estables: variable de repo MORPHE_CHANNEL=stable.
           morphe_channel:            ${{ vars.MORPHE_CHANNEL || 'dev' }}
+          # Aviso por WhatsApp al publicar (CallMeBot). Secrets, no texto: repo publico.
+          notify_whatsapp_phone:     ${{ secrets.NOTIFY_WHATSAPP_PHONE }}
+          notify_whatsapp_apikey:    ${{ secrets.NOTIFY_WHATSAPP_APIKEY }}

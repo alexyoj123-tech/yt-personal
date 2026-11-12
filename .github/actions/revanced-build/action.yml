@@ -71,6 +71,14 @@ inputs:
   gh_token:
     description: 'Token de GitHub para crear el Release'
     required: true
+  notify_whatsapp_phone:
+    description: 'Numero para avisos por WhatsApp (CallMeBot), ej. +502XXXXXXXX. Pasar desde un secret: el repo es publico. Vacio = sin aviso.'
+    required: false
+    default: ''
+  notify_whatsapp_apikey:
+    description: 'apikey de CallMeBot (secret). Vacio = sin aviso.'
+    required: false
+    default: ''
 
 runs:
   using: composite
@@ -180,6 +188,8 @@ runs:
         FORCE_RELEASE: ${{ inputs.force_release == 'true' && '1' || '0' }}
         DEVICE_NAME: 'Samsung Galaxy A04e'
         RELEASE_NOTE_PREFIX: ${{ inputs.release_note_prefix }}
+        NOTIFY_WHATSAPP_PHONE:  ${{ inputs.notify_whatsapp_phone }}
+        NOTIFY_WHATSAPP_APIKEY: ${{ inputs.notify_whatsapp_apikey }}
       run: bash project-a/scripts/create-release.sh
 
     - name: Guardar log en el repo si falla

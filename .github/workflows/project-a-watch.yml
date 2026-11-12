@@ -52,10 +52,35 @@ jobs:
             gh release view --repo "$1" --json tagName,publishedAt \
               --jq '"\(.tagName)|\(.publishedAt)"' 2>/dev/null || true
           }
-          # tag|publishedAt del release MAS NUEVO, aunque sea pre-release (canal dev)
+          # Mismo semver_gt que project-a/scripts/common.sh:
+          # 2.3.0 > 2.3.0-dev.9 > 2.3.0-dev.2 > 2.2.0
+          semver_gt() {
+            local a="${1#v}" b="${2#v}"
+            [ -n "$a" ] || return 1
+            [ -n "$b" ] || return 0
+            [ "$a" = "$b" ] && return 1
+            local ab="${a%%-*}" bb="${b%%-*}" ap="" bp=""
+            [ "$a" != "$ab" ] && ap="${a#*-}"
+            [ "$b" != "$bb" ] && bp="${b#*-}"
+            if [ "$ab" != "$bb" ]; then
+              [ "$(printf '%s\n%s\n' "$ab" "$bb" | sort -V | tail -1)" = "$ab" ]; return
+            fi
+            [ -z "$ap" ] && return 0      # misma base: estable > pre-release
+            [ -z "$bp" ] && return 1
+            [ "$(printf '%s\n%s\n' "$ap" "$bp" | sort -V | tail -1)" = "$ap" ]
+          }
+          # tag|publishedAt de la version MAS ALTA (contando pre-releases) entre
+          # los 30 releases mas recientes. Por version, no por fecha.
           newest() {
-            gh api "repos/$1/releases?per_page=1" \
-              --jq '.[0] | "\(.tag_name)|\(.published_at)"' 2>/dev/null || true
+            local rows best="" bpub="" t p
+            rows="$(gh api "repos/$1/releases?per_page=30" \
+              --jq '.[] | select(.draft | not) | "\(.tag_name)|\(.published_at)"' 2>/dev/null || true)"
+            for r in $rows; do
+              t="${r%%|*}"; p="${r#*|}"
+              if [ -z "$best" ] || semver_gt "$t" "$best"; then best="$t"; bpub="$p"; fi
+            done
+            [ -n "$best" ] && printf '%s|%s' "$best" "$bpub"
+            return 0
           }
           norm() { printf '%s' "${1#v}"; }
           echo "Canal de patches: $CHANNEL"
@@ -82,6 +107,11 @@ jobs:
               return 0
             fi
             have="$(field "$key")"
+            # patches: solo si es MAS NUEVA (dev o estable). Nunca hacia atras.
+            if [ "$key" = "patches" ] && [ -n "$have" ] && ! semver_gt "$tag" "$have"; then
+              echo "igual  $key: tengo $have, upstream $tag (no es mas nueva)"
+              return 0
+            fi
             if [ "$(norm "$tag")" != "$(norm "$have")" ]; then
               echo "NUEVO  $key: ${have:-?} -> $tag  (publicado $pub)"
               CHANGED="$CHANGED $key=$tag"

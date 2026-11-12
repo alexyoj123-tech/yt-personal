@@ -44,6 +44,17 @@ PSUF=""
 [ -n "$PATCHES_VERSION" ] && [ "$PATCHES_VERSION" != "null" ] && PSUF="-p${PATCHES_VERSION#v}"
 info "Huella de este build: $FINGERPRINT"
 
+# ── Dev o estable ───────────────────────────────────────────────────
+# Dev y estables van en la MISMA linea (tag ytp-a-*, release normal + Latest):
+# Obtainium instala sola la dev apenas sale y despues la estable encima.
+# Solo cambia la nota del release y el texto del aviso por WhatsApp.
+IS_DEV=0
+case "$PATCHES_VERSION" in *-*) IS_DEV=1 ;; esac
+if [ "$IS_DEV" = "1" ]; then
+  RELEASE_NOTE_PREFIX="Version DEV de Morphe (${PATCHES_VERSION}): sale antes que la estable y puede traer fallos. Cuando salga la estable, Obtainium la instala sola encima.${RELEASE_NOTE_PREFIX:+ $RELEASE_NOTE_PREFIX}"
+fi
+PREFIX="ytp-a-"
+
 # ── Skip si no hay cambios ──────────────────────────────────────────
 # BUG HISTORICO (arreglado 2026-09-08): este bloque nunca llegaba a saltar.
 #   1. `--limit 1` devolvia el release mas nuevo de CUALQUIER proyecto
@@ -54,7 +65,7 @@ info "Huella de este build: $FINGERPRINT"
 # Resultado: publicaba release TODOS los dias aunque nada hubiera cambiado.
 if [ "${FORCE_RELEASE:-0}" != "1" ]; then
   last_tag="$(gh release list --repo "$REPO" --limit 60 --json tagName \
-      --jq '[.[] | select(.tagName | startswith("ytp-a-"))][0].tagName // empty' \
+      --jq "[.[] | select(.tagName | startswith(\"$PREFIX\"))][0].tagName // empty" \
       2>/dev/null || true)"
 
   if [ -n "$last_tag" ]; then
@@ -64,6 +75,13 @@ if [ "${FORCE_RELEASE:-0}" != "1" ]; then
       | sed -n 's/.*ytp-fingerprint:[[:space:]]*\([^[:space:]]*\).*/\1/p' | head -1)"
 
     if [ -n "$last_fp" ]; then
+      # No retroceder: si el ultimo release ya trae patches MAS NUEVOS (p.ej.
+      # una dev publicada en el canal estable), no publicar uno mas viejo.
+      last_patches="$(printf '%s' "$last_fp" | tr ';' '\n' | sed -n 's/^patches=//p')"
+      if semver_gt "$last_patches" "$PATCHES_VERSION"; then
+        ok "$last_tag ya trae patches $last_patches, mas nuevos que $PATCHES_VERSION — no retrocedo. Skip."
+        exit 0
+      fi
       if [ "$last_fp" = "$FINGERPRINT" ]; then
         ok "Sin cambios desde $last_tag — skip release (FORCE_RELEASE=1 para forzar)."
         exit 0
@@ -90,7 +108,7 @@ if [ "${FORCE_RELEASE:-0}" != "1" ]; then
 fi
 
 # ── Elegir tag único ─────────────────────────────────────────────────
-base_tag="ytp-a-$(date -u +%Y.%m.%d)"
+base_tag="${PREFIX}$(date -u +%Y.%m.%d)"
 tag="$base_tag"
 n=1
 while gh release view "$tag" --repo "$REPO" >/dev/null 2>&1; do
@@ -158,14 +176,36 @@ step "Creando release $tag con 3 APKs"
 mapfile -t assets < <(ls "$SIGNED_DIR"/*.apk 2>/dev/null)
 [ "${#assets[@]}" -ge 3 ] || die "Se esperaban 3 APKs firmados en $SIGNED_DIR, encontré ${#assets[@]}"
 
+# El titulo tiene que seguir empezando con "Daily ReVanced Build": es el
+# filtro de Obtainium "(^ytp-a-|Daily ReVanced Build)". NUNCA --prerelease:
+# Obtainium tiene includePrereleases=false y dejaria de ver las dev.
+if [ "$IS_DEV" = "1" ]; then
+  release_flags=(--title "Daily ReVanced Build — $(date -u +%Y-%m-%d) (DEV ${PATCHES_VERSION})" --latest)
+else
+  release_flags=(--title "Daily ReVanced Build — $(date -u +%Y-%m-%d)" --latest)
+fi
 gh release create "$tag" \
   --repo "$REPO" \
-  --title "Daily ReVanced Build — $(date -u +%Y-%m-%d)" \
+  "${release_flags[@]}" \
   --notes-file "$body_file" \
-  --latest \
   "${assets[@]}"
 
 ok "Release $tag publicado:"
 ok "  https://github.com/$REPO/releases/tag/$tag"
+
+# ── Aviso por WhatsApp ──────────────────────────────────────────────
+rel_url="https://github.com/$REPO/releases/tag/$tag"
+if [ "$IS_DEV" = "1" ]; then
+  notify_msg="🧪 Nueva version DEV de Morphe: ${PATCHES_VERSION}
+YouTube ${YT_VERSION} · YT Music ${YTM_VERSION}
+Obtainium la va a instalar sola en los proximos minutos.
+${rel_url}"
+else
+  notify_msg="✅ Nueva version ESTABLE de Morphe: ${PATCHES_VERSION}
+YouTube ${YT_VERSION} · YT Music ${YTM_VERSION} · MicroG ${GMS_VERSION}
+Obtainium la va a instalar sola en los proximos minutos.
+${rel_url}"
+fi
+bash "$(dirname "$0")/notify.sh" "$notify_msg" || true
 
 rm -f "$body_file"

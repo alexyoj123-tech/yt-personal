@@ -1,22 +1,22 @@
 {
   "schema_version": 1,
-  "tag": "ytp-f-family-2026-11-08",
-  "build_date": "2026-11-08",
-  "expires_date": "2027-02-06",
+  "tag": "ytp-f-family-2026-11-12",
+  "build_date": "2026-11-12",
+  "expires_date": "2027-02-10",
   "expires_days": 90,
-  "source_release": "ytp-a-2026.11.07",
+  "source_release": "ytp-a-2026.11.11",
   "apps": {
     "yt": {
-      "filename": "g4CD-J6AA-X9KU-dcQX-WpKA-yJtt-RTjf-Vf9Py.apk",
-      "size_bytes": 242864667,
-      "sha256": "02f44371427ba42ab219aa59067be0593b2d7a7bfd1b6e05a4c7e98bc9f51591",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-11-08/g4CD-J6AA-X9KU-dcQX-WpKA-yJtt-RTjf-Vf9Py.apk"
+      "filename": "LJpw-C4kC-VHrZ-KCkP-fshL-DsHK-qteD-97dKg.apk",
+      "size_bytes": 244913568,
+      "sha256": "0fbc9195cb862d4883c99fc4bebf8190dad61f3315afccdda25ef6fcad17125d",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-11-12/LJpw-C4kC-VHrZ-KCkP-fshL-DsHK-qteD-97dKg.apk"
     },
     "ytm": {
-      "filename": "xFUA-3xKU-cGUP-dyZA-DmWb-HxHU-HvRx-8GidQ.apk",
-      "size_bytes": 86140312,
-      "sha256": "ae80bfde4e39bb6cf0d2eb12f4308a29d8f9e038cd0b3ebda65459d7d08da13f",
-      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-11-08/xFUA-3xKU-cGUP-dyZA-DmWb-HxHU-HvRx-8GidQ.apk"
+      "filename": "vx3W-4Qtq-MmQ9-cXSL-m2RF-UpiC-suwV-y3jvU.apk",
+      "size_bytes": 91095978,
+      "sha256": "b2f1fc8672da91c8486a86f8ebbdac2fc94fbf010fb7a228e8d96935ccaf0d56",
+      "url": "https://github.com/alexyoj123-tech/yt-personal/releases/download/ytp-f-family-2026-11-12/vx3W-4Qtq-MmQ9-cXSL-m2RF-UpiC-suwV-y3jvU.apk"
     }
   }
 }

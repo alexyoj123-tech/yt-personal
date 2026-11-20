@@ -1,9 +1,9 @@
-run_id=44547956578  fecha=2026-11-19T14:50:34Z
+run_id=44754143747  fecha=2026-11-20T14:31:39Z
 
 ===================== /tmp/fetch-apks.log =====================
 [INFO]  patches-meta.json no existe — descargando patches-list.json del repo de patches.
-[INFO]  Patches a usar: v2.4.0-dev.5 (canal dev)
-[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/v2.4.0-dev.5/patches-list.json (496340 bytes)
+[INFO]  Patches a usar: v2.4.0-dev.6 (canal dev)
+[OK]    patches-meta.json descargado de https://raw.githubusercontent.com/MorpheApp/morphe-patches/v2.4.0-dev.6/patches-list.json (502192 bytes)
 [INFO]  Resolución de versión: se aceptan targets experimentales.
 [INFO]  YouTube        → 21.46.522  (com.google.android.youtube)
 [INFO]  YouTube Music  → 9.46.51 (com.google.android.apps.youtube.music)
